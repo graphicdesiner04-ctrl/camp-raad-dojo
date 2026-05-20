@@ -936,6 +936,12 @@ tr:last-child td{border-bottom:none}
 
 <div id="toast"></div>
 
+<!-- GALLERY LIGHTBOX -->
+<div class="gallery-lightbox" id="gallery-lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
 <script>
 // ========== DATA ==========
 const DEFAULT_CAMPS = [
