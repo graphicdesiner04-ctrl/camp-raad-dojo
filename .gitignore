@@ -15,4 +15,5 @@ strawberry_*
 waleed-*
 make_mockup*.py
 *.pdf
-.claude/
+.claude/settings.json
+.claude/settings.local.json
