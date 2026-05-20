@@ -943,6 +943,60 @@ tr:last-child td{border-bottom:none}
 </div>
 
 <script>
+// ========== HERO SLIDER & GALLERY ==========
+let heroIndex = 0;
+let heroTimer = null;
+
+function initGallery() {
+  if (typeof GALLERY_PHOTOS === 'undefined' || !GALLERY_PHOTOS.length) return;
+  // Set sidebar cover
+  const coverImg = document.getElementById('sidebar-cover-img');
+  if (coverImg) coverImg.src = GALLERY_PHOTOS[0];
+  // Set hero slides
+  for (let i = 0; i < 4; i++) {
+    const slide = document.getElementById('slide-' + i);
+    if (slide) {
+      const img = slide.querySelector('img');
+      if (img && GALLERY_PHOTOS[i]) img.src = GALLERY_PHOTOS[i];
+    }
+  }
+  // Build gallery strip
+  const strip = document.getElementById('gallery-strip');
+  if (strip) {
+    strip.innerHTML = GALLERY_PHOTOS.map((src,i) =>
+      `<div class="gallery-thumb" onclick="openLightbox(${i})"><img src="${src}" alt="Camp Photo ${i+1}"></div>`
+    ).join('');
+  }
+  // Start auto-play
+  startHeroTimer();
+}
+
+function startHeroTimer() {
+  clearInterval(heroTimer);
+  heroTimer = setInterval(() => heroNav(1), 4500);
+}
+
+function heroNav(dir) {
+  heroGoTo((heroIndex + dir + 4) % 4);
+}
+
+function heroGoTo(idx) {
+  document.querySelectorAll('.hero-slide').forEach((s,i) => s.classList.toggle('active', i === idx));
+  document.querySelectorAll('.hero-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+  heroIndex = idx;
+  startHeroTimer();
+}
+
+function openLightbox(idx) {
+  if (typeof GALLERY_PHOTOS === 'undefined') return;
+  document.getElementById('lightbox-img').src = GALLERY_PHOTOS[idx];
+  document.getElementById('gallery-lightbox').classList.add('open');
+}
+
+function closeLightbox() {
+  document.getElementById('gallery-lightbox').classList.remove('open');
+}
+
 // ========== DATA ==========
 const DEFAULT_CAMPS = [
   {id:1,name:"المعسكر الأول",nameEn:"Camp 1 – Thailand 2026",startDate:"2026-06-16",endDate:"2026-06-29",location:"Phuket, Thailand",hotel:"The Blue Mavi",status:"قادم",fee:2990,color:"#C41E3A"},
