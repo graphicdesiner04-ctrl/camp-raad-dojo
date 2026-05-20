@@ -346,6 +346,53 @@ tr:last-child td{border-bottom:none}
 
 <!-- ======== PAGE: PARTICIPANTS ======== -->
 <div class="page active" id="page-participants">
+
+  <!-- HERO SLIDER -->
+  <div class="hero-slider" id="hero-slider">
+    <div class="hero-slide active" id="slide-0">
+      <img src="" alt="Camp Photo 1">
+      <div class="hero-content">
+        <div class="hero-title">معسكر تايلاند 2026</div>
+        <div class="hero-sub">
+          <span>🏝️ Phuket</span>
+          <span>June 16–29</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-slide" id="slide-1">
+      <img src="" alt="Camp Photo 2">
+      <div class="hero-content">
+        <div class="hero-title">Camp Raad Dojo</div>
+        <div class="hero-sub"><span>🥊 Training & Adventure</span></div>
+      </div>
+    </div>
+    <div class="hero-slide" id="slide-2">
+      <img src="" alt="Camp Photo 3">
+      <div class="hero-content">
+        <div class="hero-title">Thailand 2026</div>
+        <div class="hero-sub"><span>🚤 Island Excursion</span></div>
+      </div>
+    </div>
+    <div class="hero-slide" id="slide-3">
+      <img src="" alt="Camp Photo 4">
+      <div class="hero-content">
+        <div class="hero-title">روح الفريق</div>
+        <div class="hero-sub"><span>👊 Team Spirit</span></div>
+      </div>
+    </div>
+    <button class="hero-nav prev" onclick="heroNav(-1)">‹</button>
+    <button class="hero-nav next" onclick="heroNav(1)">›</button>
+    <div class="hero-dots">
+      <div class="hero-dot active" onclick="heroGoTo(0)"></div>
+      <div class="hero-dot" onclick="heroGoTo(1)"></div>
+      <div class="hero-dot" onclick="heroGoTo(2)"></div>
+      <div class="hero-dot" onclick="heroGoTo(3)"></div>
+    </div>
+  </div>
+
+  <!-- GALLERY STRIP -->
+  <div class="gallery-strip" id="gallery-strip"></div>
+
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-icon red">👥</div>
