@@ -285,15 +285,18 @@ tr:last-child td{border-bottom:none}
 
 <!-- ===== SIDEBAR ===== -->
 <nav id="sidebar">
-  <div class="sidebar-logo">
-    <img src="logo Raad/Logo THAILAND copy2.png" alt="Logo" onerror="this.style.display='none'">
-    <div class="sidebar-logo-text">
-      <h2>Camp Raad Dojo</h2>
-      <span id="sidebar-camp-name">Thailand 2026</span>
+  <div class="sidebar-cover" id="sidebar-cover-wrap">
+    <img id="sidebar-cover-img" src="" alt="">
+    <div class="sidebar-logo">
+      <img src="logo Raad/Logo THAILAND copy2.png" alt="Logo" onerror="this.style.display='none'">
+      <div class="sidebar-logo-text">
+        <h2>Camp Raad Dojo</h2>
+        <span id="sidebar-camp-name">Thailand 2026</span>
+      </div>
     </div>
   </div>
-  <div style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.1)">
-    <select id="camp-select" onchange="switchCamp(this.value)" style="width:100%;background:#1a2e4a;color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:6px 10px;font-size:12px;font-family:inherit;cursor:pointer;outline:none">
+  <div class="camp-select-wrap">
+    <select id="camp-select" onchange="switchCamp(this.value)">
     </select>
   </div>
   <div class="nav-section">
