@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camp Raad Dojo – Thailand 2025</title>
+<script src="passport-data.js"></script>
+<script src="logo-data.js"></script>
+<script src="invoice-data.js"></script>
+<script src="stamp-data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@font-face {
+  font-family: 'Alexandria';
+  src: url('fonts/Alexandria-VariableFont_wght.ttf') format('truetype');
+}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#C41E3A;--primary-dark:#9e1830;--navy:#0f1c2e;--navy2:#162236;
+  --sidebar:#0f1c2e;--gold:#e8a020;--bg:#f0f2f5;--white:#fff;
+  --text:#1a2332;--muted:#6b7280;--border:#e2e8f0;--success:#16a34a;
+  --warning:#d97706;--danger:#dc2626;--info:#2563eb;--radius:10px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.15);
+}
+body{font-family:'Alexandria',Arial,sans-serif;background:var(--bg);color:var(--text);direction:rtl}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* ===== LAYOUT ===== */
+#app{display:flex;min-height:100vh}
+#sidebar{width:240px;min-height:100vh;background:var(--sidebar);display:flex;flex-direction:column;position:fixed;right:0;top:0;z-index:100;transition:.3s}
+#content{margin-right:240px;flex:1;min-height:100vh;overflow-x:hidden}
+
+/* ===== SIDEBAR ===== */
+.sidebar-logo{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:12px}
+.sidebar-logo img{width:44px;height:44px;object-fit:contain;border-radius:8px}
+.sidebar-logo-text{color:#fff}
+.sidebar-logo-text h2{font-size:14px;font-weight:700;line-height:1.2}
+.sidebar-logo-text span{font-size:11px;color:rgba(255,255,255,.5)}
+.nav-section{padding:16px 0}
+.nav-section-title{font-size:10px;color:rgba(255,255,255,.35);padding:0 16px 8px;text-transform:uppercase;letter-spacing:.06em}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.65);font-size:13.5px;cursor:pointer;transition:.2s;border-right:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:rgba(196,30,58,.15);color:#fff;border-right-color:var(--primary)}
+.nav-item .icon{width:18px;text-align:center;font-size:16px}
+.nav-badge{margin-right:auto;background:var(--primary);color:#fff;font-size:10px;padding:2px 7px;border-radius:20px}
+
+/* ===== TOPBAR ===== */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow)}
+.topbar-title{font-size:18px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-btn{background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:7px;font-size:13px;display:flex;align-items:center;gap:6px;transition:.2s}
+.topbar-btn:hover{background:var(--primary-dark)}
+.topbar-btn.secondary{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.topbar-btn.secondary:hover{background:var(--border)}
+
+/* ===== PAGE ===== */
+.page{display:none;padding:24px}
+.page.active{display:block}
+
+/* ===== STATS CARDS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:var(--radius);padding:20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+.stat-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.stat-icon.red{background:rgba(196,30,58,.1);color:var(--primary)}
+.stat-icon.blue{background:rgba(37,99,235,.1);color:var(--info)}
+.stat-icon.green{background:rgba(22,163,74,.1);color:var(--success)}
+.stat-icon.gold{background:rgba(232,160,32,.12);color:var(--gold)}
+.stat-icon.purple{background:rgba(124,58,237,.1);color:#7c3aed}
+.stat-value{font-size:26px;font-weight:700;line-height:1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ===== CARD ===== */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-body{padding:20px}
+.card-actions{display:flex;gap:8px;align-items:center}
+
+/* ===== SEARCH BAR ===== */
+.search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-input{flex:1;min-width:220px;padding:9px 14px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;outline:none;transition:.2s}
+.search-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(196,30,58,.1)}
+.filter-select{padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;outline:none;min-width:140px}
+
+/* ===== TABLE ===== */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{background:#f8fafc;color:var(--muted);font-weight:600;padding:12px 14px;text-align:right;border-bottom:2px solid var(--border);white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:#fafbfc}
+tr:last-child td{border-bottom:none}
+.name-cell{display:flex;flex-direction:column;gap:2px}
+.name-ar{font-weight:600;font-size:13.5px}
+.name-en{font-size:11.5px;color:var(--muted)}
+
+/* ===== BADGE ===== */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.badge-success{background:#dcfce7;color:var(--success)}
+.badge-warning{background:#fef3c7;color:var(--warning)}
+.badge-danger{background:#fee2e2;color:var(--danger)}
+.badge-info{background:#dbeafe;color:var(--info)}
+.badge-gray{background:#f1f5f9;color:var(--muted)}
+.badge-primary{background:rgba(196,30,58,.1);color:var(--primary)}
+
+/* ===== ACTION BTNS ===== */
+.action-btns{display:flex;gap:6px;flex-wrap:nowrap}
+.btn{border:none;padding:6px 12px;border-radius:6px;font-size:12px;display:inline-flex;align-items:center;gap:4px;transition:.2s;white-space:nowrap}
+.btn-view{background:#eff6ff;color:var(--info)}
+.btn-view:hover{background:#dbeafe}
+.btn-edit{background:#f0fdf4;color:var(--success)}
+.btn-edit:hover{background:#dcfce7}
+.btn-delete{background:#fef2f2;color:var(--danger)}
+.btn-delete:hover{background:#fee2e2}
+.btn-upload{background:#fefce8;color:var(--warning)}
+.btn-upload:hover{background:#fef3c7}
+.btn-primary{background:var(--primary);color:#fff;padding:8px 18px;border-radius:7px;font-size:13px}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-secondary{background:var(--bg);color:var(--text);border:1px solid var(--border);padding:8px 18px;border-radius:7px;font-size:13px}
+.btn-secondary:hover{background:var(--border)}
+
+/* ===== MODAL ===== */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.modal-close:hover{background:var(--bg)}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+
+/* ===== FORM ===== */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:12.5px;font-weight:600;color:var(--text)}
+.form-control{padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;outline:none;transition:.2s;background:#fff;font-family:inherit}
+.form-control:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(196,30,58,.1)}
+.form-section{margin-bottom:20px}
+.form-section-title{font-size:13px;font-weight:700;color:var(--primary);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid rgba(196,30,58,.15)}
+
+/* ===== FILE LIST ===== */
+.file-list{display:flex;flex-direction:column;gap:8px}
+.file-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.file-icon{font-size:22px}
+.file-info{flex:1}
+.file-name{font-size:13px;font-weight:600}
+.file-meta{font-size:11px;color:var(--muted)}
+.file-actions{display:flex;gap:6px}
+.file-upload-zone{border:2px dashed var(--border);border-radius:8px;padding:24px;text-align:center;cursor:pointer;transition:.2s;color:var(--muted)}
+.file-upload-zone:hover{border-color:var(--primary);background:rgba(196,30,58,.03)}
+.file-upload-zone .upload-icon{font-size:32px;margin-bottom:8px}
+.file-upload-zone p{font-size:13px}
+
+/* ===== PARTICIPANT DETAIL ===== */
+.detail-section{margin-bottom:20px}
+.detail-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.detail-item{background:var(--bg);padding:10px 14px;border-radius:8px}
+.detail-item label{font-size:11px;color:var(--muted);display:block;margin-bottom:3px}
+.detail-item span{font-size:13.5px;font-weight:600}
+.detail-item span.empty{color:#cbd5e1;font-weight:400;font-style:italic;font-size:12px}
+
+/* ===== PAYMENT CARD ===== */
+.payment-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:12px;align-items:center}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;background:var(--success);border-radius:3px;transition:.4s}
+
+/* ===== EMPTY STATE ===== */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state .empty-icon{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+
+/* ===== STAFF CARD ===== */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.staff-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:.2s}
+.staff-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.staff-card-header{background:linear-gradient(135deg,var(--navy),var(--primary));padding:20px;text-align:center}
+.staff-avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.2);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;overflow:hidden}
+.staff-avatar img{width:100%;height:100%;object-fit:cover}
+.staff-card-name{color:#fff;font-size:14px;font-weight:700}
+.staff-card-role{color:rgba(255,255,255,.7);font-size:12px;margin-top:3px}
+.staff-card-body{padding:16px}
+.staff-info-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.staff-info-row:last-child{border-bottom:none}
+.staff-info-label{color:var(--muted);font-size:12px;min-width:70px}
+
+/* ===== FLIGHT CARD ===== */
+.flight-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:16px 20px;margin-bottom:12px}
+.flight-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.flight-route{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:700}
+.flight-arrow{color:var(--muted);font-size:14px}
+.flight-info{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.flight-info-item label{font-size:10px;color:var(--muted);text-transform:uppercase;display:block}
+.flight-info-item span{font-size:13px;font-weight:600}
+.flight-info-item span.empty{color:#cbd5e1;font-weight:400;font-style:italic;font-size:12px}
+
+/* ===== HOTEL CARD ===== */
+.room-badge{background:var(--navy);color:#fff;padding:4px 10px;border-radius:5px;font-size:12px;font-weight:600}
+
+/* ===== TOAST ===== */
+#toast{position:fixed;bottom:24px;left:24px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast-item{background:#1a2332;color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-lg);animation:slideIn .3s ease;display:flex;align-items:center;gap:8px}
+.toast-item.success{border-left:3px solid var(--success)}
+.toast-item.error{border-left:3px solid var(--danger)}
+@keyframes slideIn{from{transform:translateX(-20px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  #sidebar{width:200px}
+  #content{margin-right:200px}
+  .form-grid{grid-template-columns:1fr}
+  .payment-row{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  #sidebar{transform:translateX(100%);box-shadow:var(--shadow-lg)}
+  #sidebar.open{transform:translateX(0)}
+  #content{margin-right:0}
+  .topbar-title{font-size:15px}
+  .page{padding:16px}
+}
+.hamburger{display:none;background:none;border:none;font-size:22px;cursor:pointer;padding:4px}
+@media(max-width:560px){.hamburger{display:block}}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- ===== SIDEBAR ===== -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo Raad/Logo THAILAND copy2.png" alt="Logo" onerror="this.style.display='none'">
+    <div class="sidebar-logo-text">
+      <h2>Camp Raad Dojo</h2>
+      <span id="sidebar-camp-name">Thailand 2026</span>
+    </div>
+  </div>
+  <div style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.1)">
+    <select id="camp-select" onchange="switchCamp(this.value)" style="width:100%;background:#1a2e4a;color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:6px 10px;font-size:12px;font-family:inherit;cursor:pointer;outline:none">
+    </select>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">المعسكر الحالي</div>
+    <div class="nav-item active" onclick="showPage('participants')">
+      <span class="icon">👥</span> المشتركون
+      <span class="nav-badge" id="badge-participants">5</span>
+    </div>
+    <div class="nav-item" onclick="showPage('hotel')">
+      <span class="icon">🏨</span> الفندق والإقامة
+    </div>
+    <div class="nav-item" onclick="showPage('flights')">
+      <span class="icon">✈️</span> الطيران
+    </div>
+    <div class="nav-item" onclick="showPage('files')">
+      <span class="icon">📁</span> الملفات
+    </div>
+    <div class="nav-item" onclick="showPage('staff')">
+      <span class="icon">🥋</span> المدربون والمشرفون
+    </div>
+    <div class="nav-item" onclick="showPage('payments')">
+      <span class="icon">💳</span> المدفوعات
+    </div>
+    <div class="nav-item" onclick="showPage('reports')">
+      <span class="icon">📄</span> التقارير والمستندات
+    </div>
+  </div>
+  <div class="nav-section" style="border-top:1px solid rgba(255,255,255,.08);margin-top:auto">
+    <div class="nav-section-title">الإعدادات</div>
+    <div class="nav-item" onclick="showPage('camps')">
+      <span class="icon">🏕️</span> إدارة المعسكرات
+    </div>
+  </div>
+</nav>
+
+<!-- ===== CONTENT ===== -->
+<div id="content">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+  <div class="topbar-title" id="page-title">المشتركون</div>
+  <div class="topbar-right">
+    <button class="topbar-btn" id="add-btn" onclick="handleAddBtn()">+ إضافة</button>
+  </div>
+</div>
+
+<!-- ======== PAGE: PARTICIPANTS ======== -->
+<div class="page active" id="page-participants">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon red">👥</div>
+      <div><div class="stat-value" id="stat-total">5</div><div class="stat-label">إجمالي المشتركين</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">✅</div>
+      <div><div class="stat-value" id="stat-registered">5</div><div class="stat-label">مسجلون</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">🌍</div>
+      <div><div class="stat-value" id="stat-countries">3</div><div class="stat-label">جنسيات مختلفة</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gold">📎</div>
+      <div><div class="stat-value" id="stat-files">5</div><div class="stat-label">ملفات مرفقة</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📋 قائمة المشتركين</div>
+      <div class="card-actions">
+        <div class="search-bar" style="margin:0">
+          <input class="search-input" id="search-participants" placeholder="بحث بالاسم أو رقم الجواز..." oninput="renderParticipants()">
+          <select class="filter-select" id="filter-nationality" onchange="renderParticipants()">
+            <option value="">كل الجنسيات</option>
+            <option>Qatar</option>
+            <option>United Arab Emirates</option>
+            <option>Saudi Arabia</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الاسم</th>
+            <th>الجنسية</th>
+            <th>رقم الجواز</th>
+            <th>تاريخ الميلاد</th>
+            <th>الهاتف</th>
+            <th>الجواز</th>
+            <th>حالة التسجيل</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="participants-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: HOTEL ======== -->
+<div class="page" id="page-hotel">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue">🏨</div>
+      <div><div class="stat-value" id="stat-hotel-assigned">0</div><div class="stat-label">تم تعيين غرفة</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gold">🛏️</div>
+      <div><div class="stat-value" id="stat-hotel-pending">5</div><div class="stat-label">بانتظار التعيين</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">🏨 بيانات الفندق والإقامة</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>الاسم</th><th>الفندق</th><th>رقم الغرفة</th>
+            <th>نوع الغرفة</th><th>تاريخ الوصول</th><th>تاريخ المغادرة</th>
+            <th>الأشخاص</th><th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="hotel-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: FLIGHTS ======== -->
+<div class="page" id="page-flights">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue">✈️</div>
+      <div><div class="stat-value" id="stat-flights-set">0</div><div class="stat-label">حجوزات مكتملة</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gold">⏳</div>
+      <div><div class="stat-value" id="stat-flights-pending">5</div><div class="stat-label">بانتظار البيانات</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">✈️ بيانات الطيران</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>الاسم</th><th>شركة الطيران</th><th>رقم الرحلة</th>
+            <th>وقت المغادرة</th><th>وقت الوصول</th><th>الترانزيت</th>
+            <th>وصول بوكيت</th><th>تذكرة</th><th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="flights-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: FILES ======== -->
+<div class="page" id="page-files">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📁 جميع المرفقات</div>
+      <div class="card-actions">
+        <select class="filter-select" id="filter-file-type" onchange="renderFiles()">
+          <option value="">كل الأنواع</option>
+          <option value="passport">جوازات</option>
+          <option value="ticket">تذاكر</option>
+          <option value="invoice">فواتير</option>
+          <option value="receipt">إيصالات</option>
+          <option value="other">أخرى</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="files-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: STAFF ======== -->
+<div class="page" id="page-staff">
+  <div class="staff-grid" id="staff-grid"></div>
+</div>
+
+<!-- ======== PAGE: PAYMENTS ======== -->
+<div class="page" id="page-payments">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon green">💰</div>
+      <div><div class="stat-value" id="stat-total-amount">—</div><div class="stat-label">إجمالي المطلوب</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">✅</div>
+      <div><div class="stat-value" id="stat-paid-amount">—</div><div class="stat-label">تم الدفع</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">⏳</div>
+      <div><div class="stat-value" id="stat-remaining-amount">—</div><div class="stat-label">المتبقي</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">💳 تفاصيل المدفوعات</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>الاسم</th><th>الإجمالي</th><th>الدفعة الأولى</th>
+            <th>الدفعة الثانية</th><th>المتبقي</th><th>حالة الدفع</th>
+            <th>إيصالات</th><th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="payments-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: REPORTS ======== -->
+<div class="page" id="page-reports">
+  <div class="stats-grid" style="margin-bottom:24px">
+    <div class="stat-card"><div class="stat-icon red">📄</div><div><div class="stat-value">7</div><div class="stat-label">أنواع التقارير</div></div></div>
+    <div class="stat-card"><div class="stat-icon blue">📊</div><div><div class="stat-value">Excel</div><div class="stat-label">تصدير إكسل</div></div></div>
+    <div class="stat-card"><div class="stat-icon green">📝</div><div><div class="stat-value">Word</div><div class="stat-label">تصدير ورد</div></div></div>
+    <div class="stat-card"><div class="stat-icon gold">🖨️</div><div><div class="stat-value">PDF</div><div class="stat-label">طباعة / PDF</div></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px" id="reports-grid">
+
+    <!-- Report 1 -->
+    <div class="card"><div class="card-header"><div class="card-title">📋 بيانات المشتركين</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+      <p style="font-size:12px;color:var(--muted)">الاسم · الدولة · الهاتف · الجواز · العمر · الوزن · الطول · التيشرت · المدفوع · المتبقي</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="openReport('participants')">🖨️ PDF / طباعة</button>
+        <button class="btn btn-edit" onclick="exportExcel('participants')">📊 Excel</button>
+        <button class="btn btn-view" onclick="exportWord('participants')">📝 Word</button>
+      </div>
+    </div></div>
+
+    <!-- Report 2 -->
+    <div class="card"><div class="card-header"><div class="card-title">✈️ مواعيد الذهاب والعودة</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+      <p style="font-size:12px;color:var(--muted)">الاسم · الدولة · الهاتف · الجواز · موعد الذهاب · موعد العودة</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="openReport('flights-schedule')">🖨️ PDF / طباعة</button>
+        <button class="btn btn-edit" onclick="exportExcel('flights-schedule')">📊 Excel</button>
+        <button class="btn btn-view" onclick="exportWord('flights-schedule')">📝 Word</button>
+      </div>
+    </div></div>
+
+    <!-- Report 3 -->
+    <div class="card"><div class="card-header"><div class="card-title">👕 مقاسات التيشرتات</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+      <p style="font-size:12px;color:var(--muted)">الاسم · الدولة · الهاتف · العمر · الوزن · الطول · المقاس · ملاحظات</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="openReport('tshirts')">🖨️ PDF / طباعة</button>
+        <button class="btn btn-edit" onclick="exportExcel('tshirts')">📊 Excel</button>
+        <button class="btn btn-view" onclick="exportWord('tshirts')">📝 Word</button>
+      </div>
+    </div></div>
+
+    <!-- Report 4 -->
+    <div class="card"><div class="card-header"><div class="card-title">💰 الحسابات والمبالغ</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+      <p style="font-size:12px;color:var(--muted)">الاسم · الدولة · الهاتف · طريقة الدفع · المدفوع · المتبقي · ملاحظات</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="openReport('payments-report')">🖨️ PDF / طباعة</button>
+        <button class="btn btn-edit" onclick="exportExcel('payments-report')">📊 Excel</button>
+        <button class="btn btn-view" onclick="exportWord('payments-report')">📝 Word</button>
+      </div>
+    </div></div>
+
+    <!-- Report 5 -->
+    <div class="card"><div class="card-header"><div class="card-title">🏨 نوع الغرف والإقامة</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+      <p style="font-size:12px;color:var(--muted)">الاسم · الدولة · الهاتف · من · إلى · نوع الغرفة · ملاحظات</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="openReport('hotel-report')">🖨️ PDF / طباعة</button>
+        <button class="btn btn-edit" onclick="exportExcel('hotel-report')">📊 Excel</button>
+        <button class="btn btn-view" onclick="exportWord('hotel-report')">📝 Word</button>
+      </div>
+    </div></div>
+
+    <!-- Report 6 -->
+    <div class="card"><div class="card-header"><div class="card-title">📧 خطاب الفندق</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+      <p style="font-size:12px;color:var(--muted)">خطاب رسمي للفندق يتضمن قائمة الضيوف وتواريخ الإقامة ونوع الغرف</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="openReport('hotel-letter')">🖨️ PDF / طباعة</button>
+        <button class="btn btn-view" onclick="exportWord('hotel-letter')">📝 Word</button>
+      </div>
+    </div></div>
+
+    <!-- Report 7 -->
+    <div class="card"><div class="card-header"><div class="card-title">🧾 إيصالات الدفع</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+      <p style="font-size:12px;color:var(--muted)">إيصال دفع منفصل لكل مشترك يتضمن المبالغ المدفوعة والمتبقية</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="openReport('receipts')">🖨️ PDF / طباعة</button>
+        <button class="btn btn-view" onclick="exportWord('receipts')">📝 Word</button>
+      </div>
+    </div></div>
+
+  </div>
+</div>
+
+</div><!-- end #content -->
+</div><!-- end #app -->
+
+<!-- ======== MODALS ======== -->
+
+<!-- Participant Modal -->
+<div class="modal-overlay" id="modal-participant">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-participant-title">إضافة مشترك</div>
+      <button class="modal-close" onclick="closeModal('modal-participant')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section">
+        <div class="form-section-title">البيانات الشخصية</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">الاسم بالعربي *</label><input class="form-control" id="f-arabicName" placeholder="الاسم الكامل بالعربي"></div>
+          <div class="form-group"><label class="form-label">الاسم بالإنجليزي *</label><input class="form-control" id="f-englishName" placeholder="FULL NAME IN ENGLISH"></div>
+          <div class="form-group"><label class="form-label">الجنسية</label><input class="form-control" id="f-nationality" placeholder="Qatar"></div>
+          <div class="form-group"><label class="form-label">رمز الدولة</label><input class="form-control" id="f-countryCode" placeholder="QAT"></div>
+          <div class="form-group"><label class="form-label">تاريخ الميلاد</label><input class="form-control" type="date" id="f-dateOfBirth" onchange="const a=document.getElementById('f-age');if(a&&this.value)a.value=calcAge(this.value)"></div>
+          <div class="form-group"><label class="form-label">الجنس</label><select class="form-control" id="f-gender"><option>ذكر</option><option>أنثى</option></select></div>
+          <div class="form-group"><label class="form-label">مكان الميلاد</label><input class="form-control" id="f-placeOfBirth"></div>
+          <div class="form-group"><label class="form-label">رقم التواصل</label><input class="form-control" id="f-phone" placeholder="+974 XXXX XXXX"></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">بيانات الجواز</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">رقم الجواز *</label><input class="form-control" id="f-passportNumber"></div>
+          <div class="form-group"><label class="form-label">نوع الجواز</label><input class="form-control" id="f-passportType" placeholder="P"></div>
+          <div class="form-group"><label class="form-label">تاريخ الإصدار</label><input class="form-control" type="date" id="f-issueDate"></div>
+          <div class="form-group"><label class="form-label">تاريخ الانتهاء</label><input class="form-control" type="date" id="f-expiryDate"></div>
+          <div class="form-group"><label class="form-label">جهة الإصدار</label><input class="form-control" id="f-issuingAuthority"></div>
+          <div class="form-group"><label class="form-label">الرقم الشخصي / الموحد</label><input class="form-control" id="f-personalId"></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">بيانات الإقامة</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">الفندق</label><input class="form-control" id="f-hotel"></div>
+          <div class="form-group"><label class="form-label">رقم الغرفة</label><input class="form-control" id="f-roomNumber"></div>
+          <div class="form-group"><label class="form-label">نوع الغرفة</label><input class="form-control" id="f-roomType" placeholder="Standard / Deluxe / Suite"></div>
+          <div class="form-group"><label class="form-label">عدد الأشخاص بالغرفة</label><input class="form-control" type="number" id="f-roomOccupants" min="1"></div>
+          <div class="form-group"><label class="form-label">تاريخ الوصول</label><input class="form-control" type="date" id="f-checkIn"></div>
+          <div class="form-group"><label class="form-label">تاريخ المغادرة</label><input class="form-control" type="date" id="f-checkOut"></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">بيانات الطيران</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">شركة الطيران</label><input class="form-control" id="f-airline"></div>
+          <div class="form-group"><label class="form-label">رقم الرحلة</label><input class="form-control" id="f-flightNumber"></div>
+          <div class="form-group"><label class="form-label">وقت المغادرة</label><input class="form-control" type="datetime-local" id="f-departureTime"></div>
+          <div class="form-group"><label class="form-label">وقت الوصول</label><input class="form-control" type="datetime-local" id="f-arrivalTime"></div>
+          <div class="form-group"><label class="form-label">الترانزيت</label><input class="form-control" id="f-transitInfo" placeholder="بدون ترانزيت"></div>
+          <div class="form-group"><label class="form-label">موعد الوصول لبوكيت</label><input class="form-control" type="datetime-local" id="f-phuketArrival"></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">البيانات الجسدية والتجهيزات</div>
+        <div class="form-grid cols-3">
+          <div class="form-group"><label class="form-label">العمر</label><input class="form-control" type="number" id="f-age" placeholder="سنة"></div>
+          <div class="form-group"><label class="form-label">الوزن (kg)</label><input class="form-control" type="number" id="f-weight" placeholder="كجم"></div>
+          <div class="form-group"><label class="form-label">الطول (cm)</label><input class="form-control" type="number" id="f-height" placeholder="سم"></div>
+          <div class="form-group"><label class="form-label">مقاس التيشرت</label>
+            <select class="form-control" id="f-tshirtSize">
+              <option value="">—</option>
+              <option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option><option>4XL</option>
+              <option>S 128-137cm</option><option>L 147-158cm</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">طريقة الدفع</label>
+            <select class="form-control" id="f-paymentMethod">
+              <option value="">—</option><option>Bank</option><option>Shopify</option><option>Cash</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">مواعيد الذهاب والعودة</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">موعد الذهاب (تاريخ)</label><input class="form-control" type="date" id="f-departureDateTrip"></div>
+          <div class="form-group"><label class="form-label">وقت الذهاب</label><input class="form-control" type="time" id="f-departureTimeTrip"></div>
+          <div class="form-group"><label class="form-label">موعد العودة (تاريخ)</label><input class="form-control" type="date" id="f-returnDateTrip"></div>
+          <div class="form-group"><label class="form-label">وقت العودة</label><input class="form-control" type="time" id="f-returnTimeTrip"></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">حالة التسجيل والملاحظات</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">حالة التسجيل</label>
+            <select class="form-control" id="f-registrationStatus">
+              <option>مسجل</option><option>قيد المراجعة</option><option>ملغى</option>
+            </select>
+          </div>
+          <div class="form-group full"><label class="form-label">ملاحظات</label><textarea class="form-control" id="f-notes" rows="2" placeholder="أي ملاحظات خاصة..."></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-participant')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveParticipant()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Participant Modal -->
+<div class="modal-overlay" id="modal-view-participant">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="view-name">تفاصيل المشترك</div>
+      <button class="modal-close" onclick="closeModal('modal-view-participant')">✕</button>
+    </div>
+    <div class="modal-body" id="view-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-view-participant')">إغلاق</button>
+      <button class="btn btn-primary" id="view-edit-btn" onclick="">✏️ تعديل البيانات</button>
+    </div>
+  </div>
+</div>
+
+<!-- Staff Modal -->
+<div class="modal-overlay" id="modal-staff">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-staff-title">إضافة مدرب / مشرف</div>
+      <button class="modal-close" onclick="closeModal('modal-staff')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section"><div class="form-section-title">البيانات الشخصية</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">الاسم بالعربي *</label><input class="form-control" id="sf-name" placeholder="الاسم الكامل بالعربي"></div>
+        <div class="form-group"><label class="form-label">الاسم بالإنجليزي</label><input class="form-control" id="sf-nameEn" placeholder="FULL NAME IN ENGLISH"></div>
+        <div class="form-group"><label class="form-label">الدور</label>
+          <select class="form-control" id="sf-role">
+            <option>مدرب رئيسي</option><option>مدرب مساعد</option><option>مشرف</option><option>مساعد</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">الجنسية</label><input class="form-control" id="sf-nationality"></div>
+        <div class="form-group"><label class="form-label">رقم التواصل</label><input class="form-control" id="sf-phone"></div>
+        <div class="form-group"><label class="form-label">تاريخ الميلاد</label><input class="form-control" type="date" id="sf-dateOfBirth"></div>
+      </div></div>
+      <div class="form-section"><div class="form-section-title">بيانات الجواز</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">رقم الجواز</label><input class="form-control" id="sf-passportNumber"></div>
+        <div class="form-group"><label class="form-label">تاريخ الانتهاء</label><input class="form-control" type="date" id="sf-expiryDate"></div>
+        <div class="form-group"><label class="form-label">مكان الإصدار</label><input class="form-control" id="sf-placeOfBirth"></div>
+      </div></div>
+      <div class="form-section"><div class="form-section-title">المهام</div>
+      <div class="form-grid">
+        <div class="form-group full"><label class="form-label">المهام والمسؤوليات</label><textarea class="form-control" id="sf-tasks" rows="3"></textarea></div>
+      </div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-staff')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveStaff()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal-overlay" id="modal-upload">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <div class="modal-title" id="upload-modal-title">رفع ملف</div>
+      <button class="modal-close" onclick="closeModal('modal-upload')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">المشترك</label>
+        <select class="form-control" id="upload-participant-select"></select>
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">نوع الملف</label>
+        <select class="form-control" id="upload-file-type">
+          <option value="passport">جواز سفر</option>
+          <option value="ticket">تذكرة طيران</option>
+          <option value="invoice">فاتورة</option>
+          <option value="receipt">إيصال دفع</option>
+          <option value="other">أخرى</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">الملف</label>
+        <div class="file-upload-zone" onclick="document.getElementById('upload-file-input').click()">
+          <div class="upload-icon">📎</div>
+          <p id="upload-file-label">اضغط لاختيار ملف أو اسحبه هنا</p>
+          <p style="font-size:11px;margin-top:4px;color:#94a3b8">PDF, JPEG, PNG مقبولة</p>
+          <input type="file" id="upload-file-input" style="display:none" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this)">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-upload')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveUploadedFile()">⬆️ رفع الملف</button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" id="modal-payment">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div class="modal-title" id="payment-modal-title">تعديل بيانات الدفع</div>
+      <button class="modal-close" onclick="closeModal('modal-payment')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="pm-id">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">الإجمالي المطلوب</label><input class="form-control" type="number" id="pm-total" oninput="calcRemaining()"></div>
+        <div class="form-group"><label class="form-label">الدفعة الأولى</label><input class="form-control" type="number" id="pm-first" oninput="calcRemaining()"></div>
+        <div class="form-group"><label class="form-label">تاريخ الدفعة الأولى</label><input class="form-control" type="date" id="pm-first-date"></div>
+        <div class="form-group"><label class="form-label">الدفعة الثانية</label><input class="form-control" type="number" id="pm-second" oninput="calcRemaining()"></div>
+        <div class="form-group"><label class="form-label">تاريخ الدفعة الثانية</label><input class="form-control" type="date" id="pm-second-date"></div>
+        <div class="form-group"><label class="form-label">المتبقي</label><input class="form-control" id="pm-remaining" readonly style="background:#f8fafc"></div>
+        <div class="form-group full"><label class="form-label">حالة الدفع</label>
+          <select class="form-control" id="pm-status">
+            <option>مكتمل</option><option>جزئي</option><option>غير محدد</option><option>ملغى</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-payment')">إلغاء</button>
+      <button class="btn btn-primary" onclick="savePayment()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: CAMPS ======== -->
+<div class="page" id="page-camps">
+  <div class="stats-grid" style="margin-bottom:24px">
+    <div class="stat-card"><div class="stat-icon red">🏕️</div><div><div class="stat-value" id="stat-camps-total">0</div><div class="stat-label">إجمالي المعسكرات</div></div></div>
+    <div class="stat-card"><div class="stat-icon green">✅</div><div><div class="stat-value" id="stat-camps-upcoming">0</div><div class="stat-label">قادمة</div></div></div>
+    <div class="stat-card"><div class="stat-icon blue">👥</div><div><div class="stat-value" id="stat-camps-participants">0</div><div class="stat-label">إجمالي المشتركين</div></div></div>
+    <div class="stat-card"><div class="stat-icon gold">💰</div><div><div class="stat-value" id="stat-camps-revenue">$0</div><div class="stat-label">إجمالي الإيرادات</div></div></div>
+  </div>
+  <div id="camps-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;padding:0 24px 24px"></div>
+</div>
+
+<!-- MODAL: CAMP -->
+<div class="modal-overlay" id="modal-camp">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h3 class="modal-title" id="camp-modal-title">➕ إضافة معسكر جديد</h3>
+      <button class="modal-close" onclick="closeModal('modal-camp')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">اسم المعسكر (عربي) *</label><input class="form-control" id="fc-name" placeholder="المعسكر الثالث"></div>
+        <div class="form-group"><label class="form-label">Camp Name (English)</label><input class="form-control" id="fc-nameEn" placeholder="Camp 3 – Thailand 2026"></div>
+        <div class="form-group"><label class="form-label">تاريخ البداية *</label><input class="form-control" type="date" id="fc-startDate"></div>
+        <div class="form-group"><label class="form-label">تاريخ النهاية</label><input class="form-control" type="date" id="fc-endDate"></div>
+        <div class="form-group"><label class="form-label">الموقع</label><input class="form-control" id="fc-location" placeholder="Phuket, Thailand"></div>
+        <div class="form-group"><label class="form-label">الفندق</label><input class="form-control" id="fc-hotel" placeholder="The Blue Mavi"></div>
+        <div class="form-group"><label class="form-label">رسوم الاشتراك ($)</label><input class="form-control" type="number" id="fc-fee" placeholder="3390"></div>
+        <div class="form-group"><label class="form-label">الحالة</label>
+          <select class="form-control" id="fc-status">
+            <option value="قادم">قادم</option>
+            <option value="جارٍ">جارٍ الآن</option>
+            <option value="منتهي">منتهي</option>
+            <option value="ملغى">ملغى</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">اللون</label><input type="color" id="fc-color" value="#C41E3A" style="width:60px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:2px"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-camp')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveCamp()">💾 حفظ المعسكر</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ========== DATA ==========
+const DEFAULT_CAMPS = [
+  {id:1,name:"المعسكر الأول",nameEn:"Camp 1 – Thailand 2026",startDate:"2026-06-16",endDate:"2026-06-29",location:"Phuket, Thailand",hotel:"The Blue Mavi",status:"قادم",fee:2990,color:"#C41E3A"},
+  {id:2,name:"المعسكر الثاني",nameEn:"Camp 2 – Thailand 2026",startDate:"2026-07-01",endDate:"",location:"Phuket, Thailand",hotel:"The Blue Mavi",status:"قادم",fee:3390,color:"#2563eb"}
+];
+
+const DEFAULT_PARTICIPANTS = [
+  {id:1,campId:1,arabicName:"احمد حسن درويش جاسم عبدالله",englishName:"AHMED HASSAN D J ABDULLA",nationality:"Qatar",countryCode:"QAT",passportNumber:"01865172",passportType:"P",dateOfBirth:"1974-09-05",gender:"ذكر",placeOfBirth:"Qatar",issueDate:"2024-07-30",expiryDate:"2029-07-29",issuingAuthority:"Qatar",personalId:"27463400565",phone:"+974 5509 7999",hotel:"The Blue Mavi",roomNumber:"",roomType:"Single",roomOccupants:"",checkIn:"2026-06-16",checkOut:"2026-06-28",airline:"Qatar Airways",flightNumber:"QR846",departureTime:"2026-06-16T07:55",arrivalTime:"2026-06-16T18:50",transitInfo:"Non-stop",phuketArrival:"2026-06-16T18:50",totalAmount:"2990",firstPayment:"",firstPaymentDate:"",secondPayment:"",secondPaymentDate:"",paymentStatus:"غير محدد",registrationStatus:"مسجل",age:"52",weight:"84",height:"174",tshirtSize:"XL",paymentMethod:"Bank",departureDateTrip:"2026-06-16",departureTimeTrip:"07:55",returnDateTrip:"2026-06-28",returnTimeTrip:"09:20",notes:"لا يعاني من أي مرض ولله الحمد",files:[]},
+  {id:2,campId:1,arabicName:"خالد عبد الوهاب يوسف احمد المهيدب",englishName:"KHALID ABDULWAHAB YOUSEF AHMED ALMUHAIDIB",nationality:"United Arab Emirates",countryCode:"ARE",passportNumber:"AA1082304",passportType:"P",dateOfBirth:"1981-11-03",gender:"ذكر",placeOfBirth:"Abu Dhabi",issueDate:"2025-12-30",expiryDate:"2035-12-29",issuingAuthority:"Dubai",personalId:"784198109625917",phone:"+971 50 715 5770",hotel:"The Blue Mavi",roomNumber:"",roomType:"Single",roomOccupants:"",checkIn:"2026-06-16",checkOut:"2026-06-29",airline:"Etihad Airways",flightNumber:"EY414",departureTime:"2026-06-16T13:55",arrivalTime:"2026-06-16T23:40",transitInfo:"Non-stop",phuketArrival:"2026-06-16T23:40",totalAmount:"2990",firstPayment:"",firstPaymentDate:"",secondPayment:"",secondPaymentDate:"",paymentStatus:"غير محدد",registrationStatus:"مسجل",age:"44",weight:"87",height:"179",tshirtSize:"XL",paymentMethod:"Bank",departureDateTrip:"2026-06-16",departureTimeTrip:"13:55",returnDateTrip:"2026-06-29",returnTimeTrip:"15:45",notes:"",files:[]},
+  {id:3,campId:1,arabicName:"صالح محمد صالح محمد السبع",englishName:"SALEH MOHAMMED S M ALSABEA",nationality:"Qatar",countryCode:"QAT",passportNumber:"01896304",passportType:"P",dateOfBirth:"2005-07-04",gender:"ذكر",placeOfBirth:"Qatar",issueDate:"2025-01-19",expiryDate:"2030-01-18",issuingAuthority:"Qatar",personalId:"30563402808",phone:"+974 3054 4455",hotel:"The Blue Mavi",roomNumber:"",roomType:"Single",roomOccupants:"",checkIn:"",checkOut:"",airline:"",flightNumber:"",departureTime:"",arrivalTime:"",transitInfo:"",phuketArrival:"",totalAmount:"2990",firstPayment:"",firstPaymentDate:"",secondPayment:"",secondPaymentDate:"",paymentStatus:"غير محدد",registrationStatus:"مسجل",age:"",weight:"",height:"",tshirtSize:"",paymentMethod:"",departureDateTrip:"",departureTimeTrip:"",returnDateTrip:"",returnTimeTrip:"",notes:"",files:[]},
+  {id:4,campId:1,arabicName:"زعار بن مسلط بن زعار السبيعي",englishName:"ALSUBAIAI THUAAR MASLAT T",nationality:"Saudi Arabia",countryCode:"SAU",passportNumber:"BY27768",passportType:"P",dateOfBirth:"1977-06-17",gender:"ذكر",placeOfBirth:"Saudi Arabia",issueDate:"2025-09-25",expiryDate:"2030-09-26",issuingAuthority:"Dammam",personalId:"",phone:"+966 50 591 0999",hotel:"The Blue Mavi",roomNumber:"",roomType:"Single",roomOccupants:"",checkIn:"",checkOut:"",airline:"",flightNumber:"",departureTime:"",arrivalTime:"",transitInfo:"",phuketArrival:"",totalAmount:"2990",firstPayment:"",firstPaymentDate:"",secondPayment:"",secondPaymentDate:"",paymentStatus:"غير محدد",registrationStatus:"مسجل",age:"",weight:"",height:"",tshirtSize:"",paymentMethod:"",departureDateTrip:"",departureTimeTrip:"",returnDateTrip:"",returnTimeTrip:"",notes:"",files:[]},
+  {id:5,campId:1,arabicName:"عبدالرحمن عيسى عبدالرحمن العتيق علي",englishName:"ABDULRAHMAN ESSA ABDULRAHMAN ALATEEK AL ALI",nationality:"United Arab Emirates",countryCode:"ARE",passportNumber:"AA0553909",passportType:"P",dateOfBirth:"1984-03-27",gender:"ذكر",placeOfBirth:"Umm Al Quwain",issueDate:"2024-04-07",expiryDate:"2029-04-06",issuingAuthority:"Umm Al Quwain",personalId:"281882",phone:"+971 50 306 0222",hotel:"The Blue Mavi",roomNumber:"",roomType:"Single",roomOccupants:"",checkIn:"2026-06-16",checkOut:"2026-06-29",airline:"Etihad Airways",flightNumber:"EY414",departureTime:"2026-06-16T13:55",arrivalTime:"2026-06-16T23:40",transitInfo:"Non-stop",phuketArrival:"2026-06-16T23:40",totalAmount:"2990",firstPayment:"1990",firstPaymentDate:"2026-05-20",secondPayment:"",secondPaymentDate:"",paymentStatus:"جزئي",registrationStatus:"مسجل",age:"42",weight:"68",height:"162",tshirtSize:"M",paymentMethod:"Bank",departureDateTrip:"2026-06-16",departureTimeTrip:"13:55",returnDateTrip:"2026-06-29",returnTimeTrip:"15:45",notes:"",files:[]}
+];
+
+const DEFAULT_STAFF = [
+  {id:1,name:"أحمد حسن بهاء محمد",nameEn:"AHMED HASSAN BAHAA MOHAMED",role:"مشرف",nationality:"Egypt",countryCode:"EGY",phone:"",passportNumber:"A42484550",dateOfBirth:"1994-11-08",expiryDate:"2032-08-10",placeOfBirth:"Menia, Egypt",tasks:"",hotel:"The Blue Mavi",roomType:"Single",checkIn:"",checkOut:""}
+];
+
+function load(key,def){try{const d=localStorage.getItem(key);return d?JSON.parse(d):def}catch{return def}}
+function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
+
+let participants = load('camp_participants', DEFAULT_PARTICIPANTS);
+// Auto-compute ages from DOB for any participant missing age
+(function syncAges(){
+  let changed=false;
+  participants.forEach(p=>{
+    const computed=calcAge(p.dateOfBirth);
+    if(computed&&p.age!==computed){p.age=computed;changed=true;}
+  });
+  if(changed){save('camp_participants',participants);}
+})();
+let camps = load('camp_camps', DEFAULT_CAMPS);
+let currentCampId = parseInt(localStorage.getItem('current_camp_id') || '1');
+let staff = load('camp_staff', DEFAULT_STAFF);
+let uploadedFiles = load('camp_files', []);
+let editingParticipantId = null;
+let editingStaffId = null;
+let editingCampId = null;
+let currentUploadData = null;
+
+// Sync campId for existing participants without one
+(function syncCampIds(){
+  let changed = false;
+  participants.forEach(p=>{ if(!p.campId){p.campId=1;changed=true;} });
+  if(changed) save('camp_participants',participants);
+})();
+
+// ========== NAVIGATION ==========
+const pageTitles = {
+  participants:'المشتركون',hotel:'الفندق والإقامة',flights:'الطيران',
+  files:'الملفات والمرفقات',staff:'المدربون والمشرفون',payments:'المدفوعات',
+  reports:'التقارير والمستندات',camps:'إدارة المعسكرات'
+};
+const addBtnLabels = {
+  participants:'+ إضافة مشترك',hotel:'',flights:'',
+  files:'+ رفع ملف',staff:'+ إضافة مدرب',payments:'',reports:'',camps:'+ إضافة معسكر'
+};
+
+function showPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pageEl = document.getElementById('page-'+page);
+  if(pageEl) pageEl.classList.add('active');
+  const navEl = document.querySelector(`[onclick="showPage('${page}')"]`);
+  if(navEl) navEl.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[page];
+  const addBtn = document.getElementById('add-btn');
+  addBtn.textContent = addBtnLabels[page] || '+ إضافة';
+  addBtn.style.display = addBtnLabels[page] === '' ? 'none' : 'flex';
+  render(page);
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function handleAddBtn(){
+  const active = document.querySelector('.nav-item.active');
+  if(!active) return;
+  const page = active.getAttribute('onclick').match(/showPage\('(\w+)'\)/)[1];
+  if(page==='participants') openParticipantModal();
+  else if(page==='staff') openStaffModal();
+  else if(page==='files') openUploadModal();
+  else if(page==='camps') openCampModal();
+}
+
+function render(page){
+  if(page==='participants') renderParticipants();
+  else if(page==='hotel') renderHotel();
+  else if(page==='flights') renderFlights();
+  else if(page==='files') renderFiles();
+  else if(page==='staff') renderStaff();
+  else if(page==='payments') renderPayments();
+  else if(page==='reports') renderReports();
+  else if(page==='camps') renderCamps();
+}
+
+// ========== PARTICIPANTS ==========
+function renderParticipants(){
+  const q = document.getElementById('search-participants').value.toLowerCase();
+  const nat = document.getElementById('filter-nationality').value;
+  let list = participants.filter(p=>{
+    const matchCamp = p.campId === currentCampId;
+    const matchQ = !q || p.arabicName.includes(q) || p.englishName.toLowerCase().includes(q) || p.passportNumber.toLowerCase().includes(q);
+    const matchN = !nat || p.nationality === nat;
+    return matchCamp && matchQ && matchN;
+  });
+  const tbody = document.getElementById('participants-tbody');
+  tbody.innerHTML = list.map((p,i)=>{
+    const fileCount = uploadedFiles.filter(f=>f.participantId===p.id).length;
+    const statusBadge = p.registrationStatus==='مسجل'?'success':p.registrationStatus==='قيد المراجعة'?'warning':'danger';
+    return `<tr>
+      <td>${i+1}</td>
+      <td><div class="name-cell"><span class="name-ar">${p.arabicName}</span><span class="name-en">${p.englishName}</span></div></td>
+      <td>${flagEmoji(p.countryCode)} ${p.nationality}</td>
+      <td><code style="background:#f1f5f9;padding:2px 7px;border-radius:4px;font-size:12px">${p.passportNumber}</code></td>
+      <td>${formatDate(p.dateOfBirth)}</td>
+      <td dir="ltr">${p.phone||'<span style="color:#cbd5e1">—</span>'}</td>
+      <td>${fileCount>0?`<span class="badge badge-success">📎 ${fileCount} ملف</span>`:'<span class="badge badge-gray">لا يوجد</span>'}</td>
+      <td><span class="badge badge-${statusBadge}">${p.registrationStatus}</span></td>
+      <td><div class="action-btns">
+        <button class="btn btn-view" onclick="viewParticipant(${p.id})">👁 عرض</button>
+        <button class="btn btn-edit" onclick="openParticipantModal(${p.id})">✏️ تعديل</button>
+        <button class="btn btn-upload" onclick="openUploadModal(${p.id})">📎 ملف</button>
+        <button class="btn btn-delete" onclick="deleteParticipant(${p.id})">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">👥</div><p>لا يوجد مشتركون</p></div></td></tr>`;
+
+  const countries = [...new Set(participants.map(p=>p.nationality))].length;
+  document.getElementById('stat-total').textContent = participants.length;
+  document.getElementById('stat-registered').textContent = participants.filter(p=>p.registrationStatus==='مسجل').length;
+  document.getElementById('stat-countries').textContent = countries;
+  document.getElementById('stat-files').textContent = uploadedFiles.length;
+  document.getElementById('badge-participants').textContent = participants.length;
+}
+
+function viewParticipant(id){
+  const p = participants.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('view-name').textContent = p.arabicName;
+  document.getElementById('view-edit-btn').onclick = ()=>{closeModal('modal-view-participant');openParticipantModal(id);};
+  const files = uploadedFiles.filter(f=>f.participantId===id);
+  document.getElementById('view-body').innerHTML = `
+    <div class="detail-section">
+      <div class="detail-section-title">البيانات الشخصية</div>
+      <div class="detail-grid">
+        ${dRow('الاسم بالعربي',p.arabicName)}
+        ${dRow('الاسم بالإنجليزي',p.englishName)}
+        ${dRow('الجنسية',p.nationality?flagEmoji(p.countryCode)+' '+p.nationality:'')}
+        ${dRow('تاريخ الميلاد',formatDate(p.dateOfBirth))}
+        ${dRow('الجنس',p.gender)}
+        ${dRow('مكان الميلاد',p.placeOfBirth)}
+        ${dRow('الهاتف',p.phone)}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">بيانات الجواز</div>
+      <div class="detail-grid">
+        ${dRow('رقم الجواز',p.passportNumber)}
+        ${dRow('نوع الجواز',p.passportType)}
+        ${dRow('تاريخ الإصدار',formatDate(p.issueDate))}
+        ${dRow('تاريخ الانتهاء',formatDate(p.expiryDate))}
+        ${dRow('جهة الإصدار',p.issuingAuthority)}
+        ${dRow('الرقم الشخصي',p.personalId)}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">الإقامة</div>
+      <div class="detail-grid">
+        ${dRow('الفندق',p.hotel)}${dRow('رقم الغرفة',p.roomNumber)}
+        ${dRow('نوع الغرفة',p.roomType)}${dRow('الوصول',formatDate(p.checkIn))}
+        ${dRow('المغادرة',formatDate(p.checkOut))}${dRow('عدد الأشخاص',p.roomOccupants)}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">الطيران</div>
+      <div class="detail-grid">
+        ${dRow('شركة الطيران',p.airline)}${dRow('رقم الرحلة',p.flightNumber)}
+        ${dRow('المغادرة',formatDateTime(p.departureTime))}${dRow('الوصول',formatDateTime(p.arrivalTime))}
+        ${dRow('الترانزيت',p.transitInfo)}${dRow('وصول بوكيت',formatDateTime(p.phuketArrival))}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">الملفات المرفقة (${files.length})</div>
+      ${files.length ? `<div class="file-list">${files.map(f=>fileItemHTML(f,true)).join('')}</div>` : '<p style="color:#94a3b8;font-size:13px">لا توجد ملفات مرفقة</p>'}
+      <button class="btn btn-upload" style="margin-top:12px" onclick="closeModal('modal-view-participant');openUploadModal(${id})">📎 رفع ملف جديد</button>
+    </div>`;
+  openModal('modal-view-participant');
+}
+
+function dRow(label,val){
+  return `<div class="detail-item"><label>${label}</label><span class="${!val?'empty':''}">${val||'غير محدد'}</span></div>`;
+}
+
+function openParticipantModal(id=null){
+  editingParticipantId = id;
+  const fields = ['arabicName','englishName','nationality','countryCode','dateOfBirth','gender','placeOfBirth','phone','passportNumber','passportType','issueDate','expiryDate','issuingAuthority','personalId','hotel','roomNumber','roomType','roomOccupants','checkIn','checkOut','airline','flightNumber','departureTime','arrivalTime','transitInfo','phuketArrival','age','weight','height','tshirtSize','paymentMethod','departureDateTrip','departureTimeTrip','returnDateTrip','returnTimeTrip','notes','registrationStatus'];
+  if(id){
+    const p = participants.find(x=>x.id===id);
+    if(!p) return;
+    document.getElementById('modal-participant-title').textContent = 'تعديل بيانات: '+p.arabicName;
+    fields.forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value=p[f]||'';});
+    const ageEl=document.getElementById('f-age');
+    if(ageEl&&!ageEl.value&&p.dateOfBirth) ageEl.value=calcAge(p.dateOfBirth);
+  } else {
+    document.getElementById('modal-participant-title').textContent = 'إضافة مشترك جديد';
+    fields.forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value='';});
+  }
+  openModal('modal-participant');
+}
+
+function saveParticipant(){
+  const fields = ['arabicName','englishName','nationality','countryCode','dateOfBirth','gender','placeOfBirth','phone','passportNumber','passportType','issueDate','expiryDate','issuingAuthority','personalId','hotel','roomNumber','roomType','roomOccupants','checkIn','checkOut','airline','flightNumber','departureTime','arrivalTime','transitInfo','phuketArrival','age','weight','height','tshirtSize','paymentMethod','departureDateTrip','departureTimeTrip','returnDateTrip','returnTimeTrip','notes','registrationStatus'];
+  const data = {};
+  fields.forEach(f=>{const el=document.getElementById('f-'+f);if(el)data[f]=el.value;});
+  if(!data.arabicName||!data.passportNumber){toast('الاسم ورقم الجواز مطلوبان','error');return;}
+  if(editingParticipantId){
+    const idx = participants.findIndex(x=>x.id===editingParticipantId);
+    if(idx>=0) participants[idx] = {...participants[idx],...data};
+  } else {
+    const newId = Math.max(0,...participants.map(p=>p.id))+1;
+    participants.push({id:newId,campId:currentCampId,...data,files:[]});
+  }
+  save('camp_participants',participants);
+  closeModal('modal-participant');
+  renderParticipants();
+  toast(editingParticipantId?'تم تحديث بيانات المشترك':'تم إضافة المشترك','success');
+}
+
+function deleteParticipant(id){
+  if(!confirm('هل تريد حذف هذا المشترك؟')) return;
+  participants = participants.filter(p=>p.id!==id);
+  uploadedFiles = uploadedFiles.filter(f=>f.participantId!==id);
+  save('camp_participants',participants);
+  save('camp_files',uploadedFiles);
+  renderParticipants();
+  toast('تم حذف المشترك','success');
+}
+
+// ========== HOTEL ==========
+function renderHotel(){
+  const campPs = participants.filter(p=>p.campId===currentCampId);
+  const assigned = campPs.filter(p=>p.hotel).length;
+  document.getElementById('stat-hotel-assigned').textContent = assigned;
+  document.getElementById('stat-hotel-pending').textContent = campPs.length - assigned;
+  document.getElementById('hotel-tbody').innerHTML = campPs.map((p,i)=>`<tr>
+    <td>${i+1}</td>
+    <td><div class="name-cell"><span class="name-ar">${p.arabicName}</span><span class="name-en">${p.englishName}</span></div></td>
+    <td>${p.hotel||emptySpan()}</td>
+    <td>${p.roomNumber?`<span class="room-badge">${p.roomNumber}</span>`:emptySpan()}</td>
+    <td>${p.roomType||emptySpan()}</td>
+    <td>${formatDate(p.checkIn)||emptySpan()}</td>
+    <td>${formatDate(p.checkOut)||emptySpan()}</td>
+    <td>${p.roomOccupants||emptySpan()}</td>
+    <td><button class="btn btn-edit" onclick="openParticipantModal(${p.id})">✏️ تعديل</button></td>
+  </tr>`).join('');
+}
+
+// ========== FLIGHTS ==========
+function renderFlights(){
+  const campPs = participants.filter(p=>p.campId===currentCampId);
+  const set = campPs.filter(p=>p.airline||p.flightNumber).length;
+  document.getElementById('stat-flights-set').textContent = set;
+  document.getElementById('stat-flights-pending').textContent = campPs.length - set;
+  document.getElementById('flights-tbody').innerHTML = campPs.map((p,i)=>{
+    const ticketFiles = uploadedFiles.filter(f=>f.participantId===p.id&&f.fileType==='ticket');
+    return `<tr>
+      <td>${i+1}</td>
+      <td><div class="name-cell"><span class="name-ar">${p.arabicName}</span></div></td>
+      <td>${p.airline||emptySpan()}</td>
+      <td>${p.flightNumber?`<code style="background:#f1f5f9;padding:2px 7px;border-radius:4px;font-size:12px">${p.flightNumber}</code>`:emptySpan()}</td>
+      <td>${formatDateTime(p.departureTime)||emptySpan()}</td>
+      <td>${formatDateTime(p.arrivalTime)||emptySpan()}</td>
+      <td>${p.transitInfo||emptySpan()}</td>
+      <td>${formatDateTime(p.phuketArrival)||emptySpan()}</td>
+      <td>${ticketFiles.length?`<span class="badge badge-success">📎 ${ticketFiles.length}</span>`:`<button class="btn btn-upload" onclick="openUploadModal(${p.id},'ticket')">📎 رفع</button>`}</td>
+      <td><button class="btn btn-edit" onclick="openParticipantModal(${p.id})">✏️ تعديل</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ========== FILES ==========
+function renderFiles(){
+  const typeFilter = document.getElementById('filter-file-type').value;
+  const campParticipantIds = new Set(participants.filter(p=>p.campId===currentCampId).map(p=>p.id));
+  let list = uploadedFiles.filter(f=>!f.participantId||campParticipantIds.has(f.participantId));
+  if(typeFilter) list = list.filter(f=>f.fileType===typeFilter);
+  const grid = document.getElementById('files-grid');
+  if(!list.length){
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📁</div><p>لا توجد ملفات مرفقة بعد</p></div>`;
+    return;
+  }
+  grid.innerHTML = `<div class="file-list">${list.map(f=>{
+    const p = participants.find(x=>x.id===f.participantId);
+    return `<div class="file-item">
+      <div class="file-icon">${fileTypeIcon(f.fileType)}</div>
+      <div class="file-info">
+        <div class="file-name">${f.fileName}</div>
+        <div class="file-meta">${fileTypeLabel(f.fileType)} — ${p?p.arabicName:'غير محدد'} — ${formatDate(f.uploadDate)}</div>
+      </div>
+      <div class="file-actions">
+        <button class="btn btn-view" onclick="previewFile(${f.id})">👁</button>
+        <button class="btn btn-view" onclick="downloadFile(${f.id})">⬇️</button>
+        <button class="btn btn-delete" onclick="deleteFile(${f.id})">🗑</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function fileItemHTML(f,showActions){
+  return `<div class="file-item">
+    <div class="file-icon">${fileTypeIcon(f.fileType)}</div>
+    <div class="file-info">
+      <div class="file-name">${f.fileName}</div>
+      <div class="file-meta">${fileTypeLabel(f.fileType)} — ${formatDate(f.uploadDate)}</div>
+    </div>
+    ${showActions?`<div class="file-actions">
+      <button class="btn btn-view" onclick="previewFile(${f.id})">👁</button>
+      <button class="btn btn-view" onclick="downloadFile(${f.id})">⬇️</button>
+      <button class="btn btn-delete" onclick="deleteFile(${f.id})">🗑</button>
+    </div>`:''}
+  </div>`;
+}
+
+// ========== UPLOAD ==========
+function openUploadModal(participantId=null,type=null){
+  const select = document.getElementById('upload-participant-select');
+  select.innerHTML = participants.map(p=>`<option value="${p.id}" ${participantId===p.id?'selected':''}>${p.arabicName}</option>`).join('');
+  if(type) document.getElementById('upload-file-type').value = type;
+  document.getElementById('upload-file-label').textContent = 'اضغط لاختيار ملف أو اسحبه هنا';
+  currentUploadData = null;
+  document.getElementById('upload-file-input').value = '';
+  openModal('modal-upload');
+}
+
+function handleFileSelect(input){
+  const file = input.files[0];
+  if(!file) return;
+  document.getElementById('upload-file-label').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => { currentUploadData = {name:file.name,data:e.target.result,size:file.size}; };
+  reader.readAsDataURL(file);
+}
+
+function saveUploadedFile(){
+  if(!currentUploadData){toast('اختر ملفاً أولاً','error');return;}
+  const participantId = parseInt(document.getElementById('upload-participant-select').value);
+  const fileType = document.getElementById('upload-file-type').value;
+  const newFile = {
+    id:Date.now(),participantId,fileType,
+    fileName:currentUploadData.name,fileData:currentUploadData.data,
+    fileSize:currentUploadData.size,uploadDate:new Date().toISOString().split('T')[0]
+  };
+  uploadedFiles.push(newFile);
+  save('camp_files',uploadedFiles);
+  closeModal('modal-upload');
+  toast('تم رفع الملف بنجاح','success');
+  renderParticipants();
+  renderFiles();
+}
+
+function previewFile(id){
+  const f = uploadedFiles.find(x=>x.id===id);
+  if(!f) return;
+  const win = window.open('','_blank');
+  win.document.write(`<html><head><title>${f.fileName}</title></head><body style="margin:0"><iframe src="${f.fileData}" style="width:100%;height:100vh;border:none"></iframe></body></html>`);
+}
+
+function downloadFile(id){
+  const f = uploadedFiles.find(x=>x.id===id);
+  if(!f) return;
+  const a = document.createElement('a');
+  a.href = f.fileData;a.download = f.fileName;a.click();
+}
+
+function deleteFile(id){
+  if(!confirm('حذف هذا الملف؟')) return;
+  uploadedFiles = uploadedFiles.filter(f=>f.id!==id);
+  save('camp_files',uploadedFiles);
+  renderFiles();renderParticipants();
+  toast('تم حذف الملف','success');
+}
+
+// ========== STAFF ==========
+function renderStaff(){
+  const grid = document.getElementById('staff-grid');
+  if(!staff.length){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🥋</div><p>لا يوجد مدربون أو مشرفون مضافون بعد</p></div>`;
+    return;
+  }
+  grid.innerHTML = staff.map(s=>`
+    <div class="staff-card">
+      <div class="staff-card-header">
+        <div class="staff-avatar">${s.name.charAt(0)}</div>
+        <div class="staff-card-name">${s.name}</div>
+        <div class="staff-card-role">${s.role}</div>
+      </div>
+      <div class="staff-card-body">
+        <div class="staff-info-row"><span class="staff-info-label">الجنسية</span>${s.nationality||'—'}</div>
+        <div class="staff-info-row"><span class="staff-info-label">الهاتف</span><span dir="ltr">${s.phone||'—'}</span></div>
+        ${s.tasks?`<div class="staff-info-row" style="align-items:flex-start"><span class="staff-info-label">المهام</span><span style="font-size:12px">${s.tasks}</span></div>`:''}
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-edit" onclick="openStaffModal(${s.id})">✏️ تعديل</button>
+          <button class="btn btn-delete" onclick="deleteStaff(${s.id})">🗑 حذف</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+const STAFF_FIELDS = ['name','nameEn','role','nationality','phone','dateOfBirth','passportNumber','expiryDate','placeOfBirth','tasks'];
+
+function openStaffModal(id=null){
+  editingStaffId = id;
+  if(id){
+    const s = staff.find(x=>x.id===id);
+    if(!s) return;
+    document.getElementById('modal-staff-title').textContent = 'تعديل: '+s.name;
+    STAFF_FIELDS.forEach(f=>{const el=document.getElementById('sf-'+f);if(el)el.value=s[f]||'';});
+  } else {
+    document.getElementById('modal-staff-title').textContent = 'إضافة مدرب / مشرف';
+    STAFF_FIELDS.forEach(f=>{const el=document.getElementById('sf-'+f);if(el)el.value='';});
+    document.getElementById('sf-role').value = 'مدرب رئيسي';
+  }
+  openModal('modal-staff');
+}
+
+function saveStaff(){
+  const data = {};
+  STAFF_FIELDS.forEach(f=>{const el=document.getElementById('sf-'+f);if(el)data[f]=el.value;});
+  if(!data.name){toast('الاسم مطلوب','error');return;}
+  if(editingStaffId){
+    const idx=staff.findIndex(x=>x.id===editingStaffId);
+    if(idx>=0) staff[idx]={...staff[idx],...data};
+  } else {
+    staff.push({id:Date.now(),...data});
+  }
+  save('camp_staff',staff);
+  closeModal('modal-staff');
+  renderStaff();
+  toast(editingStaffId?'تم التحديث':'تم الإضافة','success');
+}
+
+function deleteStaff(id){
+  if(!confirm('حذف؟')) return;
+  staff=staff.filter(s=>s.id!==id);
+  save('camp_staff',staff);
+  renderStaff();
+  toast('تم الحذف','success');
+}
+
+// ========== PAYMENTS ==========
+function renderPayments(){
+  const campPs = participants.filter(p=>p.campId===currentCampId);
+  let totalSum=0,paidSum=0;
+  const tbody = document.getElementById('payments-tbody');
+  tbody.innerHTML = campPs.map((p,i)=>{
+    const total = parseFloat(p.totalAmount)||0;
+    const first = parseFloat(p.firstPayment)||0;
+    const second = parseFloat(p.secondPayment)||0;
+    const paid = first+second;
+    const remaining = total - paid;
+    totalSum+=total;paidSum+=paid;
+    const pct = total>0?Math.min(100,Math.round(paid/total*100)):0;
+    const statusBadge = p.paymentStatus==='مكتمل'?'success':p.paymentStatus==='جزئي'?'warning':p.paymentStatus==='ملغى'?'danger':'gray';
+    const receipts = uploadedFiles.filter(f=>f.participantId===p.id&&f.fileType==='receipt');
+    return `<tr>
+      <td>${i+1}</td>
+      <td><div class="name-cell"><span class="name-ar">${p.arabicName}</span></div></td>
+      <td>${total?'$'+total.toLocaleString('en-US'):emptySpan()}</td>
+      <td>${first?`<span style="font-weight:600">$${first.toLocaleString('en-US')}</span><br><small style="color:var(--muted)">${formatDate(p.firstPaymentDate)}</small>`:emptySpan()}</td>
+      <td>${second?`<span style="font-weight:600">$${second.toLocaleString('en-US')}</span><br><small style="color:var(--muted)">${formatDate(p.secondPaymentDate)}</small>`:emptySpan()}</td>
+      <td>${total?(remaining>0?`<span style="color:var(--danger);font-weight:700">$${remaining.toLocaleString('en-US')}</span>`:`<span style="color:var(--success);font-weight:700">✓ مكتمل</span>`):emptySpan()}</td>
+      <td>
+        <span class="badge badge-${statusBadge}">${p.paymentStatus}</span>
+        ${total>0?`<div class="progress-bar" style="margin-top:6px;width:80px"><div class="progress-fill" style="width:${pct}%"></div></div>`:''}
+      </td>
+      <td>${receipts.length?`<span class="badge badge-success">📎 ${receipts.length}</span>`:`<button class="btn btn-upload" onclick="openUploadModal(${p.id},'receipt')">📎 رفع</button>`}</td>
+      <td><div class="action-btns">
+        <button class="btn btn-edit" onclick="openPaymentModal(${p.id})">✏️ تعديل</button>
+        <button class="btn btn-view" onclick="generateInvoice(${p.id})" style="background:#fdf2f8;color:#be185d">🧾 فاتورة</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  const remaining = totalSum - paidSum;
+  document.getElementById('stat-total-amount').textContent = totalSum?'$'+totalSum.toLocaleString('en-US'):'—';
+  document.getElementById('stat-paid-amount').textContent = paidSum?'$'+paidSum.toLocaleString('en-US'):'—';
+  document.getElementById('stat-remaining-amount').textContent = remaining>0?'$'+remaining.toLocaleString('en-US'):'—';
+}
+
+function openPaymentModal(id){
+  const p = participants.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('payment-modal-title').textContent = 'دفعات: '+p.arabicName;
+  document.getElementById('pm-id').value = id;
+  document.getElementById('pm-total').value = p.totalAmount||'';
+  document.getElementById('pm-first').value = p.firstPayment||'';
+  document.getElementById('pm-first-date').value = p.firstPaymentDate||'';
+  document.getElementById('pm-second').value = p.secondPayment||'';
+  document.getElementById('pm-second-date').value = p.secondPaymentDate||'';
+  document.getElementById('pm-status').value = p.paymentStatus||'غير محدد';
+  calcRemaining();
+  openModal('modal-payment');
+}
+
+function calcRemaining(){
+  const total=parseFloat(document.getElementById('pm-total').value)||0;
+  const first=parseFloat(document.getElementById('pm-first').value)||0;
+  const second=parseFloat(document.getElementById('pm-second').value)||0;
+  document.getElementById('pm-remaining').value = total-(first+second);
+}
+
+function savePayment(){
+  const id=parseInt(document.getElementById('pm-id').value);
+  const idx=participants.findIndex(x=>x.id===id);
+  if(idx<0) return;
+  participants[idx].totalAmount=document.getElementById('pm-total').value;
+  participants[idx].firstPayment=document.getElementById('pm-first').value;
+  participants[idx].firstPaymentDate=document.getElementById('pm-first-date').value;
+  participants[idx].secondPayment=document.getElementById('pm-second').value;
+  participants[idx].secondPaymentDate=document.getElementById('pm-second-date').value;
+  participants[idx].paymentStatus=document.getElementById('pm-status').value;
+  save('camp_participants',participants);
+  closeModal('modal-payment');
+  renderPayments();
+  toast('تم حفظ بيانات الدفع','success');
+}
+
+// ========== INVOICE ==========
+function generateInvoice(participantId) {
+  const p = participants.find(x => x.id === participantId);
+  if (!p) return;
+
+  const invoiceNum = String(1000 + participantId);
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'}).toUpperCase();
+
+  const total   = parseFloat(p.totalAmount)   || 0;
+  const first   = parseFloat(p.firstPayment)  || 0;
+  const second  = parseFloat(p.secondPayment) || 0;
+  const paid    = first + second;
+  const remaining = total - paid;
+
+  const fmt = n => n ? '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '$0.00';
+
+  const currency = p.paymentCurrency || 'USD';
+
+  // build payment rows
+  let paymentRows = '';
+  if (first) paymentRows += `
+    <tr class="pay-row">
+      <td>دفعة أولى – First Payment</td>
+      <td>${fmt(first)}</td><td>1</td><td>${fmt(first)}</td>
+    </tr>`;
+  if (second) paymentRows += `
+    <tr class="pay-row">
+      <td>دفعة ثانية – Second Payment</td>
+      <td>${fmt(second)}</td><td>1</td><td>${fmt(second)}</td>
+    </tr>`;
+  if (!paymentRows) paymentRows = `
+    <tr class="pay-row">
+      <td>معسكر تايلاند – Camp Thailand</td>
+      <td>${fmt(total)}</td><td>1</td><td>${fmt(total)}</td>
+    </tr>`;
+
+  const nationality = (p.countryCode === 'QAT' ? '🇶🇦 ' : p.countryCode === 'ARE' ? '🇦🇪 ' : p.countryCode === 'SAU' ? '🇸🇦 ' : '') + (p.nationality || '');
+
+  const statusColor = remaining <= 0 ? '#16a34a' : '#dc2626';
+  const statusText  = remaining <= 0 ? 'PAID IN FULL ✓' : `BALANCE DUE: ${fmt(remaining)}`;
+
+  const html = `<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>Invoice #${invoiceNum} – ${p.englishName}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .page{width:210mm;min-height:297mm;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.15)}
+
+  /* ── HEADER ── */
+  .header{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;padding:32px 40px 24px;border-bottom:3px solid #8B1A2E}
+  .header-left{display:flex;flex-direction:column;gap:4px}
+  .invoice-word{font-size:42px;font-weight:900;letter-spacing:6px;color:#fff;background:#8B1A2E;padding:10px 28px;display:inline-block}
+  .header-center{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 20px}
+  .inv-meta{font-size:12px;color:#555}
+  .inv-meta strong{color:#1a1a2e}
+  .logo-wrap{text-align:right}
+  .logo-wrap img{height:70px;object-fit:contain}
+  .logo-name{font-size:11px;color:#8B1A2E;font-weight:700;text-align:right;margin-top:4px;letter-spacing:.05em}
+
+  /* ── BILL TO ── */
+  .bill-section{padding:28px 40px 20px;display:grid;grid-template-columns:1fr 1fr;gap:24px;border-bottom:1px solid #e5e7eb}
+  .bill-block h3{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#8B1A2E;margin-bottom:10px;border-bottom:2px solid #8B1A2E;padding-bottom:4px;display:inline-block}
+  .client-name-big{font-size:22px;font-weight:800;letter-spacing:3px;color:#1a1a2e;text-transform:uppercase;margin-bottom:8px}
+  .client-detail{font-size:13px;color:#444;margin-bottom:4px;display:flex;gap:8px}
+  .client-detail span{font-weight:600;color:#1a1a2e;min-width:90px}
+  .camp-detail{font-size:13px;color:#444;margin-bottom:5px;display:flex;gap:8px}
+  .camp-detail span{font-weight:600;color:#1a1a2e;min-width:90px}
+
+  /* ── TABLE ── */
+  .table-section{padding:28px 40px 0}
+  .table-section table{width:100%;border-collapse:collapse}
+  .table-section th{background:#1a1a2e;color:#fff;padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:left}
+  .table-section th:last-child,.table-section td:last-child{text-align:right}
+  .table-section th:nth-child(2),.table-section td:nth-child(2),
+  .table-section th:nth-child(3),.table-section td:nth-child(3){text-align:center}
+  .pay-row td{padding:14px 16px;font-size:13px;border-bottom:1px solid #f1f5f9;color:#1a1a2e}
+  .pay-row:nth-child(odd) td{background:#fafafa}
+  .pay-row:hover td{background:#fef2f2}
+
+  /* ── TOTALS ── */
+  .totals-section{padding:16px 40px 0;display:flex;justify-content:flex-end}
+  .totals-box{width:280px}
+  .totals-row{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-bottom:1px solid #f1f5f9}
+  .totals-row.grand{font-weight:800;font-size:15px;color:#1a1a2e;border-bottom:2px solid #1a1a2e;padding-bottom:10px}
+  .totals-label{color:#555}
+  .totals-value{font-weight:600}
+
+  /* ── TOTAL DUE BLOCK ── */
+  .due-block{margin:20px 40px;background:#8B1A2E;color:#fff;padding:18px 28px;display:flex;justify-content:space-between;align-items:center;border-radius:4px}
+  .due-block .due-label{font-size:14px;font-weight:700;letter-spacing:.05em}
+  .due-block .due-amount{font-size:26px;font-weight:900}
+
+  /* ── STATUS ── */
+  .status-block{margin:0 40px 20px;border:2px solid;border-radius:4px;padding:10px 18px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px}
+
+  /* ── PAYMENT DATES ── */
+  .dates-section{margin:0 40px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .date-card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;padding:12px 14px}
+  .date-card label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8B1A2E;display:block;margin-bottom:4px}
+  .date-card .val{font-size:13px;font-weight:700;color:#1a1a2e}
+  .date-card .amount{font-size:11px;color:#6b7280;margin-top:2px}
+
+  /* ── TERMS ── */
+  .terms{margin:0 40px 20px;padding:14px 18px;background:#fef2f2;border-right:4px solid #8B1A2E;border-radius:0 4px 4px 0;direction:rtl}
+  .terms p{font-size:13px;color:#444;line-height:1.7}
+  .terms .checkmark{color:#8B1A2E;font-size:16px;margin-left:6px}
+
+  /* ── FOOTER ── */
+  .footer{margin-top:auto;background:#1a1a2e;color:rgba(255,255,255,.8);padding:18px 40px;display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:11.5px}
+  .footer a{color:rgba(255,255,255,.7);text-decoration:none}
+  .footer-item{display:flex;align-items:center;gap:8px}
+  .footer-icon{color:#8B1A2E;font-size:14px}
+
+  /* ── PRINT BTN ── */
+  .print-bar{background:#1a1a2e;padding:12px 40px;display:flex;justify-content:space-between;align-items:center}
+  .print-btn{background:#8B1A2E;color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.05em;display:flex;align-items:center;gap:8px}
+  .print-btn:hover{background:#a52035}
+  .print-info{color:rgba(255,255,255,.6);font-size:12px}
+  @media print{.print-bar{display:none}body{background:#fff}.page{box-shadow:none}}
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <div class="print-info">Invoice #${invoiceNum} — ${p.arabicName}</div>
+  <button class="print-btn" onclick="window.print()">🖨️ &nbsp;طباعة / PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="invoice-word">INVOICE</div>
+    </div>
+    <div class="header-center">
+      <div class="inv-meta" style="margin-top:8px"><strong>INVOICE NO:</strong> #${invoiceNum}</div>
+      <div class="inv-meta"><strong>ACCOUNT NO:</strong> 00 0000 0000</div>
+      <div class="inv-meta"><strong>INVOICE DATE:</strong> ${dateStr}</div>
+    </div>
+    <div class="logo-wrap">
+      <img src="http://localhost:4567/logo%20Raad/Logo%20THAILAND%20copy2.png"
+           onerror="this.outerHTML='<div style=\'font-size:28px;font-weight:900;color:#8B1A2E;text-align:right\'>رعد<br>دوجو</div>'" />
+      <div class="logo-name">RAAD DOJO · خليك إيجابي</div>
+    </div>
+  </div>
+
+  <!-- BILL TO + CAMP INFO -->
+  <div class="bill-section">
+    <div class="bill-block">
+      <h3>Invoice To.</h3>
+      <div class="client-name-big">${p.englishName.split(' ').slice(0,2).join(' ')} <span style="font-weight:400;font-size:16px">${p.englishName.split(' ').slice(2).join(' ')}</span></div>
+      <div class="client-detail"><span>الاسم:</span>${p.arabicName}</div>
+      <div class="client-detail"><span>Phone:</span><span dir="ltr">${p.phone || '—'}</span></div>
+      <div class="client-detail"><span>Nationality:</span>${nationality}</div>
+      <div class="client-detail"><span>Passport:</span>${p.passportNumber || '—'}</div>
+    </div>
+    <div class="bill-block">
+      <h3>Camp Details</h3>
+      <div class="camp-detail"><span>Event:</span>Camp Thailand 2025</div>
+      <div class="camp-detail"><span>Location:</span>Phuket, Thailand 🇹🇭</div>
+      <div class="camp-detail"><span>Organizer:</span>Raad Dojo</div>
+      <div class="camp-detail"><span>Payment:</span>${p.paymentStatus || 'غير محدد'}</div>
+      <div class="camp-detail"><span>Reg. Status:</span>${p.registrationStatus || 'مسجل'}</div>
+    </div>
+  </div>
+
+  <!-- ITEMS TABLE -->
+  <div class="table-section">
+    <table>
+      <thead>
+        <tr>
+          <th>Item Description</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="pay-row">
+          <td style="font-weight:700;letter-spacing:.05em">CAMP THAILAND – RAAD DOJO 2025</td>
+          <td style="text-align:center">${fmt(total)}</td>
+          <td style="text-align:center">1</td>
+          <td style="text-align:right;font-weight:700">${fmt(total)}</td>
+        </tr>
+        ${paymentRows}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TOTALS -->
+  <div class="totals-section">
+    <div class="totals-box">
+      <div class="totals-row"><span class="totals-label">Sub Total</span><span class="totals-value">${fmt(total)}</span></div>
+      <div class="totals-row"><span class="totals-label">Amount Paid</span><span class="totals-value" style="color:#16a34a">${fmt(paid)}</span></div>
+      <div class="totals-row grand"><span class="totals-label">Grand Total</span><span class="totals-value">${fmt(total)}</span></div>
+    </div>
+  </div>
+
+  <!-- DUE BLOCK -->
+  <div class="due-block">
+    <div class="due-label">TOTAL DUE:</div>
+    <div class="due-amount">${fmt(remaining > 0 ? remaining : 0)}</div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-block" style="border-color:${statusColor};color:${statusColor};background:${remaining<=0?'#f0fdf4':'#fef2f2'}">
+    <span style="font-size:18px">${remaining<=0?'✅':'⏳'}</span>
+    ${statusText}
+  </div>
+
+  <!-- PAYMENT DATES -->
+  <div class="dates-section">
+    <div class="date-card">
+      <label>First Payment</label>
+      <div class="val">${first ? fmt(first) : '—'}</div>
+      <div class="amount">${p.firstPaymentDate ? new Date(p.firstPaymentDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : 'Not paid'}</div>
+    </div>
+    <div class="date-card">
+      <label>Second Payment</label>
+      <div class="val">${second ? fmt(second) : '—'}</div>
+      <div class="amount">${p.secondPaymentDate ? new Date(p.secondPaymentDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : 'Not paid'}</div>
+    </div>
+    <div class="date-card" style="border-color:${statusColor};background:${remaining<=0?'#f0fdf4':'#fef2f2'}">
+      <label style="color:${statusColor}">Remaining Balance</label>
+      <div class="val" style="color:${statusColor}">${fmt(remaining > 0 ? remaining : 0)}</div>
+      <div class="amount">${remaining<=0?'Fully Paid ✓':'Pending'}</div>
+    </div>
+  </div>
+
+  <!-- STAMP + TERMS -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:0 40px 16px;gap:20px">
+    <div class="terms" style="flex:1;margin:0">
+      <p><span class="checkmark">✔</span> أوافق على الشروط والاحكام الموجوده بموقع رعد دوجو</p>
+      <p style="font-size:11px;color:#888;margin-top:6px;direction:ltr">I agree to the terms and conditions found on the Raad Dojo website.</p>
+    </div>
+    <div style="text-align:center;flex-shrink:0">
+      ${typeof STAMP_DATA_URL !== 'undefined' && STAMP_DATA_URL ? `<img src="${STAMP_DATA_URL}" style="width:110px;height:110px;object-fit:contain;opacity:.9">` : ''}
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>
+      <div class="footer-item"><span class="footer-icon">📞</span> +81 90-6370-7664</div>
+      <div class="footer-item" style="margin-top:6px"><span class="footer-icon">✉️</span> contact@raaddogo.com</div>
+    </div>
+    <div>
+      <div class="footer-item"><span class="footer-icon">🌐</span> https://camp.raaddojo.com/ar</div>
+      <div class="footer-item" style="margin-top:6px"><span class="footer-icon">📍</span> Japan, Tokyo</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+}
+
+// ========== REPORTS ==========
+const LOGO = (typeof LOGO_DATA_URL !== 'undefined') ? LOGO_DATA_URL : '';
+const STAMP = (typeof STAMP_DATA_URL !== 'undefined') ? STAMP_DATA_URL : '';
+
+function renderReports(){
+  // Stats
+  const totalPaid = participants.reduce((s,p)=>{
+    return s + (parseFloat(p.firstPayment)||0) + (parseFloat(p.secondPayment)||0);
+  },0);
+  const totalRemaining = participants.reduce((s,p)=>{
+    const paid = (parseFloat(p.firstPayment)||0) + (parseFloat(p.secondPayment)||0);
+    const total = parseFloat(p.totalAmount)||0;
+    return s + Math.max(0, total - paid);
+  },0);
+  const el = id => document.getElementById(id);
+  if(el('r-stat-participants')) el('r-stat-participants').textContent = participants.length;
+  if(el('r-stat-paid')) el('r-stat-paid').textContent = '$'+totalPaid.toLocaleString();
+  if(el('r-stat-remaining')) el('r-stat-remaining').textContent = '$'+totalRemaining.toLocaleString();
+  if(el('r-stat-files')) el('r-stat-files').textContent = uploadedFiles.length;
+}
+
+function _reportHeader(titleAr, titleEn){
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;background:#0f1c2e;padding:18px 28px;color:#fff;margin-bottom:0">
+    <div style="display:flex;align-items:center;gap:16px">
+      ${LOGO ? `<img src="${LOGO}" style="height:64px;object-fit:contain;border-radius:6px">` : '<div style="width:64px;height:64px;background:#C41E3A;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px">🥋</div>'}
+      <div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:.03em">Raad Dojo</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px">Thailand Camp 2025 · Phuket, Thailand 🇹🇭</div>
+      </div>
+    </div>
+    <div style="text-align:left">
+      <div style="font-size:18px;font-weight:700">${titleEn}</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.7);margin-top:2px;direction:rtl">${titleAr}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:4px">Generated: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div>
+    </div>
+  </div>
+  <div style="height:4px;background:linear-gradient(90deg,#C41E3A,#e8a020)"></div>`;
+}
+
+function _reportPage(){
+  return `<!DOCTYPE html><html lang="ar" dir="rtl">
+<head><meta charset="UTF-8"><title>Raad Dojo – Report</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',Arial,sans-serif;background:#fff;color:#1a2332;direction:rtl;font-size:13px}
+table{width:100%;border-collapse:collapse}
+th{background:#0f1c2e;color:#fff;padding:10px 12px;text-align:right;font-size:12px;font-weight:600;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid #e2e8f0;vertical-align:middle}
+tr:nth-child(even) td{background:#f8fafc}
+tr:hover td{background:#f0f4ff}
+.section{margin:20px 28px}
+.section-title{font-size:15px;font-weight:700;color:#0f1c2e;padding:10px 0;border-bottom:2px solid #C41E3A;margin-bottom:10px}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-s{background:#dcfce7;color:#16a34a}
+.badge-p{background:#fef3c7;color:#d97706}
+.badge-u{background:#f1f5f9;color:#64748b}
+.footer-bar{background:#0f1c2e;color:rgba(255,255,255,.6);text-align:center;padding:10px;font-size:11px;margin-top:28px}
+@media print{.no-print{display:none!important}body{font-size:12px}th{font-size:11px}td{font-size:11px}@page{margin:12mm}}
+</style></head><body>`;
+}
+
+function _printBtn(){
+  return `<div class="no-print" style="background:#f8fafc;padding:12px 28px;display:flex;gap:10px;align-items:center;border-bottom:1px solid #e2e8f0">
+    <button onclick="window.print()" style="background:#C41E3A;color:#fff;border:none;padding:9px 20px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">🖨️ طباعة / حفظ PDF</button>
+    <button onclick="window.close()" style="background:#f1f5f9;color:#374151;border:1px solid #e2e8f0;padding:9px 20px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">✕ إغلاق</button>
+    <span style="font-size:11px;color:#94a3b8">لحفظ كـ PDF: اختر "Print" ثم "Save as PDF" في خيارات الطابعة</span>
+  </div>`;
+}
+
+function openReport(type){
+  let html = '';
+  if(type==='participants') html = _buildParticipantsReport();
+  else if(type==='flights-schedule') html = _buildFlightsReport();
+  else if(type==='tshirts') html = _buildTshirtsReport();
+  else if(type==='payments-report') html = _buildPaymentsReport();
+  else if(type==='hotel-report') html = _buildHotelReport();
+  else if(type==='hotel-letter') html = _buildHotelLetters();
+  else if(type==='receipts') html = _buildReceipts();
+  const win = window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+}
+
+function exportExcel(type){
+  if(!window.XLSX){toast('مكتبة Excel غير متاحة','error');return;}
+  const wb = XLSX.utils.book_new();
+  if(type==='participants'){
+    const rows = [['#','الاسم بالعربي','الاسم بالإنجليزي','الجنسية','الهاتف','رقم الجواز','العمر','الوزن','الطول','مقاس التيشرت','طريقة الدفع','المدفوع','المتبقي','ملاحظات']];
+    participants.forEach((p,i)=>{
+      const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
+      const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
+      rows.push([i+1,p.arabicName,p.englishName,p.nationality,p.phone,p.passportNumber,p.age||'',p.weight||'',p.height||'',p.tshirtSize||'',p.paymentMethod||'',paid||'',rem||'',p.notes||'']);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'بيانات المشتركين');
+  } else if(type==='flights-schedule'){
+    const rows = [['#','الاسم','الجنسية','الهاتف','رقم الجواز','تاريخ الذهاب','وقت الذهاب','تاريخ العودة','وقت العودة','شركة الطيران','رقم الرحلة']];
+    participants.forEach((p,i)=>rows.push([i+1,p.arabicName,p.nationality,p.phone,p.passportNumber,p.departureDateTrip||'',p.departureTimeTrip||'',p.returnDateTrip||'',p.returnTimeTrip||'',p.airline||'',p.flightNumber||'']));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'مواعيد الذهاب والعودة');
+  } else if(type==='tshirts'){
+    const rows = [['#','الاسم','الجنسية','الهاتف','العمر','الوزن (kg)','الطول (cm)','مقاس التيشرت','ملاحظات']];
+    participants.forEach((p,i)=>rows.push([i+1,p.arabicName,p.nationality,p.phone,p.age||'',p.weight||'',p.height||'',p.tshirtSize||'',p.notes||'']));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'مقاسات التيشرتات');
+  } else if(type==='payments-report'){
+    const rows = [['#','الاسم','الجنسية','الهاتف','طريقة الدفع','المبلغ الكلي','الدفعة الأولى','تاريخها','الدفعة الثانية','تاريخها','المدفوع','المتبقي','الحالة']];
+    participants.forEach((p,i)=>{
+      const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
+      const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
+      rows.push([i+1,p.arabicName,p.nationality,p.phone,p.paymentMethod||'',p.totalAmount||'',p.firstPayment||'',p.firstPaymentDate||'',p.secondPayment||'',p.secondPaymentDate||'',paid||'',rem||'',p.paymentStatus||'']);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'الحسابات والمبالغ');
+  } else if(type==='hotel-report'){
+    const rows = [['#','الاسم','الجنسية','الهاتف','الفندق','نوع الغرفة','رقم الغرفة','تاريخ الوصول','تاريخ المغادرة','عدد الأشخاص','ملاحظات']];
+    participants.forEach((p,i)=>rows.push([i+1,p.arabicName,p.nationality,p.phone,p.hotel||'',p.roomType||'',p.roomNumber||'',p.checkIn||'',p.checkOut||'',p.roomOccupants||'',p.notes||'']));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'نوع الغرف والإقامة');
+  }
+  if(!wb.SheetNames.length){toast('لا يوجد بيانات لهذا التقرير','error');return;}
+  XLSX.writeFile(wb, `Raad_Dojo_${type}_${new Date().toISOString().slice(0,10)}.xlsx`);
+  toast('تم تصدير ملف Excel','success');
+}
+
+function exportWord(type){
+  let html = '';
+  if(type==='participants') html = _buildParticipantsReport(true);
+  else if(type==='flights-schedule') html = _buildFlightsReport(true);
+  else if(type==='tshirts') html = _buildTshirtsReport(true);
+  else if(type==='payments-report') html = _buildPaymentsReport(true);
+  else if(type==='hotel-report') html = _buildHotelReport(true);
+  else if(type==='hotel-letter') html = _buildHotelLetters(true);
+  else if(type==='receipts') html = _buildReceipts(true);
+  const blob = new Blob(['﻿'+html], {type:'application/msword'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Raad_Dojo_${type}_${new Date().toISOString().slice(0,10)}.doc`;
+  a.click();
+  toast('تم تصدير ملف Word','success');
+}
+
+// ---- Report builders ----
+
+function _buildParticipantsReport(forWord=false){
+  const rows = participants.map((p,i)=>{
+    const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
+    const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
+    const statusClass=paid>0&&rem<=0?'badge-s':paid>0?'badge-p':'badge-u';
+    const statusTxt=paid>0&&rem<=0?'مكتمل':paid>0?'جزئي':'لم يدفع';
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td><b>${p.arabicName}</b></td>
+      <td style="font-size:11px;direction:ltr">${p.englishName}</td>
+      <td>${p.nationality||'—'}</td>
+      <td dir="ltr">${p.phone||'—'}</td>
+      <td><code>${p.passportNumber||'—'}</code></td>
+      <td style="text-align:center">${p.age||'—'}</td>
+      <td style="text-align:center">${p.weight||'—'}</td>
+      <td style="text-align:center">${p.height||'—'}</td>
+      <td style="text-align:center">${p.tshirtSize||'—'}</td>
+      <td style="text-align:center">${paid?'$'+paid.toLocaleString():'—'}</td>
+      <td style="text-align:center">${rem?'$'+rem.toLocaleString():'—'}</td>
+      <td><span class="badge ${statusClass}">${statusTxt}</span></td>
+      <td style="font-size:11px">${p.notes||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const staffRows = staff.length ? staff.map((s,i)=>`<tr>
+    <td style="text-align:center">${participants.length+i+1}</td>
+    <td><b>${s.name}</b></td>
+    <td colspan="2" style="color:#6b7280">${s.role||'مشرف'}</td>
+    <td dir="ltr">${s.phone||'—'}</td>
+    <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+    <td><span class="badge badge-s">فريق</span></td>
+    <td style="font-size:11px">${s.tasks||'—'}</td>
+  </tr>`).join('') : '';
+
+  const full = _reportPage() + (forWord?'':_printBtn()) + _reportHeader('بيانات المشتركين','Participants Data') + `
+  <div class="section">
+    <div class="section-title">بيانات المشتركين – كامب تايلاند 2025</div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>#</th><th>الاسم بالعربي</th><th>الاسم بالإنجليزي</th><th>الجنسية</th>
+        <th>الهاتف</th><th>رقم الجواز</th><th>العمر</th><th>الوزن</th><th>الطول</th>
+        <th>مقاس T</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>ملاحظات</th>
+      </tr></thead>
+      <tbody>${rows}${staffRows}</tbody>
+    </table>
+    </div>
+  </div>
+  <div class="footer-bar">Raad Dojo · Thailand Camp 2025 · contact@raaddojo.com · +81 90-6370-7664</div>
+  </body></html>`;
+  return full;
+}
+
+function _buildFlightsReport(forWord=false){
+  const rows = participants.map((p,i)=>`<tr>
+    <td style="text-align:center">${i+1}</td>
+    <td><b>${p.arabicName}</b></td>
+    <td>${p.nationality||'—'}</td>
+    <td dir="ltr">${p.phone||'—'}</td>
+    <td><code>${p.passportNumber||'—'}</code></td>
+    <td>${p.departureDateTrip||'—'}</td>
+    <td>${p.departureTimeTrip||'—'}</td>
+    <td>${p.returnDateTrip||'—'}</td>
+    <td>${p.returnTimeTrip||'—'}</td>
+  </tr>`).join('');
+
+  return _reportPage() + (forWord?'':_printBtn()) + _reportHeader('مواعيد الذهاب والعودة','Departure & Return Schedule') + `
+  <div class="section">
+    <div class="section-title">مواعيد الذهاب والعودة</div>
+    <table>
+      <thead><tr>
+        <th>#</th><th>الاسم</th><th>الجنسية</th><th>الهاتف</th><th>رقم الجواز</th>
+        <th>تاريخ الذهاب</th><th>وقت الذهاب</th><th>تاريخ العودة</th><th>وقت العودة</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>
+  <div class="footer-bar">Raad Dojo · Thailand Camp 2025</div>
+  </body></html>`;
+}
+
+function _buildTshirtsReport(forWord=false){
+  const sizes = {};
+  participants.forEach(p=>{if(p.tshirtSize){sizes[p.tshirtSize]=(sizes[p.tshirtSize]||0)+1;}});
+  const summaryRows = Object.entries(sizes).map(([sz,cnt])=>`<tr><td>${sz}</td><td style="text-align:center">${cnt}</td></tr>`).join('') || '<tr><td colspan="2" style="text-align:center;color:#94a3b8">لا توجد بيانات</td></tr>';
+
+  const rows = participants.map((p,i)=>`<tr>
+    <td style="text-align:center">${i+1}</td>
+    <td><b>${p.arabicName}</b></td>
+    <td>${p.nationality||'—'}</td>
+    <td dir="ltr">${p.phone||'—'}</td>
+    <td style="text-align:center">${p.age||'—'}</td>
+    <td style="text-align:center">${p.weight?p.weight+' kg':'—'}</td>
+    <td style="text-align:center">${p.height?p.height+' cm':'—'}</td>
+    <td style="text-align:center;font-weight:700;font-size:14px">${p.tshirtSize||'—'}</td>
+    <td style="font-size:11px">${p.notes||'—'}</td>
+  </tr>`).join('');
+
+  return _reportPage() + (forWord?'':_printBtn()) + _reportHeader('مقاسات التيشرتات','T-Shirt Sizes') + `
+  <div class="section">
+    <div style="display:flex;gap:24px;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div class="section-title">ملخص المقاسات</div>
+        <table style="max-width:300px">
+          <thead><tr><th>المقاس</th><th style="text-align:center">العدد</th></tr></thead>
+          <tbody>${summaryRows}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">تفاصيل المشتركين</div>
+    <table>
+      <thead><tr>
+        <th>#</th><th>الاسم</th><th>الجنسية</th><th>الهاتف</th>
+        <th>العمر</th><th>الوزن</th><th>الطول</th><th>مقاس التيشرت</th><th>ملاحظات</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>
+  <div class="footer-bar">Raad Dojo · Thailand Camp 2025</div>
+  </body></html>`;
+}
+
+function _buildPaymentsReport(forWord=false){
+  let totalTotal=0,totalPaid=0,totalRem=0;
+  const rows = participants.map((p,i)=>{
+    const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
+    const total=parseFloat(p.totalAmount)||0;
+    const rem=Math.max(0,total-paid);
+    totalTotal+=total; totalPaid+=paid; totalRem+=rem;
+    const statusClass=paid>0&&rem<=0?'badge-s':paid>0?'badge-p':'badge-u';
+    const statusTxt=paid>0&&rem<=0?'مكتمل':paid>0?'جزئي':'لم يدفع';
+    return `<tr>
+      <td style="text-align:center">${i+1}</td>
+      <td><b>${p.arabicName}</b></td>
+      <td>${p.nationality||'—'}</td>
+      <td dir="ltr">${p.phone||'—'}</td>
+      <td>${p.paymentMethod||'—'}</td>
+      <td style="text-align:center">${total?'$'+total.toLocaleString():'—'}</td>
+      <td style="text-align:center">${p.firstPayment?'$'+(parseFloat(p.firstPayment)||0).toLocaleString():'—'}</td>
+      <td style="text-align:center">${p.secondPayment?'$'+(parseFloat(p.secondPayment)||0).toLocaleString():'—'}</td>
+      <td style="text-align:center;color:#16a34a;font-weight:700">${paid?'$'+paid.toLocaleString():'—'}</td>
+      <td style="text-align:center;color:#dc2626;font-weight:700">${rem?'$'+rem.toLocaleString():'—'}</td>
+      <td><span class="badge ${statusClass}">${statusTxt}</span></td>
+      <td style="font-size:11px">${p.notes||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  return _reportPage() + (forWord?'':_printBtn()) + _reportHeader('الحسابات والمبالغ','Payments & Accounts') + `
+  <div class="section">
+    <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 20px;flex:1;min-width:160px">
+        <div style="font-size:11px;color:#16a34a;font-weight:600">إجمالي المدفوع</div>
+        <div style="font-size:22px;font-weight:700;color:#16a34a;margin-top:4px">$${totalPaid.toLocaleString()}</div>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 20px;flex:1;min-width:160px">
+        <div style="font-size:11px;color:#dc2626;font-weight:600">إجمالي المتبقي</div>
+        <div style="font-size:22px;font-weight:700;color:#dc2626;margin-top:4px">$${totalRem.toLocaleString()}</div>
+      </div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px 20px;flex:1;min-width:160px">
+        <div style="font-size:11px;color:#2563eb;font-weight:600">الإجمالي الكلي</div>
+        <div style="font-size:22px;font-weight:700;color:#2563eb;margin-top:4px">$${totalTotal.toLocaleString()}</div>
+      </div>
+    </div>
+    <div class="section-title">تفاصيل الحسابات</div>
+    <div style="overflow-x:auto"><table>
+      <thead><tr>
+        <th>#</th><th>الاسم</th><th>الجنسية</th><th>الهاتف</th><th>طريقة الدفع</th>
+        <th>المبلغ الكلي</th><th>الدفعة الأولى</th><th>الدفعة الثانية</th>
+        <th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>ملاحظات</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </div>
+  <div class="footer-bar">Raad Dojo · Thailand Camp 2025</div>
+  </body></html>`;
+}
+
+function _buildHotelReport(forWord=false){
+  const rows = participants.map((p,i)=>`<tr>
+    <td style="text-align:center">${i+1}</td>
+    <td><b>${p.arabicName}</b></td>
+    <td>${p.nationality||'—'}</td>
+    <td dir="ltr">${p.phone||'—'}</td>
+    <td>${p.checkIn||'—'}</td>
+    <td>${p.checkOut||'—'}</td>
+    <td>${p.roomType||'—'}</td>
+    <td style="text-align:center">${p.roomNumber||'—'}</td>
+    <td style="font-size:11px">${p.notes||'—'}</td>
+  </tr>`).join('');
+
+  return _reportPage() + (forWord?'':_printBtn()) + _reportHeader('نوع الغرف والإقامة','Hotel & Room Types') + `
+  <div class="section">
+    <div class="section-title">بيانات الإقامة</div>
+    <table>
+      <thead><tr>
+        <th>#</th><th>الاسم</th><th>الجنسية</th><th>الهاتف</th>
+        <th>تاريخ الوصول</th><th>تاريخ المغادرة</th><th>نوع الغرفة</th><th>رقم الغرفة</th><th>ملاحظات</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>
+  <div class="footer-bar">Raad Dojo · Thailand Camp 2025</div>
+  </body></html>`;
+}
+
+function _buildHotelLetters(forWord=false){
+  const letters = participants.map(p=>{
+    const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
+    const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
+    return `
+    <div style="page-break-after:always;padding:40px 50px;font-family:'Cairo',Arial,sans-serif;max-width:780px;margin:0 auto;border:1px solid #e2e8f0;border-top:6px solid #0f1c2e;direction:ltr">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+        <div style="display:flex;align-items:center;gap:14px">
+          ${LOGO ? `<img src="${LOGO}" style="height:60px;object-fit:contain">` : '<div style="font-size:28px">🥋</div>'}
+          <div>
+            <div style="font-size:22px;font-weight:700;color:#0f1c2e">Raad Dojo</div>
+            <div style="font-size:12px;color:#6b7280">Thailand Camp 2025</div>
+          </div>
+        </div>
+        <div style="text-align:right;font-size:12px;color:#6b7280">
+          <div>Date: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})}</div>
+          <div>Japan, Tokyo</div>
+          <div>contact@raaddojo.com</div>
+        </div>
+      </div>
+      <div style="height:2px;background:linear-gradient(90deg,#C41E3A,#e8a020);margin-bottom:24px"></div>
+
+      <!-- Greeting -->
+      <p style="margin-bottom:18px;color:#374151;line-height:1.8">Dear Sir / Madam,</p>
+      <p style="margin-bottom:18px;color:#374151;line-height:1.8">
+        Warm greetings from <strong>Raad Dojo</strong>. We are pleased to confirm the accommodation reservation
+        for our valued guest as part of the <strong>Thailand Camp 2025</strong> organized by Raad Dojo.
+        Kindly extend your gracious hospitality to our guest and provide all requested services.
+      </p>
+
+      <!-- Guest Table -->
+      <table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:13px">
+        <thead>
+          <tr style="background:#0f1c2e;color:#fff">
+            <th style="padding:10px 14px;text-align:left;width:40%">Item</th>
+            <th style="padding:10px 14px;text-align:left">Information</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Full Name</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.englishName||p.arabicName}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Nationality</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.nationality||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Mobile</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.phone||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Passport No.</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.passportNumber||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Check-in</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.checkIn||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Check-out</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.checkOut||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Room Type</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.roomType||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Remaining Amount</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:700;color:#C41E3A">${rem?'$'+rem.toLocaleString():'Fully Paid ✓'}</td></tr>
+        </tbody>
+      </table>
+
+      <p style="color:#374151;line-height:1.8;margin-top:18px">
+        Should you require any further information, please do not hesitate to contact us.<br>
+        We appreciate your cooperation and look forward to a successful collaboration.
+      </p>
+
+      <!-- Signature -->
+      <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <p style="font-weight:700;color:#0f1c2e">Best regards,</p>
+          <p style="color:#374151;margin-top:4px">Raad Dojo Team</p>
+          <p style="color:#6b7280;font-size:12px;margin-top:2px">+81 90-6370-7664 · contact@raaddojo.com</p>
+        </div>
+        <div style="text-align:center">
+          ${STAMP ? `<img src="${STAMP}" style="width:110px;height:110px;object-fit:contain;opacity:.85">` : '<div style="width:110px;height:110px;border:2px dashed #e2e8f0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:11px">Official Stamp</div>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return _reportPage() + (forWord?'':_printBtn()) + letters + `</body></html>`;
+}
+
+function _buildReceipts(forWord=false){
+  const receipts = participants.map((p,i)=>{
+    const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
+    const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
+    const receiptNum = 'RD-'+(String(i+1).padStart(3,'0'));
+    const payDate = p.secondPaymentDate||p.firstPaymentDate||new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+    const isPaid = rem<=0;
+    return `
+    <div style="page-break-after:always;padding:40px 50px;font-family:'Cairo',Arial,sans-serif;max-width:720px;margin:0 auto;border:1px solid #e2e8f0;direction:ltr">
+      <!-- Header banner -->
+      <div style="background:#0f1c2e;padding:20px 28px;color:#fff;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:22px;font-weight:700">Payment Receipt</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px">Raad Dojo Company · Tokyo, Japan</div>
+        </div>
+        <div style="text-align:right">
+          ${LOGO ? `<img src="${LOGO}" style="height:48px;object-fit:contain">` : '<div style="font-size:24px">🥋</div>'}
+        </div>
+      </div>
+      <div style="height:4px;background:linear-gradient(90deg,#C41E3A,#e8a020)"></div>
+
+      <!-- Receipt info -->
+      <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #e2e8f0;margin-bottom:16px">
+        <div>
+          <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Receipt Number</div>
+          <div style="font-size:18px;font-weight:700;color:#C41E3A;margin-top:2px">${receiptNum}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:#6b7280">Date of Payment</div>
+          <div style="font-size:13px;font-weight:600;margin-top:2px">${payDate}</div>
+        </div>
+      </div>
+
+      <!-- To block -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">To:</div>
+        <div style="font-size:16px;font-weight:700">${p.englishName||p.arabicName}</div>
+        <div style="color:#6b7280;font-size:12px;margin-top:2px">${p.nationality||'—'} · ${p.phone||'—'}</div>
+      </div>
+
+      <!-- Body text -->
+      <div style="background:#f8fafc;border-right:4px solid #C41E3A;padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:20px;line-height:1.8;color:#374151;font-size:13px">
+        This is to officially confirm that we have received the ${isPaid?'full remaining balance':'partial payment'} of
+        <strong style="color:#C41E3A"> $${rem>0?rem.toLocaleString():paid.toLocaleString()} USD</strong> from
+        <strong>${p.englishName||p.arabicName}</strong> in relation to their registration for
+        <strong>Camp Thailand 2025</strong> organized by Raad Dojo.
+      </div>
+
+      <!-- Payment details table -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px">
+        <thead>
+          <tr style="background:#0f1c2e;color:#fff">
+            <th style="padding:9px 14px;text-align:left">Detail</th>
+            <th style="padding:9px 14px;text-align:left">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#f8fafc"><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600">Total Amount</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.totalAmount?'$'+parseFloat(p.totalAmount).toLocaleString()+' USD':'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Total Paid</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;color:#16a34a;font-weight:700">${paid?'$'+paid.toLocaleString()+' USD':'—'}</td></tr>
+          <tr style="background:#f8fafc"><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600">Remaining Balance</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;color:${isPaid?'#16a34a':'#C41E3A'};font-weight:700">${isPaid?'$0 — Fully Paid':'$'+rem.toLocaleString()+' USD'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Payment Method</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.paymentMethod||'—'}</td></tr>
+          <tr style="background:#f8fafc"><td style="padding:9px 14px;font-weight:600">Invoice Status</td><td style="padding:9px 14px;font-weight:700;color:${isPaid?'#16a34a':'#d97706'}">${isPaid?'✅ PAID IN FULL':'⏳ PARTIALLY PAID'}</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Signature -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid #e2e8f0">
+        <div>
+          <p style="font-weight:700;color:#0f1c2e">Warm regards,</p>
+          <p style="color:#374151;margin-top:4px">Raad Dojo Team</p>
+          <p style="color:#6b7280;font-size:11px;margin-top:2px">Japan, Tokyo · +81 90-6370-7664</p>
+          <p style="color:#6b7280;font-size:11px">contact@raaddojo.com · https://camp.raaddojo.com</p>
+        </div>
+        <div style="text-align:center">
+          ${STAMP ? `<img src="${STAMP}" style="width:100px;height:100px;object-fit:contain;opacity:.85">` : '<div style="width:100px;height:100px;border:2px dashed #e2e8f0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:10px">Official Stamp</div>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return _reportPage() + (forWord?'':_printBtn()) + receipts + `</body></html>`;
+}
+
+// ========== UTILS ==========
+function calcAge(dob){
+  if(!dob) return '';
+  const b=new Date(dob), t=new Date();
+  let a=t.getFullYear()-b.getFullYear();
+  if(t.getMonth()<b.getMonth()||(t.getMonth()===b.getMonth()&&t.getDate()<b.getDate())) a--;
+  return a>0?String(a):'';
+}
+
+function emptySpan(){return '<span style="color:#cbd5e1;font-size:12px;font-style:italic">غير محدد</span>';}
+function formatDate(d){if(!d)return '';try{const dt=new Date(d);if(isNaN(dt))return d;return dt.toLocaleDateString('ar-QA',{year:'numeric',month:'short',day:'numeric'})}catch{return d;}}
+function formatDateTime(d){if(!d)return '';try{const dt=new Date(d);if(isNaN(dt))return d;return dt.toLocaleString('ar-QA',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}catch{return d;}}
+function flagEmoji(code){const flags={QAT:'🇶🇦',ARE:'🇦🇪',SAU:'🇸🇦',KWT:'🇰🇼',BHR:'🇧🇭',OMN:'🇴🇲'};return flags[code]||'🌍';}
+function fileTypeIcon(t){const icons={passport:'🛂',ticket:'✈️',invoice:'📄',receipt:'🧾',other:'📎'};return icons[t]||'📎';}
+function fileTypeLabel(t){const labels={passport:'جواز سفر',ticket:'تذكرة طيران',invoice:'فاتورة',receipt:'إيصال دفع',other:'ملف آخر'};return labels[t]||t;}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
+
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  const item=document.createElement('div');
+  item.className=`toast-item ${type}`;
+  item.textContent=(type==='success'?'✅ ':'❌ ')+msg;
+  t.appendChild(item);
+  setTimeout(()=>item.remove(),3500);
+}
+
+// Auto-load passport files on first run
+(function initPassports() {
+  const stored = load('camp_files', null);
+  if (stored && stored.length > 0) return;
+  if (typeof PRELOADED_PASSPORTS !== 'undefined' && PRELOADED_PASSPORTS.length) {
+    uploadedFiles = PRELOADED_PASSPORTS;
+    save('camp_files', uploadedFiles);
+  }
+})();
+
+// Auto-load invoice files (adds them if not already present by id)
+(function initInvoices() {
+  if (typeof PRELOADED_INVOICES === 'undefined') return;
+  const existing = new Set(uploadedFiles.map(f => f.id));
+  let added = false;
+  PRELOADED_INVOICES.forEach(inv => {
+    if (!existing.has(inv.id)) { uploadedFiles.push(inv); added = true; }
+  });
+  if (added) save('camp_files', uploadedFiles);
+
+  // Also update participant payment data from invoice amounts
+  const payUpdates = {
+    1: {firstPayment:'1076', firstPaymentDate:'2026-05-19', paymentMethod:'Bank', paymentStatus:'جزئي'},
+    2: {firstPayment:'1990', firstPaymentDate:'2026-04-27', paymentMethod:'Bank', paymentStatus:'جزئي'},
+    3: {firstPayment:'133',  firstPaymentDate:'2026-05-16', paymentMethod:'Cash', paymentStatus:'جزئي'},
+    4: {firstPayment:'1992', firstPaymentDate:'2026-03-15', paymentMethod:'Bank', paymentStatus:'جزئي'},
+  };
+  let payChanged = false;
+  participants.forEach(p => {
+    const upd = payUpdates[p.id];
+    if (upd && !p.firstPayment) { Object.assign(p, upd); payChanged = true; }
+  });
+  if (payChanged) save('camp_participants', participants);
+})();
+
+// ========== CAMPS ==========
+function initCampSelector(){
+  const sel = document.getElementById('camp-select');
+  if(!sel) return;
+  sel.innerHTML = camps.map(c=>`<option value="${c.id}">${c.name} – ${c.startDate||'?'}</option>`).join('');
+  sel.value = currentCampId;
+  const camp = camps.find(c=>c.id===currentCampId);
+  if(camp) document.getElementById('sidebar-camp-name').textContent = camp.nameEn||camp.name;
+}
+
+function switchCamp(id){
+  currentCampId = parseInt(id);
+  localStorage.setItem('current_camp_id', String(currentCampId));
+  initCampSelector();
+  const active = document.querySelector('.nav-item.active');
+  if(active){
+    const m = active.getAttribute('onclick').match(/showPage\('(\w+)'\)/);
+    if(m) render(m[1]);
+  }
+  toast('تم التبديل إلى: '+(camps.find(c=>c.id===currentCampId)||{}).name,'success');
+}
+
+function renderCamps(){
+  const grid = document.getElementById('camps-grid');
+  document.getElementById('stat-camps-total').textContent = camps.length;
+  document.getElementById('stat-camps-upcoming').textContent = camps.filter(c=>c.status==='قادم').length;
+  document.getElementById('stat-camps-participants').textContent = participants.length;
+  const totalRev = participants.reduce((s,p)=>s+(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0),0);
+  document.getElementById('stat-camps-revenue').textContent = '$'+totalRev.toLocaleString('en-US');
+  grid.innerHTML = camps.map(c=>{
+    const ps = participants.filter(p=>p.campId===c.id);
+    const paid = ps.reduce((s,p)=>s+(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0),0);
+    const isCurrent = c.id===currentCampId;
+    const statusColor = c.status==='منتهي'?'#6b7280':c.status==='جارٍ'?'#16a34a':'#2563eb';
+    return `<div style="background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:2px solid ${isCurrent?c.color||'#C41E3A':'transparent'};transition:.2s;position:relative">
+      ${isCurrent?`<div style="position:absolute;top:12px;left:12px;background:${c.color||'#C41E3A'};color:#fff;font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700">● المعسكر الحالي</div>`:''}
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:48px;height:48px;border-radius:12px;background:${c.color||'#C41E3A'}22;display:flex;align-items:center;justify-content:center;font-size:24px">🏕️</div>
+        <div>
+          <div style="font-weight:700;font-size:16px;color:#1a2332">${c.name}</div>
+          <div style="font-size:12px;color:#6b7280">${c.nameEn||''}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <div style="background:#f8fafc;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:2px">تاريخ البداية</div>
+          <div style="font-weight:600;font-size:13px">${formatDate(c.startDate)||'—'}</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:2px">تاريخ النهاية</div>
+          <div style="font-weight:600;font-size:13px">${formatDate(c.endDate)||'—'}</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:2px">المشتركون</div>
+          <div style="font-weight:700;font-size:18px;color:${c.color||'#C41E3A'}">${ps.length}</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:2px">رسوم الاشتراك</div>
+          <div style="font-weight:600;font-size:13px">$${(c.fee||0).toLocaleString('en-US')}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <span style="background:${statusColor}22;color:${statusColor};border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600">${c.status}</span>
+        <span style="color:#6b7280;font-size:12px">📍 ${c.location||'—'}</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        ${isCurrent?`<button class="btn btn-secondary" style="flex:1;opacity:.5;cursor:default">✅ الحالي</button>`:
+          `<button class="btn btn-primary" onclick="switchCamp(${c.id})" style="flex:1;background:${c.color||'#C41E3A'}">🔄 تبديل</button>`}
+        <button class="btn btn-edit" onclick="openCampModal(${c.id})">✏️</button>
+        ${camps.length>1&&ps.length===0?`<button class="btn btn-danger" onclick="deleteCamp(${c.id})" style="background:#fee2e2;color:#dc2626;border:none;padding:6px 10px;border-radius:6px;font-size:12px">🗑️</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openCampModal(id){
+  editingCampId = id||null;
+  const c = id ? camps.find(x=>x.id===id) : null;
+  document.getElementById('camp-modal-title').textContent = c ? '✏️ تعديل المعسكر' : '➕ إضافة معسكر جديد';
+  document.getElementById('fc-name').value = c?.name||'';
+  document.getElementById('fc-nameEn').value = c?.nameEn||'';
+  document.getElementById('fc-startDate').value = c?.startDate||'';
+  document.getElementById('fc-endDate').value = c?.endDate||'';
+  document.getElementById('fc-location').value = c?.location||'Phuket, Thailand';
+  document.getElementById('fc-hotel').value = c?.hotel||'The Blue Mavi';
+  document.getElementById('fc-fee').value = c?.fee||'3390';
+  document.getElementById('fc-status').value = c?.status||'قادم';
+  document.getElementById('fc-color').value = c?.color||'#C41E3A';
+  openModal('modal-camp');
+}
+
+function saveCamp(){
+  const name = document.getElementById('fc-name').value.trim();
+  if(!name){toast('اسم المعسكر مطلوب','error');return;}
+  const data = {
+    name, nameEn:document.getElementById('fc-nameEn').value.trim(),
+    startDate:document.getElementById('fc-startDate').value,
+    endDate:document.getElementById('fc-endDate').value,
+    location:document.getElementById('fc-location').value.trim(),
+    hotel:document.getElementById('fc-hotel').value.trim(),
+    fee:parseFloat(document.getElementById('fc-fee').value)||0,
+    status:document.getElementById('fc-status').value,
+    color:document.getElementById('fc-color').value
+  };
+  if(editingCampId){
+    const idx = camps.findIndex(c=>c.id===editingCampId);
+    if(idx>=0) camps[idx]={...camps[idx],...data};
+  } else {
+    const newId = Math.max(0,...camps.map(c=>c.id))+1;
+    camps.push({id:newId,...data});
+  }
+  save('camp_camps',camps);
+  closeModal('modal-camp');
+  initCampSelector();
+  renderCamps();
+  toast(editingCampId?'تم تحديث المعسكر':'تم إضافة المعسكر الجديد','success');
+}
+
+function deleteCamp(id){
+  if(!confirm('هل تريد حذف هذا المعسكر؟')) return;
+  camps = camps.filter(c=>c.id!==id);
+  if(currentCampId===id) { currentCampId=camps[0]?.id||1; localStorage.setItem('current_camp_id',String(currentCampId)); }
+  save('camp_camps',camps);
+  initCampSelector();
+  renderCamps();
+  toast('تم حذف المعسكر','success');
+}
+
+// Init
+initCampSelector();
+renderParticipants();
+</script>
+</body>
+</html>

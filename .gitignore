@@ -1,0 +1,18 @@
+# Sensitive data - passport scans & invoice images (NOT for public repo)
+passport-data.js
+invoice-data.js
+
+# Other website files (not camp dashboard)
+admin.css
+admin.html
+admin.js
+cms-bridge.js
+script.js
+styles.css
+index.html
+images/
+strawberry_*
+waleed-*
+make_mockup*.py
+*.pdf
+.claude/
