@@ -1004,6 +1004,64 @@ tr:last-child td{border-bottom:none}
 </div>
 
 <script>
+// ========== AUTH ==========
+const AUTH_USER = 'Raad';
+const AUTH_PASS = 'Raad2060';
+const AUTH_KEY  = 'crd_auth_token';
+
+function checkAuth() {
+  const token = sessionStorage.getItem(AUTH_KEY);
+  if (token === btoa(AUTH_USER + ':' + AUTH_PASS)) {
+    document.getElementById('login-screen').style.display = 'none';
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').style.visibility = 'hidden';
+    // Set background image on login screen
+    setTimeout(() => {
+      if (typeof GALLERY_PHOTOS !== 'undefined' && GALLERY_PHOTOS[2]) {
+        const el = document.getElementById('login-bg-img');
+        if (el) el.style.backgroundImage = `url(${GALLERY_PHOTOS[2]})`;
+      }
+    }, 100);
+  }
+}
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  if (u === AUTH_USER && p === AUTH_PASS) {
+    sessionStorage.setItem(AUTH_KEY, btoa(AUTH_USER + ':' + AUTH_PASS));
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.visibility = 'visible';
+    errEl.classList.remove('show');
+    initGallery();
+  } else {
+    errEl.classList.add('show');
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+    // Shake animation
+    const card = document.querySelector('.login-form-card');
+    card.style.animation = 'none';
+    card.style.transform = 'translateX(8px)';
+    setTimeout(() => { card.style.transform = 'translateX(-8px)'; }, 80);
+    setTimeout(() => { card.style.transform = 'translateX(5px)'; }, 160);
+    setTimeout(() => { card.style.transform = 'translateX(0)'; }, 240);
+  }
+}
+
+function doLogout() {
+  if (!confirm('هل تريد تسجيل الخروج؟')) return;
+  sessionStorage.removeItem(AUTH_KEY);
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').classList.remove('show');
+  checkAuth();
+}
+
+// Run auth check immediately
+checkAuth();
+
 // ========== HERO SLIDER & GALLERY ==========
 let heroIndex = 0;
 let heroTimer = null;
