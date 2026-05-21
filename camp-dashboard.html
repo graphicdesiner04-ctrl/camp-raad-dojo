@@ -2358,6 +2358,17 @@ function toast(msg,type='success'){
   if (payChanged) save('camp_participants', participants);
 })();
 
+// Auto-load ticket files (adds them if not already present by id)
+(function initTickets() {
+  if (typeof PRELOADED_TICKETS === 'undefined') return;
+  const existing = new Set(uploadedFiles.map(f => f.id));
+  let added = false;
+  PRELOADED_TICKETS.forEach(t => {
+    if (!existing.has(t.id)) { uploadedFiles.push(t); added = true; }
+  });
+  if (added) save('camp_files', uploadedFiles);
+})();
+
 // ========== CAMPS ==========
 function initCampSelector(){
   const sel = document.getElementById('camp-select');
