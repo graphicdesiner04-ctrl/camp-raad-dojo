@@ -310,6 +310,37 @@ tr:last-child td{border-bottom:none}
 </head>
 <body>
 
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="login-screen">
+  <div class="login-bg"></div>
+  <div class="login-bg-img" id="login-bg-img"></div>
+  <div class="login-particles">
+    <div class="particle" style="width:200px;height:200px;top:-60px;right:-60px;animation-delay:0s"></div>
+    <div class="particle" style="width:140px;height:140px;bottom:80px;left:-40px;animation-delay:2s;opacity:.5"></div>
+    <div class="particle" style="width:90px;height:90px;top:40%;right:10%;animation-delay:4s;opacity:.3"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <img src="logo Raad/Logo THAILAND copy2.png" alt="Logo" onerror="this.src='';this.style.display='none'">
+      <h1>Camp Raad Dojo</h1>
+      <p>Thailand Training Camp 2026 — لوحة الإدارة</p>
+    </div>
+    <div class="login-form-card">
+      <div class="login-field">
+        <label>اسم المستخدم / Username</label>
+        <input type="text" id="login-user" placeholder="أدخل اسم المستخدم..." autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+      </div>
+      <div class="login-field">
+        <label>كلمة المرور / Password</label>
+        <input type="password" id="login-pass" placeholder="أدخل كلمة المرور..." autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" onclick="doLogin()">🔓 تسجيل الدخول</button>
+      <div class="login-error" id="login-error">❌ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+    </div>
+    <div class="login-footer">Camp Raad Dojo © 2026 — Phuket, Thailand</div>
+  </div>
+</div>
+
 <div id="app">
 
 <!-- ===== SIDEBAR ===== -->
