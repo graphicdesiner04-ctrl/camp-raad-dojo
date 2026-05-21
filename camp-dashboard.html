@@ -2534,14 +2534,29 @@ function toast(msg,type='success'){
 })();
 
 // Auto-load ticket files (adds them if not already present by id)
+// Also updates existing tickets with corrected staffId/ownerName data
 (function initTickets() {
   if (typeof PRELOADED_TICKETS === 'undefined') return;
-  const existing = new Set(uploadedFiles.map(f => f.id));
-  let added = false;
+  const existingMap = {};
+  uploadedFiles.forEach(f => { existingMap[f.id] = f; });
+  let changed = false;
   PRELOADED_TICKETS.forEach(t => {
-    if (!existing.has(t.id)) { uploadedFiles.push(t); added = true; }
+    if (!existingMap[t.id]) {
+      uploadedFiles.push(t); changed = true;
+    } else {
+      // Migrate: update staffId/ownerName/ownerRole if the source has them
+      const stored = existingMap[t.id];
+      if (t.staffId && !stored.staffId) {
+        stored.staffId   = t.staffId;
+        stored.ownerName = t.ownerName;
+        stored.ownerRole = t.ownerRole;
+        stored.participantId = null;
+        stored.fileName  = t.fileName;
+        changed = true;
+      }
+    }
   });
-  if (added) save('camp_files', uploadedFiles);
+  if (changed) save('camp_files', uploadedFiles);
 })();
 
 // ========== CAMPS ==========
