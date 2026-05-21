@@ -1396,23 +1396,76 @@ function renderFlights(){
 }
 
 // ========== FILES ==========
+function ownerName(f){
+  if(f.ownerName) return f.ownerName + (f.ownerRole?' ('+f.ownerRole+')':'');
+  const p = participants.find(x=>x.id===f.participantId);
+  return p ? p.arabicName : 'غير محدد';
+}
+
 function renderFiles(){
   const typeFilter = document.getElementById('filter-file-type').value;
   const campParticipantIds = new Set(participants.filter(p=>p.campId===currentCampId).map(p=>p.id));
-  let list = uploadedFiles.filter(f=>!f.participantId||campParticipantIds.has(f.participantId));
+  // include camp participants + staff files (no participantId or staffId set)
+  let list = uploadedFiles.filter(f=>
+    f.staffId ||
+    !f.participantId ||
+    campParticipantIds.has(f.participantId)
+  );
   if(typeFilter) list = list.filter(f=>f.fileType===typeFilter);
   const grid = document.getElementById('files-grid');
   if(!list.length){
     grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📁</div><p>لا توجد ملفات مرفقة بعد</p></div>`;
     return;
   }
-  grid.innerHTML = `<div class="file-list">${list.map(f=>{
-    const p = participants.find(x=>x.id===f.participantId);
+
+  // Separate tickets (group by owner) from other files
+  const tickets = list.filter(f=>f.fileType==='ticket');
+  const others  = list.filter(f=>f.fileType!=='ticket');
+
+  // Group tickets by owner key
+  const ticketGroups = {};
+  tickets.forEach(f=>{
+    const key = f.staffId ? 'staff_'+f.staffId : 'p_'+(f.participantId||'0');
+    if(!ticketGroups[key]) ticketGroups[key] = [];
+    ticketGroups[key].push(f);
+  });
+
+  const ticketRows = Object.values(ticketGroups).map(group=>{
+    const first = group[0];
+    const name = ownerName(first);
+    const isMerged = group.length > 1;
+    const actionsHTML = group.map((f,i)=>`
+      <div style="display:flex;align-items:center;gap:4px;${isMerged?'flex-direction:column;text-align:center':''}">
+        ${isMerged?`<span style="font-size:10px;color:var(--muted);font-weight:600">تذكرة ${i+1}</span>`:''}
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-view" onclick="previewFile(${f.id})" title="عرض تذكرة ${i+1}">👁</button>
+          <button class="btn btn-view" onclick="downloadFile(${f.id})" title="تحميل تذكرة ${i+1}">⬇️</button>
+          <button class="btn btn-delete" onclick="deleteFile(${f.id})" title="حذف">🗑</button>
+        </div>
+      </div>`).join('');
+    return `<div class="file-item${isMerged?' file-item-merged':''}">
+      <div class="file-icon">✈️</div>
+      <div class="file-info">
+        <div class="file-name">
+          ${isMerged
+            ? `تذاكر طيران — ${name} <span class="badge badge-info" style="margin-right:6px;font-size:10px">${group.length} تذاكر</span>`
+            : `${first.fileName}`}
+        </div>
+        <div class="file-meta">تذكرة طيران — ${name} — ${formatDate(first.uploadDate)}</div>
+      </div>
+      <div class="file-actions" style="${isMerged?'flex-wrap:wrap;gap:8px':''}">
+        ${actionsHTML}
+      </div>
+    </div>`;
+  });
+
+  const otherRows = others.map(f=>{
+    const name = ownerName(f);
     return `<div class="file-item">
       <div class="file-icon">${fileTypeIcon(f.fileType)}</div>
       <div class="file-info">
         <div class="file-name">${f.fileName}</div>
-        <div class="file-meta">${fileTypeLabel(f.fileType)} — ${p?p.arabicName:'غير محدد'} — ${formatDate(f.uploadDate)}</div>
+        <div class="file-meta">${fileTypeLabel(f.fileType)} — ${name} — ${formatDate(f.uploadDate)}</div>
       </div>
       <div class="file-actions">
         <button class="btn btn-view" onclick="previewFile(${f.id})">👁</button>
@@ -1420,7 +1473,9 @@ function renderFiles(){
         <button class="btn btn-delete" onclick="deleteFile(${f.id})">🗑</button>
       </div>
     </div>`;
-  }).join('')}</div>`;
+  });
+
+  grid.innerHTML = `<div class="file-list">${[...otherRows, ...ticketRows].join('')}</div>`;
 }
 
 function fileItemHTML(f,showActions){
