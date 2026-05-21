@@ -1,7 +1,3 @@
-# Sensitive data - passport scans & invoice images (NOT for public repo)
-passport-data.js
-invoice-data.js
-
 # Other website files (not camp dashboard)
 admin.css
 admin.html
