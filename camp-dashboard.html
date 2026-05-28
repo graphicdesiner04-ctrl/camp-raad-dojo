@@ -1180,10 +1180,10 @@ let currentUploadData = null;
   participants.forEach(p=>{
     const upd = updates[p.id];
     if(upd){
-      if(!p.age        && upd.age)        { p.age        = upd.age;        changed = true; }
-      if(!p.weight     && upd.weight)     { p.weight     = upd.weight;     changed = true; }
-      if(!p.height     && upd.height)     { p.height     = upd.height;     changed = true; }
-      if(!p.tshirtSize && upd.tshirtSize) { p.tshirtSize = upd.tshirtSize; changed = true; }
+      const fields = ['age','weight','height','tshirtSize','notes','airline','flightNumber',
+        'departureTime','arrivalTime','transitInfo','phuketArrival',
+        'checkIn','checkOut','departureDateTrip','departureTimeTrip','returnDateTrip'];
+      fields.forEach(k=>{ if(!p[k] && upd[k]){ p[k]=upd[k]; changed=true; } });
     }
   });
   if(changed) save('camp_participants', participants);
