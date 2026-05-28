@@ -1165,6 +1165,23 @@ let currentUploadData = null;
   if(changed) save('camp_participants',participants);
 })();
 
+// Migrate physical data from DEFAULT_PARTICIPANTS into localStorage
+(function syncPhysicalData(){
+  const updates = {
+    3: {age:'20', weight:'63', height:'172'}
+  };
+  let changed = false;
+  participants.forEach(p=>{
+    const upd = updates[p.id];
+    if(upd){
+      if(!p.age    && upd.age)    { p.age    = upd.age;    changed = true; }
+      if(!p.weight && upd.weight) { p.weight = upd.weight; changed = true; }
+      if(!p.height && upd.height) { p.height = upd.height; changed = true; }
+    }
+  });
+  if(changed) save('camp_participants', participants);
+})();
+
 // ========== NAVIGATION ==========
 const pageTitles = {
   participants:'المشتركون',hotel:'الفندق والإقامة',flights:'الطيران',
