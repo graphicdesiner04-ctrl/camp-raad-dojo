@@ -1190,6 +1190,16 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
+// Add new participants from DEFAULT_PARTICIPANTS if not already in localStorage
+(function syncNewParticipants(){
+  const existingIds = new Set(participants.map(p=>p.id));
+  let changed = false;
+  DEFAULT_PARTICIPANTS.forEach(p=>{
+    if(!existingIds.has(p.id)){ participants.push(p); changed=true; }
+  });
+  if(changed) save('camp_participants', participants);
+})();
+
 // ========== NAVIGATION ==========
 const pageTitles = {
   participants:'المشتركون',hotel:'الفندق والإقامة',flights:'الطيران',
