@@ -1201,13 +1201,14 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
-// Fix هديب's flight number (EY / EY414 → EY654 / EY414)
-(function fixHudaibFlight(){
+// Fix هديب's flight number and full name
+(function fixHudaibData(){
   let changed = false;
   participants.forEach(p=>{
-    if(p.id===7 && p.flightNumber==='EY / EY414'){
-      p.flightNumber = 'EY654 / EY414';
-      changed = true;
+    if(p.id===7){
+      if(p.flightNumber==='EY / EY414'){ p.flightNumber='EY654 / EY414'; changed=true; }
+      if(p.arabicName==='هديب الرشيد'){ p.arabicName='هديب جمال محمد حمود الهديب'; changed=true; }
+      if(p.englishName==='HUDAIB J M H A ALRUSHAID'){ p.englishName='HUDAIB JAMAL MOHAMMED HAMOUD ALHDAIB'; changed=true; }
     }
   });
   if(changed) save('camp_participants', participants);
