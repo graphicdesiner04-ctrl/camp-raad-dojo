@@ -1201,7 +1201,7 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
-// Fix هديب's flight number and full name
+// Fix هديب's flight number, full name, and payment data
 (function fixHudaibData(){
   let changed = false;
   participants.forEach(p=>{
@@ -1209,6 +1209,10 @@ let currentUploadData = null;
       if(p.flightNumber==='EY / EY414'){ p.flightNumber='EY654 / EY414'; changed=true; }
       if(p.arabicName==='هديب الرشيد'){ p.arabicName='هديب جمال محمد حمود الهديب'; changed=true; }
       if(p.englishName==='HUDAIB J M H A ALRUSHAID'){ p.englishName='HUDAIB JAMAL MOHAMMED HAMOUD ALHDAIB'; changed=true; }
+      if(!p.firstPayment || p.firstPayment===''){
+        p.totalAmount='3390'; p.firstPayment='3390'; p.firstPaymentDate='2026-06-02';
+        p.paymentStatus='مدفوع بالكامل'; p.paymentMethod='Bank Transfer'; changed=true;
+      }
     }
   });
   if(changed) save('camp_participants', participants);
