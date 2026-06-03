@@ -1281,6 +1281,10 @@ let currentUploadData = null;
       if(p.roomType!=='Single'){ p.roomType='Single'; changed=true; }
       if(p.roomOccupants!=='1'){ p.roomOccupants='1'; changed=true; }
     }
+    // تحديث اسم البنك لكل المشتركين
+    if([1,2,4,5,7,8,9].includes(p.id) && p.paymentMethod!=='SNB الأهلي'){
+      p.paymentMethod='SNB الأهلي'; changed=true;
+    }
   });
   if(changed) save('camp_participants', participants);
 })();
