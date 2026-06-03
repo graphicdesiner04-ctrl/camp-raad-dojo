@@ -2304,7 +2304,8 @@ function exportWord(type){
 // ---- Report builders ----
 
 function _buildParticipantsReport(forWord=false){
-  const rows = participants.map((p,i)=>{
+  const activePs = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId);
+  const rows = activePs.map((p,i)=>{
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
     const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
     const statusClass=paid>0&&rem<=0?'badge-s':paid>0?'badge-p':'badge-u';
