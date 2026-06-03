@@ -1253,12 +1253,13 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
-// Mark صالح (id:3) as cancelled, سهيل (id:6) as unconfirmed, fix amounts
+// Move صالح(id:3) and سهيل(id:6) to unconfirmed, fix amounts
 (function syncCancelledAndUnconfirmed(){
   let changed = false;
   participants.forEach(p=>{
-    if(p.id===3 && !p.isCancelled){
-      p.isCancelled=true; p.registrationStatus='ملغى'; p.paymentStatus='ملغى'; changed=true;
+    if(p.id===3){
+      if(p.isCancelled){ p.isCancelled=false; changed=true; }
+      if(!p.isUnconfirmed){ p.isUnconfirmed=true; p.registrationStatus='غير مؤكد'; p.paymentStatus='غير محدد'; changed=true; }
     }
     if(p.id===6 && !p.isUnconfirmed){
       p.isUnconfirmed=true; p.registrationStatus='غير مؤكد'; p.totalAmount='2290'; changed=true;
