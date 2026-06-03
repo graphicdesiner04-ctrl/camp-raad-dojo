@@ -1552,7 +1552,7 @@ function ownerName(f){
 
 function renderFiles(){
   const typeFilter = document.getElementById('filter-file-type').value;
-  const campParticipantIds = new Set(participants.filter(p=>p.campId===currentCampId).map(p=>p.id));
+  const campParticipantIds = new Set(participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed).map(p=>p.id));
   // include camp participants + staff files (no participantId or staffId set)
   let list = uploadedFiles.filter(f=>
     f.staffId ||
