@@ -1359,7 +1359,7 @@ function renderParticipants(){
         <button class="btn btn-upload" onclick="openUploadModal(${p.id})">📎 ملف</button>
         ${cancelled
           ?`<button class="btn btn-uncancel" onclick="toggleCancelParticipant(${p.id})">↩️ استرجاع</button>`
-          :`<button class="btn btn-cancel" onclick="toggleCancelParticipant(${p.id})">🚫 كنسل</button>`}
+          :`<button class="btn btn-cancel" onclick="toggleCancelParticipant(${p.id})">🚫 إلغاء الاشتراك</button>`}
         <button class="btn btn-delete" onclick="deleteParticipant(${p.id})">🗑</button>
       </div></td>
     </tr>`;
