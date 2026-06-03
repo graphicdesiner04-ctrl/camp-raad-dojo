@@ -2120,17 +2120,18 @@ const LOGO = (typeof LOGO_DATA_URL !== 'undefined') ? LOGO_DATA_URL : '';
 const STAMP = (typeof STAMP_DATA_URL !== 'undefined') ? STAMP_DATA_URL : '';
 
 function renderReports(){
-  // Stats
-  const totalPaid = participants.reduce((s,p)=>{
+  // Stats - exclude cancelled and unconfirmed
+  const activePs = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed);
+  const totalPaid = activePs.reduce((s,p)=>{
     return s + (parseFloat(p.firstPayment)||0) + (parseFloat(p.secondPayment)||0);
   },0);
-  const totalRemaining = participants.reduce((s,p)=>{
+  const totalRemaining = activePs.reduce((s,p)=>{
     const paid = (parseFloat(p.firstPayment)||0) + (parseFloat(p.secondPayment)||0);
     const total = parseFloat(p.totalAmount)||0;
     return s + Math.max(0, total - paid);
   },0);
   const el = id => document.getElementById(id);
-  if(el('r-stat-participants')) el('r-stat-participants').textContent = participants.length;
+  if(el('r-stat-participants')) el('r-stat-participants').textContent = activePs.length;
   if(el('r-stat-paid')) el('r-stat-paid').textContent = '$'+totalPaid.toLocaleString();
   if(el('r-stat-remaining')) el('r-stat-remaining').textContent = '$'+totalRemaining.toLocaleString();
   if(el('r-stat-files')) el('r-stat-files').textContent = uploadedFiles.length;
