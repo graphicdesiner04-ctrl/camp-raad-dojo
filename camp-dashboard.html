@@ -1503,7 +1503,7 @@ function deleteParticipant(id){
 
 // ========== HOTEL ==========
 function renderHotel(){
-  const campPs = participants.filter(p=>p.campId===currentCampId);
+  const campPs = participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed);
   const assigned = campPs.filter(p=>p.hotel).length;
   document.getElementById('stat-hotel-assigned').textContent = assigned;
   document.getElementById('stat-hotel-pending').textContent = campPs.length - assigned;
