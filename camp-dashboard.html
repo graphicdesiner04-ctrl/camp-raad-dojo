@@ -1338,8 +1338,8 @@ function renderParticipants(){
     const matchN = !nat||p.nationality===nat;
     return matchQ&&matchN;
   };
-  const activeList    = campPs.filter(p=>!p.isCancelled&&filterFn(p));
-  const cancelledList = campPs.filter(p=> p.isCancelled&&filterFn(p));
+  const activeList    = campPs.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&filterFn(p));
+  const cancelledList = campPs.filter(p=> p.isCancelled&&!p.isUnconfirmed&&filterFn(p));
 
   const rowHTML = (p,i,cancelled)=>{
     const fileCount = uploadedFiles.filter(f=>f.participantId===p.id).length;
