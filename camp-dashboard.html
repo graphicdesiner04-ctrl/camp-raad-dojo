@@ -2421,7 +2421,7 @@ function _buildTshirtsReport(forWord=false){
 
 function _buildPaymentsReport(forWord=false){
   let totalTotal=0,totalPaid=0,totalRem=0;
-  const rows = participants.map((p,i)=>{
+  const rows = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId).map((p,i)=>{
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
     const total=parseFloat(p.totalAmount)||0;
     const rem=Math.max(0,total-paid);
