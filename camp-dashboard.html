@@ -1253,19 +1253,34 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
-// Move صالح(id:3) and سهيل(id:6) to unconfirmed, fix amounts
-(function syncCancelledAndUnconfirmed(){
+// Sync all data fixes: cancel/unconfirmed status, payments, rooms
+(function syncAllFixes(){
   let changed = false;
   participants.forEach(p=>{
+    // صالح → unconfirmed
     if(p.id===3){
       if(p.isCancelled){ p.isCancelled=false; changed=true; }
       if(!p.isUnconfirmed){ p.isUnconfirmed=true; p.registrationStatus='غير مؤكد'; p.paymentStatus='غير محدد'; changed=true; }
     }
+    // سهيل → unconfirmed + 2290
     if(p.id===6 && !p.isUnconfirmed){
       p.isUnconfirmed=true; p.registrationStatus='غير مؤكد'; p.totalAmount='2290'; changed=true;
     }
-    if(p.id===8 && !p.phone){ p.phone='+966 59 588 8141'; changed=true; }
-    if(p.id===9 && p.totalAmount==='2990'){ p.totalAmount='1950'; changed=true; }
+    // ازاد → phone + payment
+    if(p.id===8){
+      if(!p.phone){ p.phone='+966 59 588 8141'; changed=true; }
+      if(!p.firstPayment){ p.totalAmount='3390'; p.firstPayment='3390'; p.firstPaymentDate='2026-06-03'; p.paymentStatus='مدفوع بالكامل'; p.paymentMethod='Bank Transfer'; changed=true; }
+    }
+    // علي → payment
+    if(p.id===9){
+      if(p.totalAmount==='2990'){ p.totalAmount='1950'; changed=true; }
+      if(!p.firstPayment){ p.firstPayment='1011'; p.firstPaymentDate='2026-06-03'; p.paymentStatus='جزئي'; p.paymentMethod='Bank Transfer'; changed=true; }
+    }
+    // كل الغرف فردية - 1 شخص
+    if(!p.isUnconfirmed && !p.isCancelled){
+      if(p.roomType!=='Single'){ p.roomType='Single'; changed=true; }
+      if(p.roomOccupants!=='1'){ p.roomOccupants='1'; changed=true; }
+    }
   });
   if(changed) save('camp_participants', participants);
 })();
