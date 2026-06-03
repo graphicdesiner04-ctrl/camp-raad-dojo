@@ -1717,7 +1717,7 @@ function deleteStaff(id){
 
 // ========== PAYMENTS ==========
 function renderPayments(){
-  const campPs = participants.filter(p=>p.campId===currentCampId);
+  const campPs = participants.filter(p=>p.campId===currentCampId && !p.isCancelled);
   let totalSum=0,paidSum=0;
   const tbody = document.getElementById('payments-tbody');
   tbody.innerHTML = campPs.map((p,i)=>{
