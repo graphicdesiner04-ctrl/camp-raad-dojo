@@ -1216,6 +1216,17 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
+// Mark صالح (id:3) as cancelled in localStorage
+(function syncCancelledStatus(){
+  let changed = false;
+  participants.forEach(p=>{
+    if(p.id===3 && !p.isCancelled){
+      p.isCancelled=true; p.registrationStatus='ملغى'; p.paymentStatus='ملغى'; changed=true;
+    }
+  });
+  if(changed) save('camp_participants', participants);
+})();
+
 // Fix هديب's flight number, full name, and payment data
 (function fixHudaibData(){
   let changed = false;
