@@ -1253,13 +1253,18 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
-// Mark صالح (id:3) as cancelled in localStorage
-(function syncCancelledStatus(){
+// Mark صالح (id:3) as cancelled, سهيل (id:6) as unconfirmed, fix amounts
+(function syncCancelledAndUnconfirmed(){
   let changed = false;
   participants.forEach(p=>{
     if(p.id===3 && !p.isCancelled){
       p.isCancelled=true; p.registrationStatus='ملغى'; p.paymentStatus='ملغى'; changed=true;
     }
+    if(p.id===6 && !p.isUnconfirmed){
+      p.isUnconfirmed=true; p.registrationStatus='غير مؤكد'; p.totalAmount='2290'; changed=true;
+    }
+    if(p.id===8 && !p.phone){ p.phone='+966 59 588 8141'; changed=true; }
+    if(p.id===9 && p.totalAmount==='2990'){ p.totalAmount='1950'; changed=true; }
   });
   if(changed) save('camp_participants', participants);
 })();
