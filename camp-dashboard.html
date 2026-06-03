@@ -2376,11 +2376,12 @@ function _buildFlightsReport(forWord=false){
 }
 
 function _buildTshirtsReport(forWord=false){
+  const activePs = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId);
   const sizes = {};
-  participants.forEach(p=>{if(p.tshirtSize){sizes[p.tshirtSize]=(sizes[p.tshirtSize]||0)+1;}});
+  activePs.forEach(p=>{if(p.tshirtSize){sizes[p.tshirtSize]=(sizes[p.tshirtSize]||0)+1;}});
   const summaryRows = Object.entries(sizes).map(([sz,cnt])=>`<tr><td>${sz}</td><td style="text-align:center">${cnt}</td></tr>`).join('') || '<tr><td colspan="2" style="text-align:center;color:#94a3b8">لا توجد بيانات</td></tr>';
 
-  const rows = participants.map((p,i)=>`<tr>
+  const rows = activePs.map((p,i)=>`<tr>
     <td style="text-align:center">${i+1}</td>
     <td><b>${p.arabicName}</b></td>
     <td>${p.nationality||'—'}</td>
