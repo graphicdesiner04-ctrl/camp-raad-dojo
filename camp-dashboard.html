@@ -2475,7 +2475,7 @@ function _buildPaymentsReport(forWord=false){
 }
 
 function _buildHotelReport(forWord=false){
-  const rows = participants.map((p,i)=>`<tr>
+  const rows = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId).map((p,i)=>`<tr>
     <td style="text-align:center">${i+1}</td>
     <td><b>${p.arabicName}</b></td>
     <td>${p.nationality||'—'}</td>
