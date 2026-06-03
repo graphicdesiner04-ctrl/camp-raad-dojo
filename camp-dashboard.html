@@ -1388,13 +1388,14 @@ function renderParticipants(){
 function toggleCancelParticipant(id){
   const p = participants.find(x=>x.id===id);
   if(!p) return;
-  const action = p.isCancelled?'استرجاع':'كنسل';
-  if(!confirm(`هل تريد ${action} هذا المشترك؟`)) return;
+  const action = p.isCancelled?'استرجاع الاشتراك':'إلغاء الاشتراك';
+  if(!confirm(`هل تريد ${action} لـ ${p.arabicName}؟`)) return;
   p.isCancelled = !p.isCancelled;
   if(p.isCancelled){ p.registrationStatus='ملغى'; p.paymentStatus='ملغى'; }
+  else { p.registrationStatus='مسجل'; }
   save('camp_participants',participants);
   renderParticipants();
-  toast(p.isCancelled?'تم كنسل المشترك':'تم استرجاع المشترك',p.isCancelled?'warning':'success');
+  toast(p.isCancelled?'تم إلغاء اشتراك المشترك':'تم استرجاع المشترك',p.isCancelled?'warning':'success');
 }
 
 function viewParticipant(id){
