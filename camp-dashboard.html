@@ -656,6 +656,34 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
+<!-- ======== PAGE: UNCONFIRMED ======== -->
+<div class="page" id="page-unconfirmed">
+  <div class="stats-grid">
+    <div class="stat-card teal-card">
+      <div class="stat-icon" style="background:rgba(13,148,136,.1);color:#0d9488">⏳</div>
+      <div><div class="stat-value" id="stat-unconfirmed-count">0</div><div class="stat-label">في انتظار التأكيد</div></div>
+    </div>
+    <div class="stat-card gold-card">
+      <div class="stat-icon gold">💰</div>
+      <div><div class="stat-value" id="stat-unconfirmed-amount">—</div><div class="stat-label">إجمالي المبالغ المنتظرة</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">⏳ الحجوزات غير المؤكدة</div>
+      <small style="color:var(--muted);font-size:12px">هؤلاء المشتركون لم يؤكدوا حجزهم بعد — لا يظهرون في أي تقارير أو قوائم أخرى</small>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>الاسم</th><th>الجنسية</th><th>الجواز</th><th>الفترة</th><th>التكلفة</th><th>الهاتف</th><th>الإجراءات</th></tr>
+        </thead>
+        <tbody id="unconfirmed-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- ======== PAGE: REPORTS ======== -->
 <div class="page" id="page-reports">
   <div class="stats-grid" style="margin-bottom:24px">
