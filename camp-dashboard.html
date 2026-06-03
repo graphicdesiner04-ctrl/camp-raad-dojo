@@ -2328,19 +2328,9 @@ function _buildParticipantsReport(forWord=false){
     </tr>`;
   }).join('');
 
-  const staffRows = staff.length ? staff.map((s,i)=>`<tr>
-    <td style="text-align:center">${participants.length+i+1}</td>
-    <td><b>${s.name}</b></td>
-    <td colspan="2" style="color:#6b7280">${s.role||'مشرف'}</td>
-    <td dir="ltr">${s.phone||'—'}</td>
-    <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
-    <td><span class="badge badge-s">فريق</span></td>
-    <td style="font-size:11px">${s.tasks||'—'}</td>
-  </tr>`).join('') : '';
-
   const full = _reportPage() + (forWord?'':_printBtn()) + _reportHeader('بيانات المشتركين','Participants Data') + `
   <div class="section">
-    <div class="section-title">بيانات المشتركين – كامب تايلاند 2025</div>
+    <div class="section-title">بيانات المشتركين – كامب تايلاند 2026 (${activePs.length} مشترك)</div>
     <div style="overflow-x:auto">
     <table>
       <thead><tr>
@@ -2348,7 +2338,7 @@ function _buildParticipantsReport(forWord=false){
         <th>الهاتف</th><th>رقم الجواز</th><th>العمر</th><th>الوزن</th><th>الطول</th>
         <th>مقاس T</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>ملاحظات</th>
       </tr></thead>
-      <tbody>${rows}${staffRows}</tbody>
+      <tbody>${rows}</tbody>
     </table>
     </div>
   </div>
