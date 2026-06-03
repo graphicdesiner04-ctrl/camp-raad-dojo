@@ -1522,7 +1522,7 @@ function renderHotel(){
 
 // ========== FLIGHTS ==========
 function renderFlights(){
-  const campPs = participants.filter(p=>p.campId===currentCampId);
+  const campPs = participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed);
   const set = campPs.filter(p=>p.airline||p.flightNumber).length;
   document.getElementById('stat-flights-set').textContent = set;
   document.getElementById('stat-flights-pending').textContent = campPs.length - set;
