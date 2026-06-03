@@ -1368,7 +1368,7 @@ function renderParticipants(){
   let html = activeList.map((p,i)=>rowHTML(p,i,false)).join('');
   if(!html) html = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">👥</div><p>لا يوجد مشتركون نشطون</p></div></td></tr>`;
   if(cancelledList.length){
-    html += `<tr class="cancelled-divider"><td colspan="9">🚫 المشتركون المكنسلون (${cancelledList.length}) — لا تُحسب في الإحصائيات</td></tr>`;
+    html += `<tr class="cancelled-divider"><td colspan="9">🚫 ملغو الاشتراك (${cancelledList.length}) — لا تُحسب في الإحصائيات</td></tr>`;
     html += cancelledList.map((p,i)=>rowHTML(p,i,true)).join('');
   }
   document.getElementById('participants-tbody').innerHTML = html;
