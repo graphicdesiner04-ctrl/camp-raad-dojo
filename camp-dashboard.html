@@ -1793,7 +1793,11 @@ function renderPayments(){
         <span class="badge badge-${statusBadge}">${p.paymentStatus}</span>
         ${total>0?`<div class="progress-bar" style="margin-top:6px;width:80px"><div class="progress-fill" style="width:${pct}%"></div></div>`:''}
       </td>
-      <td>${receipts.length?`<span class="badge badge-success">📎 ${receipts.length}</span>`:`<button class="btn btn-upload" onclick="openUploadModal(${p.id},'receipt')">📎 رفع</button>`}</td>
+      <td>
+        ${receipts.length?`<span class="badge badge-success">📎 ${receipts.length}</span> `:''}
+        ${(()=>{const inv=uploadedFiles.find(f=>f.participantId===p.id&&f.fileType==='invoice');return inv?`<button class="btn btn-view" style="font-size:11px" onclick="viewFile(${inv.id})">🧾 فاتورة</button>`:'';})()}
+        ${!receipts.length?`<button class="btn btn-upload" style="font-size:11px" onclick="openUploadModal(${p.id},'receipt')">📎 إيصال</button>`:''}
+      </td>
       <td><div class="action-btns">
         <button class="btn btn-edit" onclick="openPaymentModal(${p.id})">✏️ تعديل</button>
         <button class="btn btn-view" onclick="generateInvoice(${p.id})" style="background:#fdf2f8;color:#be185d">🧾 فاتورة</button>
