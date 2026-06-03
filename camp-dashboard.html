@@ -1284,17 +1284,19 @@ function render(page){
 function renderParticipants(){
   const q = document.getElementById('search-participants').value.toLowerCase();
   const nat = document.getElementById('filter-nationality').value;
-  let list = participants.filter(p=>{
-    const matchCamp = p.campId === currentCampId;
-    const matchQ = !q || p.arabicName.includes(q) || p.englishName.toLowerCase().includes(q) || p.passportNumber.toLowerCase().includes(q);
-    const matchN = !nat || p.nationality === nat;
-    return matchCamp && matchQ && matchN;
-  });
-  const tbody = document.getElementById('participants-tbody');
-  tbody.innerHTML = list.map((p,i)=>{
+  const campPs = participants.filter(p=>p.campId===currentCampId);
+  const filterFn = p=>{
+    const matchQ = !q||p.arabicName.includes(q)||p.englishName.toLowerCase().includes(q)||p.passportNumber.toLowerCase().includes(q);
+    const matchN = !nat||p.nationality===nat;
+    return matchQ&&matchN;
+  };
+  const activeList    = campPs.filter(p=>!p.isCancelled&&filterFn(p));
+  const cancelledList = campPs.filter(p=> p.isCancelled&&filterFn(p));
+
+  const rowHTML = (p,i,cancelled)=>{
     const fileCount = uploadedFiles.filter(f=>f.participantId===p.id).length;
     const statusBadge = p.registrationStatus==='مسجل'?'success':p.registrationStatus==='قيد المراجعة'?'warning':'danger';
-    return `<tr>
+    return `<tr${cancelled?' class="cancelled-row"':''}>
       <td>${i+1}</td>
       <td><div class="name-cell"><span class="name-ar">${p.arabicName}</span><span class="name-en">${p.englishName}</span></div></td>
       <td>${flagEmoji(p.countryCode)} ${p.nationality}</td>
@@ -1307,17 +1309,41 @@ function renderParticipants(){
         <button class="btn btn-view" onclick="viewParticipant(${p.id})">👁 عرض</button>
         <button class="btn btn-edit" onclick="openParticipantModal(${p.id})">✏️ تعديل</button>
         <button class="btn btn-upload" onclick="openUploadModal(${p.id})">📎 ملف</button>
+        ${cancelled
+          ?`<button class="btn btn-uncancel" onclick="toggleCancelParticipant(${p.id})">↩️ استرجاع</button>`
+          :`<button class="btn btn-cancel" onclick="toggleCancelParticipant(${p.id})">🚫 كنسل</button>`}
         <button class="btn btn-delete" onclick="deleteParticipant(${p.id})">🗑</button>
       </div></td>
     </tr>`;
-  }).join('') || `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">👥</div><p>لا يوجد مشتركون</p></div></td></tr>`;
+  };
 
-  const countries = [...new Set(participants.map(p=>p.nationality))].length;
-  document.getElementById('stat-total').textContent = participants.length;
-  document.getElementById('stat-registered').textContent = participants.filter(p=>p.registrationStatus==='مسجل').length;
+  let html = activeList.map((p,i)=>rowHTML(p,i,false)).join('');
+  if(!html) html = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">👥</div><p>لا يوجد مشتركون نشطون</p></div></td></tr>`;
+  if(cancelledList.length){
+    html += `<tr class="cancelled-divider"><td colspan="9">🚫 المشتركون المكنسلون (${cancelledList.length}) — لا تُحسب في الإحصائيات</td></tr>`;
+    html += cancelledList.map((p,i)=>rowHTML(p,i,true)).join('');
+  }
+  document.getElementById('participants-tbody').innerHTML = html;
+
+  const countries = [...new Set(activeList.map(p=>p.nationality))].length;
+  document.getElementById('stat-total').textContent = activeList.length;
+  document.getElementById('stat-registered').textContent = activeList.filter(p=>p.registrationStatus==='مسجل').length;
   document.getElementById('stat-countries').textContent = countries;
   document.getElementById('stat-files').textContent = uploadedFiles.length;
-  document.getElementById('badge-participants').textContent = participants.length;
+  document.getElementById('stat-cancelled').textContent = cancelledList.length;
+  document.getElementById('badge-participants').textContent = activeList.length;
+}
+
+function toggleCancelParticipant(id){
+  const p = participants.find(x=>x.id===id);
+  if(!p) return;
+  const action = p.isCancelled?'استرجاع':'كنسل';
+  if(!confirm(`هل تريد ${action} هذا المشترك؟`)) return;
+  p.isCancelled = !p.isCancelled;
+  if(p.isCancelled){ p.registrationStatus='ملغى'; p.paymentStatus='ملغى'; }
+  save('camp_participants',participants);
+  renderParticipants();
+  toast(p.isCancelled?'تم كنسل المشترك':'تم استرجاع المشترك',p.isCancelled?'warning':'success');
 }
 
 function viewParticipant(id){
