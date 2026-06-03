@@ -1399,6 +1399,45 @@ function toggleCancelParticipant(id){
   toast(p.isCancelled?'تم إلغاء اشتراك المشترك':'تم استرجاع المشترك',p.isCancelled?'warning':'success');
 }
 
+// ========== UNCONFIRMED BOOKINGS ==========
+function renderUnconfirmed(){
+  const list = participants.filter(p=>p.campId===currentCampId&&p.isUnconfirmed);
+  document.getElementById('stat-unconfirmed-count').textContent = list.length;
+  const totalAmt = list.reduce((s,p)=>s+(parseFloat(p.totalAmount)||0),0);
+  document.getElementById('stat-unconfirmed-amount').textContent = totalAmt?'$'+totalAmt.toLocaleString('en-US'):'—';
+  const tbody = document.getElementById('unconfirmed-tbody');
+  tbody.innerHTML = list.map((p,i)=>{
+    const fileCount = uploadedFiles.filter(f=>f.participantId===p.id).length;
+    return `<tr class="unconfirmed-row">
+      <td>${i+1}</td>
+      <td><div class="name-cell"><span class="name-ar">${p.arabicName}</span><span class="name-en">${p.englishName}</span></div></td>
+      <td>${flagEmoji(p.countryCode)} ${p.nationality}</td>
+      <td><code style="background:#fef9c3;padding:2px 7px;border-radius:4px;font-size:12px">${p.passportNumber}</code></td>
+      <td><small>${p.checkIn||'—'} → ${p.checkOut||'—'}</small></td>
+      <td><strong style="color:var(--primary)">$${(parseFloat(p.totalAmount)||0).toLocaleString('en-US')}</strong></td>
+      <td dir="ltr">${p.phone||'<span style="color:#cbd5e1">—</span>'}</td>
+      <td><div class="action-btns">
+        <button class="btn btn-view" onclick="viewParticipant(${p.id})">👁 عرض</button>
+        <button class="btn btn-edit" onclick="openParticipantModal(${p.id})">✏️ تعديل</button>
+        ${fileCount?`<span class="badge badge-success" style="font-size:11px">📎 ${fileCount}</span>`:''}
+        <button class="btn btn-confirm" onclick="confirmBooking(${p.id})">✅ تأكيد الحجز</button>
+      </div></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">⏳</div><p>لا توجد حجوزات غير مؤكدة</p></div></td></tr>`;
+}
+
+function confirmBooking(id){
+  const p = participants.find(x=>x.id===id);
+  if(!p) return;
+  if(!confirm(`تأكيد حجز ${p.arabicName}؟\nسيتم نقله إلى قائمة المشتركين المؤكدين.`)) return;
+  p.isUnconfirmed = false;
+  p.registrationStatus = 'مسجل';
+  save('camp_participants',participants);
+  renderUnconfirmed();
+  renderParticipants();
+  toast(`تم تأكيد حجز ${p.arabicName} ونقله للمشتركين`, 'success');
+}
+
 function viewParticipant(id){
   const p = participants.find(x=>x.id===id);
   if(!p) return;
