@@ -1285,6 +1285,11 @@ let currentUploadData = null;
     if([1,2,4,5,7,8,9].includes(p.id) && p.paymentMethod!=='SNB الأهلي'){
       p.paymentMethod='SNB الأهلي'; changed=true;
     }
+    // عبدالرحمن - القسط الثاني $1,000
+    if(p.id===5 && !p.secondPayment){
+      p.secondPayment='1000'; p.secondPaymentDate='2026-06-03';
+      p.paymentStatus='مدفوع بالكامل'; changed=true;
+    }
   });
   if(changed) save('camp_participants', participants);
 })();
