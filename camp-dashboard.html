@@ -305,26 +305,99 @@ tr:last-child td{border-bottom:none}
 .logout-btn:hover{background:rgba(196,30,58,.25);color:#fff;border-color:rgba(196,30,58,.5)}
 
 /* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .form-grid.cols-3{grid-template-columns:1fr 1fr}
+}
 @media(max-width:768px){
-  #sidebar{width:210px}
-  #content{margin-right:210px}
+  #sidebar{width:220px}
+  #content{margin-right:220px}
   .form-grid{grid-template-columns:1fr}
   .payment-row{grid-template-columns:1fr 1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
   .gallery-strip{grid-template-columns:repeat(2,1fr)}
   .hero-slider{height:170px}
+  table{font-size:12.5px}
+  th,td{padding:10px 10px}
 }
-@media(max-width:560px){
-  #sidebar{transform:translateX(100%);box-shadow:var(--shadow-lg)}
+.hamburger{display:none;background:none;border:none;font-size:24px;cursor:pointer;padding:6px 8px;color:var(--text);border-radius:8px;transition:.2s;line-height:1}
+.hamburger:hover{background:var(--bg)}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;backdrop-filter:blur(2px)}
+.sidebar-overlay.show{display:block}
+@media(max-width:600px){
+  /* layout */
+  .hamburger{display:flex;align-items:center;justify-content:center}
+  #sidebar{transform:translateX(100%);box-shadow:var(--shadow-lg);z-index:200;width:270px;transition:transform .28s cubic-bezier(.4,0,.2,1)}
   #sidebar.open{transform:translateX(0)}
-  #content{margin-right:0}
-  .topbar-title{font-size:15px}
-  .page{padding:16px}
-  .gallery-strip{grid-template-columns:repeat(2,1fr)}
-  .hero-slider{height:140px}
+  #content{margin-right:0 !important}
+  /* topbar */
+  .topbar{padding:0 14px;height:54px}
+  .topbar-title{font-size:14px;font-weight:700}
+  .topbar-btn{padding:7px 12px;font-size:12px}
+  .logout-btn{padding:5px 8px;font-size:11px}
+  /* page */
+  .page{padding:12px}
+  /* hero */
+  .hero-slider{height:130px;margin-bottom:16px;border-radius:12px}
+  .hero-title{font-size:16px}
+  .hero-sub{font-size:11px}
+  /* stats */
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .stat-card{padding:14px 12px;gap:10px}
+  .stat-icon{width:40px;height:40px;font-size:18px;border-radius:10px;flex-shrink:0}
+  .stat-value{font-size:22px}
+  .stat-label{font-size:11px}
+  .stat-trend{font-size:10px}
+  /* gallery */
+  .gallery-strip{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+  .gallery-thumb{height:80px}
+  /* card */
+  .card-header{padding:12px 14px}
+  .card-title{font-size:13.5px}
+  .card-body{padding:14px}
+  /* search */
+  .search-bar{flex-direction:column;gap:8px;margin-bottom:12px}
+  .search-input{min-width:unset;width:100%}
+  .filter-select{width:100%}
+  /* table */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 var(--radius) var(--radius)}
+  table{font-size:12px;min-width:580px}
+  th,td{padding:9px 10px;white-space:nowrap}
+  .name-ar{font-size:12.5px}
+  .name-en{font-size:10.5px}
+  /* action buttons in table — stack them smaller */
+  .action-btns{flex-wrap:wrap;gap:4px}
+  .btn{font-size:11px;padding:5px 8px}
+  .btn-cancel{font-size:10px;padding:4px 7px}
+  /* modal */
+  .modal-overlay{padding:0;align-items:flex-end}
+  .modal{border-radius:18px 18px 0 0;max-height:92vh;max-width:100%;width:100%}
+  .modal-header{padding:16px 18px}
+  .modal-body{padding:16px 18px}
+  .modal-footer{padding:12px 18px}
+  .form-grid{grid-template-columns:1fr;gap:12px}
+  /* flight card */
+  .flight-info{grid-template-columns:1fr 1fr}
+  .flight-route{font-size:15px}
+  /* staff grid */
+  .staff-grid{grid-template-columns:1fr}
+  /* file item */
+  .file-item{flex-wrap:wrap;gap:8px}
+  .file-info{min-width:0;flex:1 1 60%}
+  .file-actions{flex-shrink:0}
+  /* detail grid in participant modal */
+  .detail-grid{grid-template-columns:1fr}
+  /* payment row */
+  .payment-row{grid-template-columns:1fr;gap:8px}
+  /* progress bar */
+  .progress-bar{margin-top:3px}
+  /* badge */
+  .badge{font-size:10.5px;padding:2px 8px}
+  /* bottom toast */
+  #toast{bottom:16px;left:12px;right:12px}
+  .toast-item{font-size:12px;padding:10px 14px}
+  /* unconfirmed */
+  .unconfirmed-section-title{font-size:12px;padding:8px 12px}
 }
-.hamburger{display:none;background:none;border:none;font-size:22px;cursor:pointer;padding:4px}
-@media(max-width:560px){.hamburger{display:block}}
 </style>
 </head>
 <body>
