@@ -1344,42 +1344,48 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
-// Sync all data fixes: cancel/unconfirmed status, payments, rooms
+// Sync all data fixes — UNCONDITIONAL: always force correct values regardless of what's stored
 (function syncAllFixes(){
   let changed = false;
   participants.forEach(p=>{
-    // صالح → unconfirmed
+    // صالح (id:3) → always unconfirmed, never cancelled
     if(p.id===3){
-      if(p.isCancelled){ p.isCancelled=false; changed=true; }
-      if(!p.isUnconfirmed){ p.isUnconfirmed=true; p.registrationStatus='غير مؤكد'; p.paymentStatus='غير محدد'; changed=true; }
+      if(p.isCancelled!==false){ p.isCancelled=false; changed=true; }
+      if(!p.isUnconfirmed){ p.isUnconfirmed=true; changed=true; }
+      if(p.registrationStatus!=='غير مؤكد'){ p.registrationStatus='غير مؤكد'; changed=true; }
     }
-    // سهيل → unconfirmed + 2290
-    if(p.id===6 && !p.isUnconfirmed){
-      p.isUnconfirmed=true; p.registrationStatus='غير مؤكد'; p.totalAmount='2290'; changed=true;
+    // سهيل (id:6) → always unconfirmed + 2290
+    if(p.id===6){
+      if(!p.isUnconfirmed){ p.isUnconfirmed=true; changed=true; }
+      if(p.registrationStatus!=='غير مؤكد'){ p.registrationStatus='غير مؤكد'; changed=true; }
+      if(p.totalAmount!=='2290'){ p.totalAmount='2290'; changed=true; }
     }
-    // ازاد → phone + payment
+    // ازاد (id:8) → phone + full payment $3390
     if(p.id===8){
-      if(!p.phone){ p.phone='+966 59 588 8141'; changed=true; }
-      if(!p.firstPayment){ p.totalAmount='3390'; p.firstPayment='3390'; p.firstPaymentDate='2026-06-03'; p.paymentStatus='مدفوع بالكامل'; p.paymentMethod='Bank Transfer'; changed=true; }
+      if(p.phone!=='+966 59 588 8141'){ p.phone='+966 59 588 8141'; changed=true; }
+      if(p.totalAmount!=='3390'){ p.totalAmount='3390'; changed=true; }
+      if(p.firstPayment!=='3390'){ p.firstPayment='3390'; p.firstPaymentDate='2026-06-03'; changed=true; }
+      if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
     }
-    // علي → payment
+    // علي (id:9) → total $1950, partial $1011
     if(p.id===9){
-      if(p.totalAmount==='2990'){ p.totalAmount='1950'; changed=true; }
-      if(!p.firstPayment){ p.firstPayment='1011'; p.firstPaymentDate='2026-06-03'; p.paymentStatus='جزئي'; p.paymentMethod='Bank Transfer'; changed=true; }
+      if(p.totalAmount!=='1950'){ p.totalAmount='1950'; changed=true; }
+      if(p.firstPayment!=='1011'){ p.firstPayment='1011'; p.firstPaymentDate='2026-06-03'; changed=true; }
+      if(p.paymentStatus!=='جزئي'){ p.paymentStatus='جزئي'; changed=true; }
     }
-    // كل الغرف فردية - 1 شخص
+    // عبدالرحمن (id:5) → second payment $1000, fully paid
+    if(p.id===5){
+      if(p.secondPayment!=='1000'){ p.secondPayment='1000'; p.secondPaymentDate='2026-06-03'; changed=true; }
+      if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
+    }
+    // كل الغرف المؤكدة: Single, 1 شخص
     if(!p.isUnconfirmed && !p.isCancelled){
       if(p.roomType!=='Single'){ p.roomType='Single'; changed=true; }
       if(p.roomOccupants!=='1'){ p.roomOccupants='1'; changed=true; }
     }
-    // تحديث اسم البنك لكل المشتركين
-    if([1,2,4,5,7,8,9].includes(p.id) && p.paymentMethod!=='SNB الأهلي'){
-      p.paymentMethod='SNB الأهلي'; changed=true;
-    }
-    // عبدالرحمن - القسط الثاني $1,000
-    if(p.id===5 && !p.secondPayment){
-      p.secondPayment='1000'; p.secondPaymentDate='2026-06-03';
-      p.paymentStatus='مدفوع بالكامل'; changed=true;
+    // SNB الأهلي لكل المشتركين السبعة المؤكدين
+    if([1,2,4,5,7,8,9].includes(p.id)){
+      if(p.paymentMethod!=='SNB الأهلي'){ p.paymentMethod='SNB الأهلي'; changed=true; }
     }
   });
   if(changed) save('camp_participants', participants);
