@@ -1753,7 +1753,7 @@ function renderFiles(){
   // Group tickets by owner key
   const ticketGroups = {};
   tickets.forEach(f=>{
-    const key = f.staffId ? 'staff_'+f.staffId : 'p_'+(f.participantId||'0');
+    const key = 'p_'+(f.participantId||'0');
     if(!ticketGroups[key]) ticketGroups[key] = [];
     ticketGroups[key].push(f);
   });
