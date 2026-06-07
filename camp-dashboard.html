@@ -1408,6 +1408,19 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
+// ========== SIDEBAR MOBILE ==========
+function toggleSidebar(){
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  const isOpen = sb.classList.toggle('open');
+  if(ov){ ov.classList.toggle('show', isOpen); }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  const ov = document.getElementById('sidebar-overlay');
+  if(ov) ov.classList.remove('show');
+}
+
 // ========== NAVIGATION ==========
 const pageTitles = {
   participants:'المشتركون',hotel:'الفندق والإقامة',flights:'الطيران',
