@@ -1732,12 +1732,12 @@ function ownerName(f){
 
 function renderFiles(){
   const typeFilter = document.getElementById('filter-file-type').value;
-  const campParticipantIds = new Set(participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed).map(p=>p.id));
-  // include camp participants + staff files (no participantId or staffId set)
+  // فقط المشتركون المؤكدون (7 أشخاص) — لا مشرفون ولا غير مؤكدين ولا ملغيين
+  const campParticipantIds = new Set(
+    participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed).map(p=>p.id)
+  );
   let list = uploadedFiles.filter(f=>
-    f.staffId ||
-    !f.participantId ||
-    campParticipantIds.has(f.participantId)
+    f.participantId && campParticipantIds.has(f.participantId)
   );
   if(typeFilter) list = list.filter(f=>f.fileType===typeFilter);
   const grid = document.getElementById('files-grid');
