@@ -1444,7 +1444,7 @@ function showPage(page){
   addBtn.textContent = addBtnLabels[page] || '+ إضافة';
   addBtn.style.display = addBtnLabels[page] === '' ? 'none' : 'flex';
   render(page);
-  document.getElementById('sidebar').classList.remove('open');
+  closeSidebar();
 }
 
 function handleAddBtn(){
