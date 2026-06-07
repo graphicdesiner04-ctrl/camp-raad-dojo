@@ -1270,6 +1270,20 @@ const DEFAULT_STAFF = [
 function load(key,def){try{const d=localStorage.getItem(key);return d?JSON.parse(d):def}catch{return def}}
 function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
 
+// ====== DATA VERSION — bump this string any time DEFAULT_PARTICIPANTS changes ======
+// This forces mobile/cached browsers to reload fresh data from DEFAULT_PARTICIPANTS
+const DATA_VERSION = '20260607-v4';
+(function forceCacheBust(){
+  const stored = localStorage.getItem('data_version');
+  if(stored !== DATA_VERSION){
+    // Clear participant data so it re-loads from DEFAULT_PARTICIPANTS below
+    localStorage.removeItem('camp_participants');
+    localStorage.removeItem('camp_staff');
+    localStorage.setItem('data_version', DATA_VERSION);
+    console.log('[CampDashboard] Data version updated to', DATA_VERSION, '— refreshing participant data');
+  }
+})();
+
 let participants = load('camp_participants', DEFAULT_PARTICIPANTS);
 // Auto-compute ages from DOB for any participant missing age
 (function syncAges(){
