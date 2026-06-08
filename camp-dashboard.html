@@ -3022,10 +3022,8 @@ function deleteCamp(id){
   toast('تم حذف المعسكر','success');
 }
 
-// Init (only runs if authenticated — login screen hides app otherwise)
-initCampSelector();
-renderParticipants();
-// Gallery inits after login or if already authenticated
+// Init: checkAuth handles everything — renders data only when user is authenticated
+checkAuth();
 if (sessionStorage.getItem(AUTH_KEY) === btoa(AUTH_USER + ':' + AUTH_PASS)) {
   initGallery();
 }
