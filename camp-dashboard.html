@@ -1145,13 +1145,11 @@ const AUTH_PASS = 'Raad2060';
 const AUTH_KEY  = 'crd_auth_token';
 
 function checkAuth() {
+  // Only handles visibility — rendering happens at end of script (after all migrations)
   const token = sessionStorage.getItem(AUTH_KEY);
   if (token === btoa(AUTH_USER + ':' + AUTH_PASS)) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.visibility = 'visible';
-    // Render all pages with correct data immediately
-    initCampSelector();
-    renderParticipants();
   } else {
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.visibility = 'hidden';
@@ -1163,6 +1161,10 @@ function checkAuth() {
       }
     }, 100);
   }
+}
+
+function isAuthenticated(){
+  return sessionStorage.getItem(AUTH_KEY) === btoa(AUTH_USER + ':' + AUTH_PASS);
 }
 
 function doLogin() {
