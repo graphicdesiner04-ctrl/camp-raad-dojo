@@ -1174,6 +1174,8 @@ function doLogin() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.visibility = 'visible';
     errEl.classList.remove('show');
+    initCampSelector();
+    renderParticipants();
     initGallery();
   } else {
     errEl.classList.add('show');
