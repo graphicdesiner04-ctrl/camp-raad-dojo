@@ -1148,6 +1148,10 @@ function checkAuth() {
   const token = sessionStorage.getItem(AUTH_KEY);
   if (token === btoa(AUTH_USER + ':' + AUTH_PASS)) {
     document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.visibility = 'visible';
+    // Render all pages with correct data immediately
+    initCampSelector();
+    renderParticipants();
   } else {
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.visibility = 'hidden';
