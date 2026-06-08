@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<!-- FORCE FRESH LOAD: redirect to add ?cv=4 so browser fetches new HTML bypassing cache -->
+<script>
+(function(){
+  var CV = '4';
+  var m = location.search.match(/[?&]cv=([^&]*)/);
+  if(!m || m[1] !== CV){
+    var sep = location.search ? '&' : '?';
+    location.replace(location.pathname + '?cv=' + CV);
+  }
+})();
+</script>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
