@@ -1365,12 +1365,6 @@ let currentUploadData = null;
       if(!p.isUnconfirmed){ p.isUnconfirmed=true; changed=true; }
       if(p.registrationStatus!=='غير مؤكد'){ p.registrationStatus='غير مؤكد'; changed=true; }
     }
-    // سهيل (id:6) → always unconfirmed + 2290
-    if(p.id===6){
-      if(!p.isUnconfirmed){ p.isUnconfirmed=true; changed=true; }
-      if(p.registrationStatus!=='غير مؤكد'){ p.registrationStatus='غير مؤكد'; changed=true; }
-      if(p.totalAmount!=='2290'){ p.totalAmount='2290'; changed=true; }
-    }
     // ازاد (id:8) → phone + full payment $3390
     if(p.id===8){
       if(p.phone!=='+966 59 588 8141'){ p.phone='+966 59 588 8141'; changed=true; }
