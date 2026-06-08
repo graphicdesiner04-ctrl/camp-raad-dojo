@@ -3022,9 +3022,12 @@ function deleteCamp(id){
   toast('تم حذف المعسكر','success');
 }
 
-// Init: checkAuth handles everything — renders data only when user is authenticated
+// ===== FINAL INIT — runs AFTER all migrations/IIFEs above =====
+// This is the only place that renders data, so it always uses fully-migrated data
 checkAuth();
-if (sessionStorage.getItem(AUTH_KEY) === btoa(AUTH_USER + ':' + AUTH_PASS)) {
+if(isAuthenticated()){
+  initCampSelector();
+  renderParticipants();
   initGallery();
 }
 </script>
