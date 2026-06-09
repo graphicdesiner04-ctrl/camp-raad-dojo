@@ -1392,6 +1392,7 @@ let currentUploadData = null;
     }
     // مشاري (id:10) → full payment $3390 — SAB الأول 09/06/2026
     if(p.id===10){
+      if(p.phone!=='+966 50 386 2077'){ p.phone='+966 50 386 2077'; changed=true; }
       if(p.totalAmount!=='3390'){ p.totalAmount='3390'; changed=true; }
       if(p.firstPayment!=='3390'){ p.firstPayment='3390'; p.firstPaymentDate='2026-06-09'; changed=true; }
       if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
