@@ -853,9 +853,9 @@ tr:last-child td{border-bottom:none}
     </div></div>
 
     <!-- Report 8 -->
-    <div class="card"><div class="card-header"><div class="card-title">💳 فواتير المبالغ المتبقية</div></div>
+    <div class="card"><div class="card-header"><div class="card-title">🧾 إيصالات استلام المبالغ المتبقية</div></div>
     <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
-      <p style="font-size:12px;color:var(--muted)">فاتورة بالمبلغ المتبقي لكل مشترك لم يسدد كامل الاشتراك — جاهزة للطباعة عند التحصيل</p>
+      <p style="font-size:12px;color:var(--muted)">إيصال رسمي يثبت استلام المبلغ المتبقي من المشترك وأن حسابه بات مسدداً بالكامل</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-primary" onclick="chooseReportLang('remaining-invoices')">🖨️ PDF / طباعة</button>
         <button class="btn btn-view" onclick="chooseReportLang('remaining-invoices','word')">📝 Word</button>
@@ -2935,8 +2935,10 @@ function _buildReceipts(forWord=false, lang='ar'){
 }
 
 // ========== UTILS ==========
-function _buildRemainingInvoices(forWord=false, lang='ar'){
-  const isAr = (lang==='ar');
+function _buildRemainingInvoices(forWord=false, lang){
+  lang=lang||_reportLang||'ar';
+  const isAr=(lang==='ar');
+  const dir=isAr?'rtl':'ltr';
   const pending = participants.filter(p=>{
     if(p.isCancelled||p.isUnconfirmed||p.campId!==currentCampId) return false;
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
@@ -2950,63 +2952,83 @@ function _buildRemainingInvoices(forWord=false, lang='ar'){
   }
 
   const dateStr = new Date().toLocaleDateString(isAr?'ar-SA':'en-GB',{day:'2-digit',month:'long',year:'numeric'});
-  const dir = isAr ? 'rtl' : 'ltr';
 
-  const invoices = pending.map((p,i)=>{
+  const receipts = pending.map((p,i)=>{
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
-    const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
-    const invNum = 'RD-BAL-'+(String(i+1).padStart(3,'0'));
+    const total=parseFloat(p.totalAmount)||0;
+    const rem=Math.max(0,total-paid);
+    const recNum = 'RD-RCP-'+(String(i+1).padStart(3,'0'));
     const name = isAr ? (p.arabicName||p.englishName) : (p.englishName||p.arabicName);
 
     if(isAr){
       return `
     <div style="page-break-after:always;padding:40px 50px;font-family:'Cairo',Arial,sans-serif;max-width:720px;margin:0 auto;border:1px solid #e2e8f0;direction:rtl">
+      <!-- Header -->
       <div style="background:#0a1628;padding:20px 28px;color:#fff;display:flex;justify-content:space-between;align-items:center">
-        <div style="text-align:right">
-          ${LOGO ? `<img src="${LOGO}" style="height:48px;object-fit:contain">` : '<div style="font-size:24px">🥋</div>'}
-        </div>
+        <div style="text-align:right">${LOGO ? `<img src="${LOGO}" style="height:52px;object-fit:contain">` : '<div style="font-size:28px">🥋</div>'}</div>
         <div>
-          <div style="font-size:20px;font-weight:700">فاتورة المبلغ المتبقي</div>
+          <div style="font-size:20px;font-weight:700">إيصال استلام دفعة</div>
           <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px">Raad Dojo · طوكيو، اليابان</div>
         </div>
       </div>
-      <div style="height:4px;background:linear-gradient(90deg,#C41E3A,#e8a020)"></div>
-      <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #e2e8f0;margin-bottom:16px">
+      <div style="height:4px;background:linear-gradient(90deg,#16a34a,#22c55e)"></div>
+
+      <!-- Receipt meta -->
+      <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #e2e8f0;margin-bottom:20px">
         <div style="text-align:left">
           <div style="font-size:11px;color:#6b7280">التاريخ</div>
           <div style="font-size:13px;font-weight:600;margin-top:2px">${dateStr}</div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:11px;color:#6b7280;text-transform:uppercase">رقم الفاتورة</div>
-          <div style="font-size:18px;font-weight:700;color:#C41E3A;margin-top:2px">${invNum}</div>
+          <div style="font-size:11px;color:#6b7280">رقم الإيصال</div>
+          <div style="font-size:18px;font-weight:700;color:#16a34a;margin-top:2px">${recNum}</div>
         </div>
       </div>
-      <div style="margin-bottom:20px;padding:14px;background:#f8fafc;border-radius:8px;border-right:4px solid #0a1628">
-        <div style="font-size:11px;color:#6b7280;margin-bottom:4px">إلى المشترك الكريم</div>
+
+      <!-- Confirmation banner -->
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:32px">✅</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#15803d">تم استلام الدفعة بنجاح</div>
+          <div style="font-size:12px;color:#16a34a;margin-top:3px">تم استلام كامل مبلغ الاشتراك — الحساب مسدد بالكامل</div>
+        </div>
+      </div>
+
+      <!-- Client info -->
+      <div style="margin-bottom:20px;padding:14px 18px;background:#f8fafc;border-radius:8px;border-right:4px solid #0a1628">
+        <div style="font-size:11px;color:#6b7280;margin-bottom:4px">استُلم من</div>
         <div style="font-size:16px;font-weight:700;color:#0a1628">${name}</div>
         <div style="font-size:12px;color:#64748b;margin-top:2px" dir="ltr">${p.phone||''}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px">${p.nationality||''}</div>
       </div>
+
+      <!-- Payment breakdown -->
       <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px">
         <thead><tr style="background:#f1f5f9">
           <th style="padding:10px 14px;text-align:right;font-weight:600;color:#374151;border-bottom:2px solid #e2e8f0">البيان</th>
           <th style="padding:10px 14px;text-align:left;font-weight:600;color:#374151;border-bottom:2px solid #e2e8f0">المبلغ</th>
         </tr></thead>
         <tbody>
-          <tr><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">إجمالي الاشتراك</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:left;font-weight:600">$${parseFloat(p.totalAmount||0).toLocaleString()}</td></tr>
-          <tr><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;color:#16a34a">المبلغ المدفوع</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:left;color:#16a34a;font-weight:600">- $${paid.toLocaleString()}</td></tr>
+          <tr style="background:#f0fdf4"><td style="padding:10px 14px;border-bottom:1px solid #dcfce7;font-weight:600;color:#15803d">✦ الدفعة المستلمة (المبلغ المتبقي)</td><td style="padding:10px 14px;border-bottom:1px solid #dcfce7;text-align:left;font-weight:700;color:#15803d;font-size:15px">$${rem.toLocaleString()}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;color:#64748b">المدفوع سابقاً</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:left;color:#64748b">$${paid.toLocaleString()}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">إجمالي الاشتراك</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:left;font-weight:600">$${total.toLocaleString()}</td></tr>
         </tbody>
       </table>
-      <div style="background:linear-gradient(135deg,#C41E3A,#9b1428);color:#fff;padding:18px 20px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-        <div style="font-size:22px;font-weight:800">$${rem.toLocaleString()}</div>
-        <div style="font-size:14px;font-weight:600">المبلغ المتبقي المستحق</div>
+
+      <!-- Fully paid badge -->
+      <div style="background:linear-gradient(135deg,#15803d,#16a34a);color:#fff;padding:16px 20px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div style="font-size:14px;font-weight:600">✅ مدفوع بالكامل</div>
+        <div style="font-size:22px;font-weight:800">$${total.toLocaleString()}</div>
       </div>
-      <div style="border:1px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;color:#64748b;font-size:12px">
-        يرجى تسديد المبلغ المتبقي عند الالتقاء · البنك الأهلي السعودي SNB
+
+      <!-- Note -->
+      <div style="border:1px dashed #bbf7d0;border-radius:8px;padding:12px 16px;text-align:center;color:#16a34a;font-size:12px;margin-bottom:28px">
+        هذا الإيصال يُثبت استلام كامل مبلغ الاشتراك في معسكر تايلاند 2025
       </div>
-      <div style="margin-top:28px;display:flex;justify-content:space-between;align-items:flex-end">
-        <div style="text-align:center">
-          ${STAMP ? `<img src="${STAMP}" style="width:90px;height:90px;object-fit:contain;opacity:.85">` : ''}
-        </div>
+
+      <!-- Signature -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-end">
+        <div style="text-align:center">${STAMP ? `<img src="${STAMP}" style="width:90px;height:90px;object-fit:contain;opacity:.85">` : ''}</div>
         <div style="text-align:right">
           <p style="font-weight:700;color:#0a1628">مع خالص التقدير،</p>
           <p style="color:#374151;margin-top:4px;font-size:13px">فريق Raad Dojo</p>
@@ -3017,68 +3039,87 @@ function _buildRemainingInvoices(forWord=false, lang='ar'){
     } else {
       return `
     <div style="page-break-after:always;padding:40px 50px;font-family:'Cairo',Arial,sans-serif;max-width:720px;margin:0 auto;border:1px solid #e2e8f0;direction:ltr">
+      <!-- Header -->
       <div style="background:#0a1628;padding:20px 28px;color:#fff;display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div style="font-size:20px;font-weight:700">Remaining Balance Invoice</div>
+          <div style="font-size:20px;font-weight:700">Payment Receipt</div>
           <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px">Raad Dojo · Tokyo, Japan</div>
         </div>
-        <div>
-          ${LOGO ? `<img src="${LOGO}" style="height:48px;object-fit:contain">` : '<div style="font-size:24px">🥋</div>'}
-        </div>
+        <div>${LOGO ? `<img src="${LOGO}" style="height:52px;object-fit:contain">` : '<div style="font-size:28px">🥋</div>'}</div>
       </div>
-      <div style="height:4px;background:linear-gradient(90deg,#C41E3A,#e8a020)"></div>
-      <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #e2e8f0;margin-bottom:16px">
+      <div style="height:4px;background:linear-gradient(90deg,#16a34a,#22c55e)"></div>
+
+      <!-- Receipt meta -->
+      <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #e2e8f0;margin-bottom:20px">
         <div>
-          <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Invoice No.</div>
-          <div style="font-size:18px;font-weight:700;color:#C41E3A;margin-top:2px">${invNum}</div>
+          <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Receipt No.</div>
+          <div style="font-size:18px;font-weight:700;color:#16a34a;margin-top:2px">${recNum}</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;color:#6b7280">Date</div>
           <div style="font-size:13px;font-weight:600;margin-top:2px">${dateStr}</div>
         </div>
       </div>
-      <div style="margin-bottom:20px;padding:14px;background:#f8fafc;border-radius:8px;border-left:4px solid #0a1628">
-        <div style="font-size:11px;color:#6b7280;margin-bottom:4px">TO</div>
+
+      <!-- Confirmation banner -->
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:32px">✅</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#15803d">Payment Successfully Received</div>
+          <div style="font-size:12px;color:#16a34a;margin-top:3px">Full registration fee has been collected — account is now fully settled</div>
+        </div>
+      </div>
+
+      <!-- Client info -->
+      <div style="margin-bottom:20px;padding:14px 18px;background:#f8fafc;border-radius:8px;border-left:4px solid #0a1628">
+        <div style="font-size:11px;color:#6b7280;margin-bottom:4px">RECEIVED FROM</div>
         <div style="font-size:16px;font-weight:700;color:#0a1628">${name}</div>
         <div style="font-size:12px;color:#64748b;margin-top:2px">${p.phone||''}</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px">${p.nationality||''}</div>
       </div>
+
+      <!-- Payment breakdown -->
       <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px">
         <thead><tr style="background:#f1f5f9">
           <th style="padding:10px 14px;text-align:left;font-weight:600;color:#374151;border-bottom:2px solid #e2e8f0">Description</th>
           <th style="padding:10px 14px;text-align:right;font-weight:600;color:#374151;border-bottom:2px solid #e2e8f0">Amount</th>
         </tr></thead>
         <tbody>
-          <tr><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Total Registration Fee</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:right;font-weight:600">$${parseFloat(p.totalAmount||0).toLocaleString()}</td></tr>
-          <tr><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;color:#16a34a">Amount Paid</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:right;color:#16a34a;font-weight:600">- $${paid.toLocaleString()}</td></tr>
+          <tr style="background:#f0fdf4"><td style="padding:10px 14px;border-bottom:1px solid #dcfce7;font-weight:600;color:#15803d">✦ Payment Received (Remaining Balance)</td><td style="padding:10px 14px;border-bottom:1px solid #dcfce7;text-align:right;font-weight:700;color:#15803d;font-size:15px">$${rem.toLocaleString()}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;color:#64748b">Previously Paid</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:right;color:#64748b">$${paid.toLocaleString()}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9">Total Registration Fee</td><td style="padding:9px 14px;border-bottom:1px solid #f1f5f9;text-align:right;font-weight:600">$${total.toLocaleString()}</td></tr>
         </tbody>
       </table>
-      <div style="background:linear-gradient(135deg,#C41E3A,#9b1428);color:#fff;padding:18px 20px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-        <div style="font-size:14px;font-weight:600">Balance Due</div>
-        <div style="font-size:22px;font-weight:800">$${rem.toLocaleString()}</div>
+
+      <!-- Fully paid badge -->
+      <div style="background:linear-gradient(135deg,#15803d,#16a34a);color:#fff;padding:16px 20px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div style="font-size:14px;font-weight:600">✅ Fully Paid</div>
+        <div style="font-size:22px;font-weight:800">$${total.toLocaleString()}</div>
       </div>
-      <div style="border:1px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;color:#64748b;font-size:12px">
-        Please settle the remaining balance upon meeting · SNB Bank
+
+      <!-- Note -->
+      <div style="border:1px dashed #bbf7d0;border-radius:8px;padding:12px 16px;text-align:center;color:#16a7280;font-size:12px;margin-bottom:28px">
+        This receipt confirms full payment received for Thailand Camp 2025 registration.
       </div>
-      <div style="margin-top:28px;display:flex;justify-content:space-between;align-items:flex-end">
+
+      <!-- Signature -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-end">
         <div>
           <p style="font-weight:700;color:#0a1628">Best regards,</p>
           <p style="color:#374151;margin-top:4px;font-size:13px">Raad Dojo Team</p>
           <p style="color:#6b7280;font-size:11px;margin-top:2px">contact@raaddojo.com</p>
         </div>
-        <div style="text-align:center">
-          ${STAMP ? `<img src="${STAMP}" style="width:90px;height:90px;object-fit:contain;opacity:.85">` : ''}
-        </div>
+        <div style="text-align:center">${STAMP ? `<img src="${STAMP}" style="width:90px;height:90px;object-fit:contain;opacity:.85">` : ''}</div>
       </div>
     </div>`;
     }
   }).join('');
 
-  return `<!DOCTYPE html><html lang="${lang}" dir="${dir}"><head><meta charset="UTF-8"><title>Raad Dojo – Remaining Invoices</title>
+  return `<!DOCTYPE html><html lang="${lang}" dir="${dir}"><head><meta charset="UTF-8"><title>Raad Dojo – Payment Receipt</title>
 <style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}body{font-family:'Cairo',Arial,sans-serif;background:#fff;color:#1a2332;font-size:13px}
-@media print{.no-print{display:none!important}@page{margin:12mm}}</style></head><body>` + (forWord?'':_printBtn()) + invoices + `</body></html>`;
+@media print{.no-print{display:none!important}@page{margin:12mm}}</style></head><body>` + (forWord?'':_printBtn()) + receipts + `</body></html>`;
 }
-
 function calcAge(dob){
   if(!dob) return '';
   const b=new Date(dob), t=new Date();
