@@ -2382,6 +2382,25 @@ function _printBtn(){
   </div>`;
 }
 
+// ---- Language selector before any report ----
+let _reportLang = 'ar';
+let _pendingReport = null;
+let _pendingAction = 'open';
+
+function chooseReportLang(type, action){
+  action = action || 'open';
+  _pendingReport = type;
+  _pendingAction = action;
+  document.getElementById('modal-lang').style.display='flex';
+}
+function _doOpenReport(lang){
+  _reportLang = lang;
+  document.getElementById('modal-lang').style.display='none';
+  if(_pendingAction==='open') openReport(_pendingReport);
+  else if(_pendingAction==='word') exportWord(_pendingReport);
+  else if(_pendingAction==='excel') exportExcel(_pendingReport);
+}
+
 function openReport(type){
   let html = '';
   if(type==='participants') html = _buildParticipantsReport();
@@ -2389,8 +2408,9 @@ function openReport(type){
   else if(type==='tshirts') html = _buildTshirtsReport();
   else if(type==='payments-report') html = _buildPaymentsReport();
   else if(type==='hotel-report') html = _buildHotelReport();
-  else if(type==='hotel-letter') html = _buildHotelLetters();
-  else if(type==='receipts') html = _buildReceipts();
+  else if(type==='hotel-letter') html = _buildHotelLetters(false, _reportLang);
+  else if(type==='receipts') html = _buildReceipts(false, _reportLang);
+  else if(type==='remaining-invoices') html = _buildRemainingInvoices(false, _reportLang);
   const win = window.open('','_blank');
   win.document.write(html);
   win.document.close();
@@ -2654,12 +2674,73 @@ function _buildHotelReport(forWord=false){
 function _buildHotelLetters(forWord=false, lang='ar'){
   const isAr = (lang==='ar');
   const filtered = participants.filter(p=>!p.isUnconfirmed&&!p.isCancelled&&p.campId===currentCampId);
+  const dateStr = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  const dateStrAr = new Date().toLocaleDateString('ar-SA',{day:'2-digit',month:'long',year:'numeric'});
+
   const letters = filtered.map(p=>{
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
     const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
-    return `
+    const remText = rem ? '$'+rem.toLocaleString() : (isAr ? 'مدفوع بالكامل ✓' : 'Fully Paid ✓');
+    const remColor = rem ? '#C41E3A' : '#16a34a';
+
+    if(isAr){
+      return `
+    <div style="page-break-after:always;padding:40px 50px;font-family:'Cairo',Arial,sans-serif;max-width:780px;margin:0 auto;border:1px solid #e2e8f0;border-top:6px solid #0f1c2e;direction:rtl">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+        <div style="text-align:right;font-size:12px;color:#6b7280">
+          <div>التاريخ: ${dateStrAr}</div>
+          <div>طوكيو، اليابان</div>
+          <div>contact@raaddojo.com</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div>
+            <div style="font-size:22px;font-weight:700;color:#0f1c2e">Raad Dojo</div>
+            <div style="font-size:12px;color:#6b7280">معسكر تايلاند 2025</div>
+          </div>
+          ${LOGO ? `<img src="${LOGO}" style="height:60px;object-fit:contain">` : '<div style="font-size:28px">🥋</div>'}
+        </div>
+      </div>
+      <div style="height:2px;background:linear-gradient(90deg,#C41E3A,#e8a020);margin-bottom:24px"></div>
+      <p style="margin-bottom:18px;color:#374151;line-height:1.8">السيد / السيدة مدير الفندق الكريم،</p>
+      <p style="margin-bottom:18px;color:#374151;line-height:1.8">
+        تحية طيبة وبعد، يسعدنا في <strong>Raad Dojo</strong> تأكيد حجز الإقامة للضيف الكريم ضمن
+        <strong>معسكر تايلاند 2025</strong> الذي تنظمه Raad Dojo. نأمل منكم تقديم جميع الخدمات المطلوبة
+        وإيلاء ضيفنا العناية اللازمة.
+      </p>
+      <table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:13px">
+        <thead><tr style="background:#0f1c2e;color:#fff">
+          <th style="padding:10px 14px;text-align:right;width:40%">البيان</th>
+          <th style="padding:10px 14px;text-align:right">المعلومات</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">الاسم الكامل</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.arabicName||p.englishName}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">الجنسية</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.nationality||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">الهاتف</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0" dir="ltr">${p.phone||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">رقم الجواز</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.passportNumber||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">تاريخ الوصول</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.checkIn||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">تاريخ المغادرة</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.checkOut||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">نوع الغرفة</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.roomType==='Single'?'غرفة مفردة':p.roomType||'—'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">المبلغ المتبقي</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:700;color:${remColor}">${remText}</td></tr>
+        </tbody>
+      </table>
+      <p style="color:#374151;line-height:1.8;margin-top:18px">
+        لأي استفسار أو معلومات إضافية، يرجى التواصل معنا في أي وقت.<br>
+        نقدر تعاونكم ونتطلع إلى شراكة ناجحة.
+      </p>
+      <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div style="text-align:center">
+          ${STAMP ? `<img src="${STAMP}" style="width:110px;height:110px;object-fit:contain;opacity:.85">` : '<div style="width:110px;height:110px;border:2px dashed #e2e8f0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:11px">الختم الرسمي</div>'}
+        </div>
+        <div style="text-align:right">
+          <p style="font-weight:700;color:#0f1c2e">مع خالص التقدير،</p>
+          <p style="color:#374151;margin-top:4px">فريق Raad Dojo</p>
+          <p style="color:#6b7280;font-size:12px;margin-top:2px">+81 90-6370-7664 · contact@raaddojo.com</p>
+        </div>
+      </div>
+    </div>`;
+    } else {
+      return `
     <div style="page-break-after:always;padding:40px 50px;font-family:'Cairo',Arial,sans-serif;max-width:780px;margin:0 auto;border:1px solid #e2e8f0;border-top:6px solid #0f1c2e;direction:ltr">
-      <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
         <div style="display:flex;align-items:center;gap:14px">
           ${LOGO ? `<img src="${LOGO}" style="height:60px;object-fit:contain">` : '<div style="font-size:28px">🥋</div>'}
@@ -2669,29 +2750,23 @@ function _buildHotelLetters(forWord=false, lang='ar'){
           </div>
         </div>
         <div style="text-align:right;font-size:12px;color:#6b7280">
-          <div>Date: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})}</div>
+          <div>Date: ${dateStr}</div>
           <div>Japan, Tokyo</div>
           <div>contact@raaddojo.com</div>
         </div>
       </div>
       <div style="height:2px;background:linear-gradient(90deg,#C41E3A,#e8a020);margin-bottom:24px"></div>
-
-      <!-- Greeting -->
       <p style="margin-bottom:18px;color:#374151;line-height:1.8">Dear Sir / Madam,</p>
       <p style="margin-bottom:18px;color:#374151;line-height:1.8">
         Warm greetings from <strong>Raad Dojo</strong>. We are pleased to confirm the accommodation reservation
         for our valued guest as part of the <strong>Thailand Camp 2025</strong> organized by Raad Dojo.
         Kindly extend your gracious hospitality to our guest and provide all requested services.
       </p>
-
-      <!-- Guest Table -->
       <table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:13px">
-        <thead>
-          <tr style="background:#0f1c2e;color:#fff">
-            <th style="padding:10px 14px;text-align:left;width:40%">Item</th>
-            <th style="padding:10px 14px;text-align:left">Information</th>
-          </tr>
-        </thead>
+        <thead><tr style="background:#0f1c2e;color:#fff">
+          <th style="padding:10px 14px;text-align:left;width:40%">Item</th>
+          <th style="padding:10px 14px;text-align:left">Information</th>
+        </tr></thead>
         <tbody>
           <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Full Name</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.englishName||p.arabicName}</td></tr>
           <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Nationality</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.nationality||'—'}</td></tr>
@@ -2700,16 +2775,13 @@ function _buildHotelLetters(forWord=false, lang='ar'){
           <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Check-in</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.checkIn||'—'}</td></tr>
           <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Check-out</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.checkOut||'—'}</td></tr>
           <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Room Type</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0">${p.roomType||'—'}</td></tr>
-          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Remaining Amount</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:700;color:#C41E3A">${rem?'$'+rem.toLocaleString():'Fully Paid ✓'}</td></tr>
+          <tr><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:600;background:#f8fafc">Remaining Amount</td><td style="padding:9px 14px;border-bottom:1px solid #e2e8f0;font-weight:700;color:${remColor}">${remText}</td></tr>
         </tbody>
       </table>
-
       <p style="color:#374151;line-height:1.8;margin-top:18px">
         Should you require any further information, please do not hesitate to contact us.<br>
         We appreciate your cooperation and look forward to a successful collaboration.
       </p>
-
-      <!-- Signature -->
       <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end">
         <div>
           <p style="font-weight:700;color:#0f1c2e">Best regards,</p>
@@ -2721,9 +2793,14 @@ function _buildHotelLetters(forWord=false, lang='ar'){
         </div>
       </div>
     </div>`;
+    }
   }).join('');
 
-  return _reportPage() + (forWord?'':_printBtn()) + letters + `</body></html>`;
+  const dir = isAr ? 'rtl' : 'ltr';
+  return `<!DOCTYPE html><html lang="${lang}" dir="${dir}"><head><meta charset="UTF-8"><title>Raad Dojo – Hotel Letter</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Cairo',Arial,sans-serif;background:#fff;color:#1a2332;font-size:13px}
+@media print{.no-print{display:none!important}@page{margin:12mm}}</style></head><body>` + (forWord?'':_printBtn()) + letters + `</body></html>`;
 }
 
 function _buildReceipts(forWord=false){
