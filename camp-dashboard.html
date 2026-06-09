@@ -2568,7 +2568,7 @@ function _buildFlightsReport(forWord=false, lang){
 
   return _reportPage(lang) + (forWord?'':_printBtn()) + _reportHeader('مواعيد الوصول والمغادرة','Arrival & Departure Schedule') + `
   <div class="section">
-    <div class="section-title">${L.title}</div>
+    <div class="section-title">${isAr?'مواعيد الوصول والمغادرة':'Arrival & Departure Schedule'}</div>
     <table>
       <thead><tr>
         <th>#</th><th>${L.name}</th><th>${L.nat}</th><th>${L.phone}</th><th>${L.pass}</th>
