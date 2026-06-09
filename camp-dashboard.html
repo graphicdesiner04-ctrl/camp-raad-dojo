@@ -1308,7 +1308,7 @@ function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
 
 // ====== DATA VERSION — bump this string any time DEFAULT_PARTICIPANTS changes ======
 // This forces mobile/cached browsers to reload fresh data from DEFAULT_PARTICIPANTS
-const DATA_VERSION = '20260609-v9';
+const DATA_VERSION = '20260609-v10';
 (function forceCacheBust(){
   const stored = localStorage.getItem('data_version');
   if(stored !== DATA_VERSION){
@@ -2369,16 +2369,18 @@ function _reportHeader(titleAr, titleEn){
       </div>
     </div>
     <div style="text-align:left">
-      <div style="font-size:18px;font-weight:700">${titleEn}</div>
-      <div style="font-size:14px;color:rgba(255,255,255,.7);margin-top:2px;direction:rtl">${titleAr}</div>
+      <div style="font-size:18px;font-weight:700">${_reportLang==='ar'?titleAr:titleEn}</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.7);margin-top:2px">${_reportLang==='ar'?titleEn:titleAr}</div>
       <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:4px">Generated: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div>
     </div>
   </div>
   <div style="height:4px;background:linear-gradient(90deg,#C41E3A,#e8a020)"></div>`;
 }
 
-function _reportPage(){
-  return `<!DOCTYPE html><html lang="ar" dir="rtl">
+function _reportPage(lang){
+  lang=lang||'ar';
+  const dir=lang==='ar'?'rtl':'ltr';
+  return `<!DOCTYPE html><html lang="${lang}" dir="${dir}">
 <head><meta charset="UTF-8"><title>Raad Dojo – Report</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
@@ -2429,11 +2431,11 @@ function _doOpenReport(lang){
 
 function openReport(type){
   let html = '';
-  if(type==='participants') html = _buildParticipantsReport();
-  else if(type==='flights-schedule') html = _buildFlightsReport();
-  else if(type==='tshirts') html = _buildTshirtsReport();
-  else if(type==='payments-report') html = _buildPaymentsReport();
-  else if(type==='hotel-report') html = _buildHotelReport();
+  if(type==='participants') html = _buildParticipantsReport(false, _reportLang);
+  else if(type==='flights-schedule') html = _buildFlightsReport(false, _reportLang);
+  else if(type==='tshirts') html = _buildTshirtsReport(false, _reportLang);
+  else if(type==='payments-report') html = _buildPaymentsReport(false, _reportLang);
+  else if(type==='hotel-report') html = _buildHotelReport(false, _reportLang);
   else if(type==='hotel-letter') html = _buildHotelLetters(false, _reportLang);
   else if(type==='receipts') html = _buildReceipts(false, _reportLang);
   else if(type==='remaining-invoices') html = _buildRemainingInvoices(false, _reportLang);
@@ -2482,10 +2484,10 @@ function exportExcel(type){
 function exportWord(type){
   let html = '';
   if(type==='participants') html = _buildParticipantsReport(true);
-  else if(type==='flights-schedule') html = _buildFlightsReport(true);
-  else if(type==='tshirts') html = _buildTshirtsReport(true);
-  else if(type==='payments-report') html = _buildPaymentsReport(true);
-  else if(type==='hotel-report') html = _buildHotelReport(true);
+  else if(type==='flights-schedule') html = _buildFlightsReport(true, _reportLang);
+  else if(type==='tshirts') html = _buildTshirtsReport(true, _reportLang);
+  else if(type==='payments-report') html = _buildPaymentsReport(true, _reportLang);
+  else if(type==='hotel-report') html = _buildHotelReport(true, _reportLang);
   else if(type==='hotel-letter') html = _buildHotelLetters(true, _reportLang);
   else if(type==='receipts') html = _buildReceipts(true, _reportLang);
   else if(type==='remaining-invoices') html = _buildRemainingInvoices(true, _reportLang);
@@ -2499,16 +2501,18 @@ function exportWord(type){
 
 // ---- Report builders ----
 
-function _buildParticipantsReport(forWord=false){
+function _buildParticipantsReport(forWord=false, lang){
+  lang=lang||_reportLang||'ar';
+  const isAr=(lang==='ar');
   const activePs = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId);
   const rows = activePs.map((p,i)=>{
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
     const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
     const statusClass=paid>0&&rem<=0?'badge-s':paid>0?'badge-p':'badge-u';
-    const statusTxt=paid>0&&rem<=0?'مكتمل':paid>0?'جزئي':'لم يدفع';
+    const statusTxt=isAr?(paid>0&&rem<=0?'مكتمل':paid>0?'جزئي':'لم يدفع'):(paid>0&&rem<=0?'Paid':paid>0?'Partial':'Unpaid');
     return `<tr>
       <td style="text-align:center">${i+1}</td>
-      <td><b>${p.arabicName}</b></td>
+      <td><b>${isAr?p.arabicName:(p.englishName||p.arabicName)}</b></td>
       <td style="font-size:11px;direction:ltr">${p.englishName}</td>
       <td>${p.nationality||'—'}</td>
       <td dir="ltr">${p.phone||'—'}</td>
@@ -2543,10 +2547,12 @@ function _buildParticipantsReport(forWord=false){
   return full;
 }
 
-function _buildFlightsReport(forWord=false){
+function _buildFlightsReport(forWord=false, lang){
+  lang=lang||_reportLang||'ar';
+  const isAr=(lang==='ar');
   const rows = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId).map((p,i)=>`<tr>
     <td style="text-align:center">${i+1}</td>
-    <td><b>${p.arabicName}</b></td>
+    <td><b>${isAr?p.arabicName:(p.englishName||p.arabicName)}</b></td>
     <td>${p.nationality||'—'}</td>
     <td dir="ltr">${p.phone||'—'}</td>
     <td><code>${p.passportNumber||'—'}</code></td>
@@ -2556,30 +2562,36 @@ function _buildFlightsReport(forWord=false){
     <td>${p.returnTimeTrip||'—'}</td>
   </tr>`).join('');
 
-  return _reportPage() + (forWord?'':_printBtn()) + _reportHeader('مواعيد الذهاب والعودة','Departure & Return Schedule') + `
+  const L = isAr
+    ? {title:'مواعيد الذهاب والعودة',name:'الاسم',nat:'الجنسية',phone:'الهاتف',pass:'رقم الجواز',dep:'تاريخ الذهاب',depT:'وقت الذهاب',ret:'تاريخ العودة',retT:'وقت العودة',footer:'Raad Dojo · معسكر تايلاند 2025'}
+    : {title:'Departure & Return Schedule',name:'Name',nat:'Nationality',phone:'Phone',pass:'Passport No.',dep:'Departure Date',depT:'Dep. Time',ret:'Return Date',retT:'Ret. Time',footer:'Raad Dojo · Thailand Camp 2025'};
+
+  return _reportPage(lang) + (forWord?'':_printBtn()) + _reportHeader('مواعيد الذهاب والعودة','Departure & Return Schedule') + `
   <div class="section">
-    <div class="section-title">مواعيد الذهاب والعودة</div>
+    <div class="section-title">${L.title}</div>
     <table>
       <thead><tr>
-        <th>#</th><th>الاسم</th><th>الجنسية</th><th>الهاتف</th><th>رقم الجواز</th>
-        <th>تاريخ الذهاب</th><th>وقت الذهاب</th><th>تاريخ العودة</th><th>وقت العودة</th>
+        <th>#</th><th>${L.name}</th><th>${L.nat}</th><th>${L.phone}</th><th>${L.pass}</th>
+        <th>${L.dep}</th><th>${L.depT}</th><th>${L.ret}</th><th>${L.retT}</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
   </div>
-  <div class="footer-bar">Raad Dojo · Thailand Camp 2025</div>
+  <div class="footer-bar">${L.footer}</div>
   </body></html>`;
 }
 
-function _buildTshirtsReport(forWord=false){
+function _buildTshirtsReport(forWord=false, lang){
+  lang=lang||_reportLang||'ar';
+  const isAr=(lang==='ar');
   const activePs = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId);
   const sizes = {};
   activePs.forEach(p=>{if(p.tshirtSize){sizes[p.tshirtSize]=(sizes[p.tshirtSize]||0)+1;}});
-  const summaryRows = Object.entries(sizes).map(([sz,cnt])=>`<tr><td>${sz}</td><td style="text-align:center">${cnt}</td></tr>`).join('') || '<tr><td colspan="2" style="text-align:center;color:#94a3b8">لا توجد بيانات</td></tr>';
+  const summaryRows = Object.entries(sizes).map(([sz,cnt])=>`<tr><td>${sz}</td><td style="text-align:center">${cnt}</td></tr>`).join('') || `<tr><td colspan="2" style="text-align:center;color:#94a3b8">${isAr?'لا توجد بيانات':'No data'}</td></tr>`;
 
   const rows = activePs.map((p,i)=>`<tr>
     <td style="text-align:center">${i+1}</td>
-    <td><b>${p.arabicName}</b></td>
+    <td><b>${isAr?p.arabicName:(p.englishName||p.arabicName)}</b></td>
     <td>${p.nationality||'—'}</td>
     <td dir="ltr">${p.phone||'—'}</td>
     <td style="text-align:center">${p.age||'—'}</td>
@@ -2589,13 +2601,13 @@ function _buildTshirtsReport(forWord=false){
     <td style="font-size:11px">${p.notes||'—'}</td>
   </tr>`).join('');
 
-  return _reportPage() + (forWord?'':_printBtn()) + _reportHeader('مقاسات التيشرتات','T-Shirt Sizes') + `
+  return _reportPage(lang) + (forWord?'':_printBtn()) + _reportHeader('مقاسات التيشرتات','T-Shirt Sizes') + `
   <div class="section">
     <div style="display:flex;gap:24px;flex-wrap:wrap">
       <div style="flex:1;min-width:280px">
-        <div class="section-title">ملخص المقاسات</div>
+        <div class="section-title">${isAr?'ملخص المقاسات':'Size Summary'}</div>
         <table style="max-width:300px">
-          <thead><tr><th>المقاس</th><th style="text-align:center">العدد</th></tr></thead>
+          <thead><tr><th>${isAr?'المقاس':'Size'}</th><th style="text-align:center">${isAr?'العدد':'Count'}</th></tr></thead>
           <tbody>${summaryRows}</tbody>
         </table>
       </div>
@@ -2611,11 +2623,13 @@ function _buildTshirtsReport(forWord=false){
       <tbody>${rows}</tbody>
     </table>
   </div>
-  <div class="footer-bar">Raad Dojo · Thailand Camp 2025</div>
+  <div class="footer-bar">${isAr?'Raad Dojo · معسكر تايلاند 2025':'Raad Dojo · Thailand Camp 2025'}</div>
   </body></html>`;
 }
 
-function _buildPaymentsReport(forWord=false){
+function _buildPaymentsReport(forWord=false, lang){
+  lang=lang||_reportLang||'ar';
+  const isAr=(lang==='ar');
   let totalTotal=0,totalPaid=0,totalRem=0;
   const rows = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId).map((p,i)=>{
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
@@ -2623,10 +2637,10 @@ function _buildPaymentsReport(forWord=false){
     const rem=Math.max(0,total-paid);
     totalTotal+=total; totalPaid+=paid; totalRem+=rem;
     const statusClass=paid>0&&rem<=0?'badge-s':paid>0?'badge-p':'badge-u';
-    const statusTxt=paid>0&&rem<=0?'مكتمل':paid>0?'جزئي':'لم يدفع';
+    const statusTxt=isAr?(paid>0&&rem<=0?'مكتمل':paid>0?'جزئي':'لم يدفع'):(paid>0&&rem<=0?'Paid':paid>0?'Partial':'Unpaid');
     return `<tr>
       <td style="text-align:center">${i+1}</td>
-      <td><b>${p.arabicName}</b></td>
+      <td><b>${isAr?p.arabicName:(p.englishName||p.arabicName)}</b></td>
       <td>${p.nationality||'—'}</td>
       <td dir="ltr">${p.phone||'—'}</td>
       <td>${p.paymentMethod||'—'}</td>
@@ -2640,11 +2654,11 @@ function _buildPaymentsReport(forWord=false){
     </tr>`;
   }).join('');
 
-  return _reportPage() + (forWord?'':_printBtn()) + _reportHeader('الحسابات والمبالغ','Payments & Accounts') + `
+  return _reportPage(lang) + (forWord?'':_printBtn()) + _reportHeader('الحسابات والمبالغ','Payments & Accounts') + `
   <div class="section">
     <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap">
       <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 20px;flex:1;min-width:160px">
-        <div style="font-size:11px;color:#16a34a;font-weight:600">إجمالي المدفوع</div>
+        <div style="font-size:11px;color:#16a34a;font-weight:600">${isAr?'إجمالي المدفوع':'Total Paid'}</div>
         <div style="font-size:22px;font-weight:700;color:#16a34a;margin-top:4px">$${totalPaid.toLocaleString()}</div>
       </div>
       <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 20px;flex:1;min-width:160px">
@@ -2666,35 +2680,41 @@ function _buildPaymentsReport(forWord=false){
       <tbody>${rows}</tbody>
     </table></div>
   </div>
-  <div class="footer-bar">Raad Dojo · Thailand Camp 2025</div>
+  <div class="footer-bar">${isAr?'Raad Dojo · معسكر تايلاند 2025':'Raad Dojo · Thailand Camp 2025'}</div>
   </body></html>`;
 }
 
-function _buildHotelReport(forWord=false){
+function _buildHotelReport(forWord=false, lang){
+  lang=lang||_reportLang||'ar';
+  const isAr=(lang==='ar');
   const rows = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId).map((p,i)=>`<tr>
     <td style="text-align:center">${i+1}</td>
-    <td><b>${p.arabicName}</b></td>
+    <td><b>${isAr?p.arabicName:(p.englishName||p.arabicName)}</b></td>
     <td>${p.nationality||'—'}</td>
     <td dir="ltr">${p.phone||'—'}</td>
     <td>${p.checkIn||'—'}</td>
     <td>${p.checkOut||'—'}</td>
-    <td>${p.roomType||'—'}</td>
+    <td>${isAr?(p.roomType==='Single'?'غرفة مفردة':p.roomType||'—'):p.roomType||'—'}</td>
     <td style="text-align:center">${p.roomNumber||'—'}</td>
     <td style="font-size:11px">${p.notes||'—'}</td>
   </tr>`).join('');
 
-  return _reportPage() + (forWord?'':_printBtn()) + _reportHeader('نوع الغرف والإقامة','Hotel & Room Types') + `
+  const L = isAr
+    ? {title:'بيانات الإقامة',name:'الاسم',nat:'الجنسية',phone:'الهاتف',ci:'تاريخ الوصول',co:'تاريخ المغادرة',room:'نوع الغرفة',rnum:'رقم الغرفة',notes:'ملاحظات',footer:'Raad Dojo · معسكر تايلاند 2025'}
+    : {title:'Accommodation Details',name:'Name',nat:'Nationality',phone:'Phone',ci:'Check-in',co:'Check-out',room:'Room Type',rnum:'Room No.',notes:'Notes',footer:'Raad Dojo · Thailand Camp 2025'};
+
+  return _reportPage(lang) + (forWord?'':_printBtn()) + _reportHeader('نوع الغرف والإقامة','Hotel & Room Types') + `
   <div class="section">
-    <div class="section-title">بيانات الإقامة</div>
+    <div class="section-title">${L.title}</div>
     <table>
       <thead><tr>
-        <th>#</th><th>الاسم</th><th>الجنسية</th><th>الهاتف</th>
-        <th>تاريخ الوصول</th><th>تاريخ المغادرة</th><th>نوع الغرفة</th><th>رقم الغرفة</th><th>ملاحظات</th>
+        <th>#</th><th>${L.name}</th><th>${L.nat}</th><th>${L.phone}</th>
+        <th>${L.ci}</th><th>${L.co}</th><th>${L.room}</th><th>${L.rnum}</th><th>${L.notes}</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
   </div>
-  <div class="footer-bar">Raad Dojo · Thailand Camp 2025</div>
+  <div class="footer-bar">${L.footer}</div>
   </body></html>`;
 }
 
