@@ -2566,7 +2566,7 @@ function _buildFlightsReport(forWord=false, lang){
     ? {title:'مواعيد الذهاب والعودة',name:'الاسم',nat:'الجنسية',phone:'الهاتف',pass:'رقم الجواز',dep:'تاريخ الذهاب',depT:'وقت الذهاب',ret:'تاريخ العودة',retT:'وقت العودة',footer:'Raad Dojo · معسكر تايلاند 2025'}
     : {title:'Arrival & Departure Schedule',name:'Name',nat:'Nationality',phone:'Phone',pass:'Passport No.',dep:'Arrival Date',depT:'Arr. Time',ret:'Departure Date',retT:'Dep. Time',footer:'Raad Dojo · Thailand Camp 2025'};
 
-  return _reportPage(lang) + (forWord?'':_printBtn()) + _reportHeader('مواعيد الذهاب والعودة','Departure & Return Schedule') + `
+  return _reportPage(lang) + (forWord?'':_printBtn()) + _reportHeader('مواعيد الوصول والمغادرة','Arrival & Departure Schedule') + `
   <div class="section">
     <div class="section-title">${L.title}</div>
     <table>
