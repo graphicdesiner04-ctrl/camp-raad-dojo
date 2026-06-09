@@ -1390,8 +1390,8 @@ let currentUploadData = null;
       if(p.roomType!=='Single'){ p.roomType='Single'; changed=true; }
       if(p.roomOccupants!=='1'){ p.roomOccupants='1'; changed=true; }
     }
-    // SNB الأهلي لكل المشتركين السبعة المؤكدين
-    if([1,2,4,5,7,8,9].includes(p.id)){
+    // SNB الأهلي لكل المشتركين المؤكدين
+    if([1,2,4,5,7,8,9,10].includes(p.id)){
       if(p.paymentMethod!=='SNB الأهلي'){ p.paymentMethod='SNB الأهلي'; changed=true; }
     }
   });
