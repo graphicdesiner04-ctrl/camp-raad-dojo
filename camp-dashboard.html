@@ -2651,8 +2651,10 @@ function _buildHotelReport(forWord=false){
   </body></html>`;
 }
 
-function _buildHotelLetters(forWord=false){
-  const letters = participants.map(p=>{
+function _buildHotelLetters(forWord=false, lang='ar'){
+  const isAr = (lang==='ar');
+  const filtered = participants.filter(p=>!p.isUnconfirmed&&!p.isCancelled&&p.campId===currentCampId);
+  const letters = filtered.map(p=>{
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
     const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
     return `
