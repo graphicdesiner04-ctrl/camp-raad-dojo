@@ -1365,12 +1365,13 @@ let currentUploadData = null;
       if(!p.isUnconfirmed){ p.isUnconfirmed=true; changed=true; }
       if(p.registrationStatus!=='غير مؤكد'){ p.registrationStatus='غير مؤكد'; changed=true; }
     }
-    // ازاد (id:8) → phone + full payment $3390
+    // ازاد (id:8) → phone + full payment $3390 + Bangkok Airways flight
     if(p.id===8){
       if(p.phone!=='+966 59 588 8141'){ p.phone='+966 59 588 8141'; changed=true; }
       if(p.totalAmount!=='3390'){ p.totalAmount='3390'; changed=true; }
       if(p.firstPayment!=='3390'){ p.firstPayment='3390'; p.firstPaymentDate='2026-06-03'; changed=true; }
       if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
+      if(p.airline!=='Bangkok Airways'){ p.airline='Bangkok Airways'; p.flightNumber='PG273 / PG274'; p.departureTime='2026-06-16T12:35'; p.arrivalTime='2026-06-16T14:05'; p.transitInfo='عبر بانكوك (BKK) — Ref: EJ3NCR'; p.phuketArrival='2026-06-16T14:05'; p.departureDateTrip='2026-06-16'; p.departureTimeTrip='12:35'; p.returnDateTrip='2026-06-29'; p.returnTimeTrip='14:45'; changed=true; }
     }
     // علي (id:9) → total $1950, partial $1011
     if(p.id===9){
