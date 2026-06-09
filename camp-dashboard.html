@@ -1284,7 +1284,7 @@ function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
 
 // ====== DATA VERSION — bump this string any time DEFAULT_PARTICIPANTS changes ======
 // This forces mobile/cached browsers to reload fresh data from DEFAULT_PARTICIPANTS
-const DATA_VERSION = '20260608-v5';
+const DATA_VERSION = '20260609-v6';
 (function forceCacheBust(){
   const stored = localStorage.getItem('data_version');
   if(stored !== DATA_VERSION){
