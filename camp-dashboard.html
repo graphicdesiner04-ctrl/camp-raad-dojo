@@ -2460,8 +2460,9 @@ function exportWord(type){
   else if(type==='tshirts') html = _buildTshirtsReport(true);
   else if(type==='payments-report') html = _buildPaymentsReport(true);
   else if(type==='hotel-report') html = _buildHotelReport(true);
-  else if(type==='hotel-letter') html = _buildHotelLetters(true);
-  else if(type==='receipts') html = _buildReceipts(true);
+  else if(type==='hotel-letter') html = _buildHotelLetters(true, _reportLang);
+  else if(type==='receipts') html = _buildReceipts(true, _reportLang);
+  else if(type==='remaining-invoices') html = _buildRemainingInvoices(true, _reportLang);
   const blob = new Blob(['﻿'+html], {type:'application/msword'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
