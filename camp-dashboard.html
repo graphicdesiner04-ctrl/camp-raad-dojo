@@ -1416,13 +1416,14 @@ let currentUploadData = null;
       if(p.roomType!=='Single'){ p.roomType='Single'; changed=true; }
       if(p.roomOccupants!=='1'){ p.roomOccupants='1'; changed=true; }
     }
-    // مشاري (id:10) → full payment $3390 — SAB الأول 09/06/2026
+    // مشاري (id:10) → full payment $3390 — SAB الأول + Etihad EY572/EY410
     if(p.id===10){
       if(p.phone!=='+966 50 386 2077'){ p.phone='+966 50 386 2077'; changed=true; }
       if(p.totalAmount!=='3390'){ p.totalAmount='3390'; changed=true; }
       if(p.firstPayment!=='3390'){ p.firstPayment='3390'; p.firstPaymentDate='2026-06-09'; changed=true; }
       if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
       if(p.paymentMethod!=='SAB الأول'){ p.paymentMethod='SAB الأول'; changed=true; }
+      if(p.airline!=='Etihad Airways'){ p.airline='Etihad Airways'; p.flightNumber='EY572 / EY410'; p.departureTime='2026-06-16T17:00'; p.arrivalTime='2026-06-17T06:40'; p.transitInfo='عبر أبوظبي (AUH) — Terminal A'; p.phuketArrival='2026-06-17T06:40'; p.departureDateTrip='2026-06-16'; p.departureTimeTrip='17:00'; p.checkIn='2026-06-17'; p.returnDateTrip='2026-06-29'; changed=true; }
     }
     // SNB الأهلي لبقية المشتركين المؤكدين
     if([1,2,4,5,7,8,9].includes(p.id)){
