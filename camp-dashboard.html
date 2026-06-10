@@ -486,6 +486,9 @@ tr:last-child td{border-bottom:none}
     <div class="nav-item" onclick="showPage('reports')">
       <span class="icon">📄</span> التقارير والمستندات
     </div>
+    <div class="nav-item" onclick="showPage('expenses')">
+      <span class="icon">💰</span> المصروفات والأرباح
+    </div>
   </div>
   <div class="nav-section" style="border-top:1px solid rgba(255,255,255,.08);margin-top:auto">
     <div class="nav-section-title">الإعدادات</div>
@@ -863,6 +866,55 @@ tr:last-child td{border-bottom:none}
     </div></div>
 
   </div>
+</div>
+
+
+<div class="page" id="page-expenses">
+
+  <!-- Summary Cards -->
+  <div class="stats-grid" style="margin-bottom:24px" id="expenses-summary"></div>
+
+  <!-- Exchange Rate Bar -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-body" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <span style="font-weight:600;font-size:14px">💱 سعر الصرف:</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:13px;color:var(--muted)">1 دولار =</span>
+        <input type="number" id="thb-rate" value="35" min="1" step="0.1"
+          style="width:80px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:14px;text-align:center"
+          oninput="saveThbRate();renderExpenses()">
+        <span style="font-size:13px;color:var(--muted)">بات تايلاندي (THB)</span>
+      </div>
+      <span style="font-size:12px;color:var(--muted);margin-right:auto">كل المبالغ بالبات تتحول تلقائياً للدولار</span>
+    </div>
+  </div>
+
+  <!-- Expenses Table -->
+  <div class="card">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+      <div class="card-title">💸 قائمة المصروفات</div>
+      <button class="btn btn-primary" onclick="openExpenseModal()" style="font-size:13px">+ إضافة مصروف</button>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:var(--navy);color:#fff">
+              <th style="padding:10px 12px;text-align:center;width:40px">#</th>
+              <th style="padding:10px 12px">الوصف</th>
+              <th style="padding:10px 12px;text-align:center">الفئة</th>
+              <th style="padding:10px 12px;text-align:left">المبلغ (THB)</th>
+              <th style="padding:10px 12px;text-align:left">المبلغ ($)</th>
+              <th style="padding:10px 12px;text-align:center">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="expenses-tbody"><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">لا توجد مصروفات بعد</td></tr></tbody>
+          <tfoot id="expenses-tfoot"></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 </div><!-- end #content -->
@@ -1415,11 +1467,11 @@ function closeSidebar(){
 const pageTitles = {
   participants:'المشتركون',hotel:'الفندق والإقامة',flights:'الطيران',
   files:'الملفات والمرفقات',staff:'المدربون والمشرفون',payments:'المدفوعات',
-  reports:'التقارير والمستندات',camps:'إدارة المعسكرات'
+  reports:'التقارير والمستندات',camps:'إدارة المعسكرات',expenses:'المصروفات والأرباح'
 };
 const addBtnLabels = {
   participants:'+ إضافة مشترك',hotel:'',flights:'',
-  files:'+ رفع ملف',staff:'+ إضافة مدرب',payments:'',reports:'',camps:'+ إضافة معسكر'
+  files:'+ رفع ملف',staff:'+ إضافة مدرب',payments:'',reports:'',camps:'+ إضافة معسكر',expenses:'+ إضافة مصروف'
 };
 
 function showPage(page){
@@ -1445,6 +1497,7 @@ function handleAddBtn(){
   else if(page==='staff') openStaffModal();
   else if(page==='files') openUploadModal();
   else if(page==='camps') openCampModal();
+  else if(page==='expenses') openExpenseModal();
 }
 
 function render(page){
@@ -1457,6 +1510,7 @@ function render(page){
   else if(page==='payments') renderPayments();
   else if(page==='reports') renderReports();
   else if(page==='camps') renderCamps();
+  else if(page==='expenses') renderExpenses();
 }
 
 // ========== PARTICIPANTS ==========
@@ -3357,6 +3411,180 @@ function deleteCamp(id){
   });
   if(changed) save('camp_participants', participants);
 })();
+
+
+// ========== EXPENSES ==========
+const EXPENSE_CATEGORIES = ['إقامة','طعام وشراب','نقل','تدريب ومعدات','ترفيه وجولات','رسوم إدارية','أخرى'];
+
+function getExpenses(){ return load('camp_expenses_'+currentCampId, []); }
+function saveExpenses(arr){ save('camp_expenses_'+currentCampId, arr); }
+function getThbRate(){ return parseFloat(localStorage.getItem('thb_rate')||'35'); }
+function saveThbRate(){
+  const v = parseFloat(document.getElementById('thb-rate')?.value||35);
+  if(!isNaN(v) && v>0){ localStorage.setItem('thb_rate', String(v)); renderExpenses(); }
+}
+
+function renderExpenses(){
+  const expenses = getExpenses();
+  const rate = getThbRate();
+  const rateEl = document.getElementById('thb-rate');
+  if(rateEl && document.activeElement!==rateEl) rateEl.value = rate;
+
+  const totalTHB = expenses.reduce((s,e)=>s+(parseFloat(e.amountTHB)||0),0);
+  const totalUSD = totalTHB / rate;
+
+  const campPs = participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed);
+  const revenueUSD = campPs.reduce((s,p)=>{
+    return s + (parseFloat(p.firstPayment||0)) + (parseFloat(p.secondPayment||0));
+  },0);
+  const profitUSD = revenueUSD - totalUSD;
+  const profitTHB = profitUSD * rate;
+  const isProfit = profitUSD >= 0;
+
+  const summary = document.getElementById('expenses-summary');
+  if(summary){
+    summary.innerHTML = `
+      <div class="stat-card"><div class="stat-icon green">💵</div><div>
+        <div class="stat-value">$${revenueUSD.toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})}</div>
+        <div class="stat-label">إجمالي الإيرادات (USD)</div>
+      </div></div>
+      <div class="stat-card"><div class="stat-icon red">🧾</div><div>
+        <div class="stat-value">${Math.round(totalTHB).toLocaleString('en')} ฿</div>
+        <div class="stat-label">إجمالي المصروفات (THB)</div>
+      </div></div>
+      <div class="stat-card"><div class="stat-icon red">💸</div><div>
+        <div class="stat-value">$${totalUSD.toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})}</div>
+        <div class="stat-label">إجمالي المصروفات (USD)</div>
+      </div></div>
+      <div class="stat-card" style="border:2px solid ${isProfit?'var(--success)':'var(--danger)'}">
+        <div class="stat-icon" style="background:${isProfit?'#dcfce7':'#fee2e2'}">${isProfit?'📈':'📉'}</div>
+        <div>
+          <div class="stat-value" style="color:${isProfit?'var(--success)':'var(--danger)'}">
+            ${isProfit?'+':''}${profitUSD.toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})} $
+          </div>
+          <div class="stat-label">${isProfit?'✅ صافي الربح':'❌ خسارة'} (USD)</div>
+        </div>
+      </div>
+    `;
+  }
+
+  const tbody = document.getElementById('expenses-tbody');
+  if(!tbody) return;
+  if(!expenses.length){
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">لا توجد مصروفات بعد — اضغط + إضافة مصروف</td></tr>';
+  } else {
+    tbody.innerHTML = expenses.map((e,i)=>{
+      const usd = (parseFloat(e.amountTHB)||0)/rate;
+      return `<tr style="border-bottom:1px solid var(--border)">
+        <td style="text-align:center;padding:10px 12px;color:var(--muted)">${i+1}</td>
+        <td style="padding:10px 12px;font-weight:500">${e.desc}</td>
+        <td style="padding:10px 12px;text-align:center">
+          <span style="background:#f1f5f9;border-radius:20px;padding:3px 10px;font-size:12px">${e.category||'أخرى'}</span>
+        </td>
+        <td style="padding:10px 12px;text-align:left;font-weight:600">${parseFloat(e.amountTHB||0).toLocaleString('en')} ฿</td>
+        <td style="padding:10px 12px;text-align:left;color:var(--danger)">$${usd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        <td style="padding:10px 12px;text-align:center">
+          <button class="btn btn-edit" style="font-size:11px;padding:4px 8px" onclick="editExpense(${e.id})">✏️ تعديل</button>
+          <button class="btn btn-danger" style="font-size:11px;padding:4px 8px;margin-right:4px" onclick="deleteExpense(${e.id})">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  const tfoot = document.getElementById('expenses-tfoot');
+  if(tfoot && expenses.length){
+    tfoot.innerHTML = `
+      <tr style="background:#f8fafc;font-weight:700;border-top:2px solid var(--border)">
+        <td colspan="3" style="padding:12px;text-align:right">الإجمالي</td>
+        <td style="padding:12px;text-align:left;font-size:15px">${Math.round(totalTHB).toLocaleString('en')} ฿</td>
+        <td style="padding:12px;text-align:left;font-size:15px;color:var(--danger)">$${totalUSD.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        <td></td>
+      </tr>
+      <tr style="background:${isProfit?'#dcfce7':'#fee2e2'};font-weight:700">
+        <td colspan="3" style="padding:12px;text-align:right;color:${isProfit?'var(--success)':'var(--danger)'}">
+          ${isProfit?'✅ صافي الربح':'❌ الخسارة'}
+        </td>
+        <td style="padding:12px;text-align:left;color:${isProfit?'var(--success)':'var(--danger)'}">
+          ${isProfit?'+':'-'}${Math.round(Math.abs(profitTHB)).toLocaleString('en')} ฿
+        </td>
+        <td style="padding:12px;text-align:left;color:${isProfit?'var(--success)':'var(--danger)'}">
+          ${isProfit?'+':'-'}$${Math.abs(profitUSD).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
+        </td>
+        <td></td>
+      </tr>
+    `;
+  } else if(tfoot){
+    tfoot.innerHTML='';
+  }
+}
+
+let editingExpenseId = null;
+
+function openExpenseModal(id){
+  editingExpenseId = id||null;
+  const expenses = getExpenses();
+  const e = id ? expenses.find(x=>x.id===id) : null;
+  const cats = EXPENSE_CATEGORIES.map(c=>`<option value="${c}" ${e&&e.category===c?'selected':''}>${c}</option>`).join('');
+  const html = `
+    <div id="modal-expense" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center" onclick="if(event.target===this)this.remove()">
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:440px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+        <h3 style="margin:0 0 20px;font-size:18px">${id?'✏️ تعديل مصروف':'➕ إضافة مصروف جديد'}</h3>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <label style="font-size:13px;font-weight:600;display:block">الوصف
+            <input id="exp-desc" type="text" value="${e?e.desc:''}" placeholder="مثال: فندق ليلة 15 يونيو"
+              style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
+          </label>
+          <label style="font-size:13px;font-weight:600;display:block">الفئة
+            <select id="exp-cat" style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
+              ${cats}
+            </select>
+          </label>
+          <label style="font-size:13px;font-weight:600;display:block">المبلغ بالبات (THB) ฿
+            <input id="exp-thb" type="number" value="${e?e.amountTHB:''}" min="0" step="1" placeholder="0"
+              style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
+          </label>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:22px;justify-content:flex-end">
+          <button onclick="document.getElementById('modal-expense').remove()"
+            style="padding:9px 22px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:14px">إلغاء</button>
+          <button onclick="saveExpense()"
+            style="padding:9px 22px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600">حفظ</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', html);
+  setTimeout(()=>document.getElementById('exp-desc')?.focus(), 80);
+}
+
+function saveExpense(){
+  const desc = (document.getElementById('exp-desc')?.value||'').trim();
+  const cat  = document.getElementById('exp-cat')?.value || 'أخرى';
+  const thb  = parseFloat(document.getElementById('exp-thb')?.value)||0;
+  if(!desc){ alert('أدخل وصف المصروف'); return; }
+  if(!thb || thb<=0){ alert('أدخل المبلغ بالبات'); return; }
+  const expenses = getExpenses();
+  if(editingExpenseId){
+    const idx = expenses.findIndex(e=>e.id===editingExpenseId);
+    if(idx>=0){ expenses[idx].desc=desc; expenses[idx].category=cat; expenses[idx].amountTHB=thb; }
+  } else {
+    const newId = expenses.length ? Math.max(...expenses.map(e=>e.id))+1 : 1;
+    expenses.push({id:newId, desc, category:cat, amountTHB:thb});
+  }
+  saveExpenses(expenses);
+  document.getElementById('modal-expense')?.remove();
+  renderExpenses();
+  toast(editingExpenseId?'تم تعديل المصروف ✅':'تمت إضافة المصروف ✅','success');
+}
+
+function editExpense(id){ openExpenseModal(id); }
+
+function deleteExpense(id){
+  if(!confirm('حذف هذا المصروف؟')) return;
+  saveExpenses(getExpenses().filter(e=>e.id!==id));
+  renderExpenses();
+  toast('تم حذف المصروف','success');
+}
 
 // ===== FINAL INIT — runs AFTER all migrations/IIFEs above =====
 // This is the only place that renders data, so it always uses fully-migrated data
