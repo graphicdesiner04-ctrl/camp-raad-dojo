@@ -1360,7 +1360,7 @@ function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
 
 // ====== DATA VERSION — bump this string any time DEFAULT_PARTICIPANTS changes ======
 // This forces mobile/cached browsers to reload fresh data from DEFAULT_PARTICIPANTS
-const DATA_VERSION = '20260610-v12';
+const DATA_VERSION = '20260612-v13';
 (function forceCacheBust(){
   const stored = localStorage.getItem('data_version');
   if(stored !== DATA_VERSION){
@@ -2383,14 +2383,15 @@ function _reportHeader(titleAr, titleEn){
 function _reportPage(lang){
   lang=lang||'ar';
   const dir=lang==='ar'?'rtl':'ltr';
+  const thAlign=lang==='ar'?'right':'left';
   return `<!DOCTYPE html><html lang="${lang}" dir="${dir}">
 <head><meta charset="UTF-8"><title>Raad Dojo – Report</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Cairo',Arial,sans-serif;background:#fff;color:#1a2332;direction:rtl;font-size:13px}
+body{font-family:'Cairo',Arial,sans-serif;background:#fff;color:#1a2332;direction:${dir};font-size:13px}
 table{width:100%;border-collapse:collapse}
-th{background:#0f1c2e;color:#fff;padding:10px 12px;text-align:right;font-size:12px;font-weight:600;white-space:nowrap}
+th{background:#0f1c2e;color:#fff;padding:10px 12px;text-align:${thAlign};font-size:12px;font-weight:600;white-space:nowrap}
 td{padding:9px 12px;border-bottom:1px solid #e2e8f0;vertical-align:middle}
 tr:nth-child(even) td{background:#f8fafc}
 tr:hover td{background:#f0f4ff}
@@ -2559,7 +2560,11 @@ function _buildFlightsReport(forWord=false, lang){
       const db=(b.departureDateTrip||'9999')+' '+(b.departureTimeTrip||'00:00');
       return da.localeCompare(db);
     });
-  const rows = sortedP.map((p,i)=>`<tr>
+  const rows = sortedP.map((p,i)=>{
+    const flParts=(p.flightNumber||'').split('/').map(s=>s.trim());
+    const arrFl=flParts[0]||'—';
+    const retFl=flParts[1]||'—';
+    return `<tr>
     <td style="text-align:center">${i+1}</td>
     <td><b>${isAr?p.arabicName:(p.englishName||p.arabicName)}</b></td>
     <td>${p.nationality||'—'}</td>
@@ -2567,13 +2572,15 @@ function _buildFlightsReport(forWord=false, lang){
     <td><code>${p.passportNumber||'—'}</code></td>
     <td>${p.departureDateTrip||'—'}</td>
     <td>${p.departureTimeTrip||'—'}</td>
+    <td dir="ltr" style="font-size:11px"><code style="background:#e0f2fe;padding:2px 6px;border-radius:4px;color:#0369a1">${arrFl}</code></td>
     <td>${p.returnDateTrip||'—'}</td>
     <td>${p.returnTimeTrip||'—'}</td>
-  </tr>`).join('');
+    <td dir="ltr" style="font-size:11px"><code style="background:#fef9c3;padding:2px 6px;border-radius:4px;color:#854d0e">${retFl}</code></td>
+  </tr>`;}).join('');
 
   const L = isAr
-    ? {title:'مواعيد الوصول والمغادرة',name:'الاسم',nat:'الجنسية',phone:'الهاتف',pass:'رقم الجواز',dep:'يوم الوصول',depT:'وقت الوصول',ret:'يوم المغادرة',retT:'وقت المغادرة',footer:'Raad Dojo · معسكر تايلاند 2025'}
-    : {title:'Arrival & Departure Schedule',name:'Name',nat:'Nationality',phone:'Phone',pass:'Passport No.',dep:'Arrival Date',depT:'Arr. Time',ret:'Departure Date',retT:'Dep. Time',footer:'Raad Dojo · Thailand Camp 2025'};
+    ? {title:'مواعيد الوصول والمغادرة',name:'الاسم',nat:'الجنسية',phone:'الهاتف',pass:'رقم الجواز',dep:'يوم الوصول',depT:'وقت الوصول',arrFl:'رحلة الوصول (HKT)',ret:'يوم المغادرة',retT:'وقت المغادرة',retFl:'رحلة المغادرة (HKT)',footer:'Raad Dojo · معسكر تايلاند 2025'}
+    : {title:'Arrival & Departure Schedule',name:'Name',nat:'Nationality',phone:'Phone',pass:'Passport No.',dep:'Arrival Date',depT:'Arr. Time',arrFl:'Arr. Flight (HKT)',ret:'Departure Date',retT:'Dep. Time',retFl:'Dep. Flight (HKT)',footer:'Raad Dojo · Thailand Camp 2025'};
 
   return _reportPage(lang) + (forWord?'':_printBtn()) + _reportHeader('مواعيد الوصول والمغادرة','Arrival & Departure Schedule') + `
   <div class="section">
@@ -2581,7 +2588,7 @@ function _buildFlightsReport(forWord=false, lang){
     <table>
       <thead><tr>
         <th>#</th><th>${L.name}</th><th>${L.nat}</th><th>${L.phone}</th><th>${L.pass}</th>
-        <th>${L.dep}</th><th>${L.depT}</th><th>${L.ret}</th><th>${L.retT}</th>
+        <th>${L.dep}</th><th>${L.depT}</th><th>${L.arrFl}</th><th>${L.ret}</th><th>${L.retT}</th><th>${L.retFl}</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
