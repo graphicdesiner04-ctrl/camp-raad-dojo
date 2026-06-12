@@ -2049,7 +2049,7 @@ function deleteStaff(id){
 
 // ========== PAYMENTS ==========
 function renderPayments(){
-  const campPs = participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed);
+  const campPs = participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed&&!p.isGuestOnly);
   let totalSum=0,paidSum=0;
   const tbody = document.getElementById('payments-tbody');
   tbody.innerHTML = campPs.map((p,i)=>{
