@@ -1227,9 +1227,16 @@ tr:last-child td{border-bottom:none}
 <!-- GALLERY LIGHTBOX -->
 <div class="gallery-lightbox" id="gallery-lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-  <img id="lightbox-img" src="" alt="">
+  <img id="lightbox-img" src="" alt="صورة مكبرة">
 </div>
 
+<!-- Data bundles: loaded after UI markup so first paint is not blocked -->
+<script src="passport-data.js?v=20260607"></script>
+<script src="logo-data.js?v=20260607"></script>
+<script src="invoice-data.js?v=20260607"></script>
+<script src="stamp-data.js?v=20260607"></script>
+<script src="gallery-data.js?v=20260607"></script>
+<script src="tickets-data.js?v=20260607"></script>
 <script>
 // ========== AUTH ==========
 const AUTH_USER = 'Raad';
