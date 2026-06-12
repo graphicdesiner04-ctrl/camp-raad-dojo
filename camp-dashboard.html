@@ -2918,7 +2918,7 @@ function _buildHotelLetters(forWord=false, lang='ar'){
 
 function _buildReceipts(forWord=false, lang='ar'){
   const isAr = (lang==='ar');
-  const receipts = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId).map((p,i)=>{
+  const receipts = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&!p.isGuestOnly&&p.campId===currentCampId).map((p,i)=>{
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
     const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
     const receiptNum = 'RD-'+(String(i+1).padStart(3,'0'));
