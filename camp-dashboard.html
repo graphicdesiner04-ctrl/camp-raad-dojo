@@ -3679,6 +3679,12 @@ if(isAuthenticated()){
   initGallery();
 }
 
+// Show data version on login screen so stale clients are easy to spot
+(function(){
+  const v = document.getElementById('login-version');
+  if(v) v.textContent = 'Data ' + DATA_VERSION;
+})();
+
 // Keyboard access for sidebar navigation (nav items are divs)
 document.querySelectorAll('.nav-item').forEach(el=>{
   el.setAttribute('role','button');
