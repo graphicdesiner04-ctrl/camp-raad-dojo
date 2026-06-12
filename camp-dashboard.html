@@ -2650,7 +2650,7 @@ function _buildFlightsReport(forWord=false, lang){
 function _buildTshirtsReport(forWord=false, lang){
   lang=lang||_reportLang||'ar';
   const isAr=(lang==='ar');
-  const activePs = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&p.campId===currentCampId);
+  const activePs = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&!p.isGuestOnly&&p.campId===currentCampId);
   const sizes = {};
   activePs.forEach(p=>{if(p.tshirtSize){sizes[p.tshirtSize]=(sizes[p.tshirtSize]||0)+1;}});
   const summaryRows = Object.entries(sizes).map(([sz,cnt])=>`<tr><td>${sz}</td><td style="text-align:center">${cnt}</td></tr>`).join('') || `<tr><td colspan="2" style="text-align:center;color:#94a3b8">${isAr?'لا توجد بيانات':'No data'}</td></tr>`;
