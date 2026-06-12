@@ -13,3 +13,6 @@ make_mockup*.py
 *.pdf
 .claude/settings.json
 .claude/settings.local.json
+
+*.py
+C?UsershpDownloads*.html
