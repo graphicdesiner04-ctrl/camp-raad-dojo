@@ -8,7 +8,25 @@
 <meta name="theme-color" content="#0a1628">
 <!-- SERVICE WORKER: forces fresh HTML on every visit — fixes mobile cache permanently -->
 <script>
-if('serviceWorker' in navigator){
+// HARD RESET: open ...camp-dashboard.html?reset=1 to wipe ALL local state
+// (service workers, caches, localStorage) and reload a guaranteed-fresh copy.
+if(location.search.indexOf('reset=1') !== -1){
+  (async function(){
+    try{
+      if('serviceWorker' in navigator){
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for(const r of regs) await r.unregister();
+      }
+      if(window.caches){
+        const keys = await caches.keys();
+        for(const k of keys) await caches.delete(k);
+      }
+      localStorage.clear();
+      sessionStorage.clear();
+    }catch(e){}
+    location.replace(location.pathname + '?fresh=' + Date.now());
+  })();
+}else if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(function(){});
 }
 </script>
