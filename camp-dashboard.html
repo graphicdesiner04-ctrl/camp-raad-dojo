@@ -1834,7 +1834,7 @@ function renderFiles(){
   const typeFilter = document.getElementById('filter-file-type').value;
   // فقط المشتركون المؤكدون (7 أشخاص) — لا مشرفون ولا غير مؤكدين ولا ملغيين
   const campParticipantIds = new Set(
-    participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed).map(p=>p.id)
+    participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed&&!p.isGuestOnly).map(p=>p.id)
   );
   let list = uploadedFiles.filter(f=>
     f.participantId && campParticipantIds.has(f.participantId)
