@@ -3006,7 +3006,7 @@ function _buildRemainingInvoices(forWord=false, lang){
   const isAr=(lang==='ar');
   const dir=isAr?'rtl':'ltr';
   const pending = participants.filter(p=>{
-    if(p.isCancelled||p.isUnconfirmed||p.campId!==currentCampId) return false;
+    if(p.isCancelled||p.isUnconfirmed||p.isGuestOnly||p.campId!==currentCampId) return false;
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
     const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
     return rem > 0;
