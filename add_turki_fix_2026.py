@@ -22,8 +22,8 @@ if old_ps_end not in content:
 turki_entry = ',\n  {id:11,campId:1,arabicName:"تركي الخالدي",englishName:"TURKI ALKHALIDI",nationality:"Saudi Arabia",countryCode:"SAU",passportNumber:"",phone:"",hotel:"The Blue Mavi",roomType:"Single",roomOccupants:"1",checkIn:"2026-06-17",checkOut:"2026-06-30",airline:"Etihad Airways",flightNumber:"EY572 / EY410",departureDateTrip:"2026-06-17",departureTimeTrip:"06:40",returnDateTrip:"2026-06-30",returnTimeTrip:"",totalAmount:"0",firstPayment:"0",secondPayment:"",paymentStatus:"",registrationStatus:"ضيف",isGuestOnly:true,notes:"ضيف — يظهر في جدول الرحلات وخطاب الفندق فقط",files:[]}'
 
 # Find end of participants array (last participant entry before ];)
-old_last_p_end = 'notes:"",files:[]}]\n'
-new_last_p_end = 'notes:"",files:[]}' + turki_entry + ']\n'
+old_last_p_end = 'files:[]}\n];\n\nconst '
+new_last_p_end = 'files:[]}' + turki_entry + '\n];\n\nconst '
 
 if old_last_p_end not in content:
     print('ERROR: participants array end not found')
