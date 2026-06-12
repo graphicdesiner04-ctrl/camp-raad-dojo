@@ -3499,7 +3499,7 @@ function renderExpenses(){
   const totalTHB = expenses.reduce((s,e)=>s+(parseFloat(e.amountTHB)||0),0);
   const totalUSD = totalTHB / rate;
 
-  const campPs = participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed);
+  const campPs = participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed&&!p.isGuestOnly);
   const revenueUSD = campPs.reduce((s,p)=>{
     return s + (parseFloat(p.firstPayment||0)) + (parseFloat(p.secondPayment||0));
   },0);
