@@ -3531,16 +3531,17 @@ const DEFAULT_EXPENSES = [
 const SAR_PER_USD = 3.75;
 
 function getExpenses(){
-  let arr = load('camp_expenses_'+currentCampId, null);
-  if(arr===null){
-    const defaults = DEFAULT_EXPENSES.map(e=>({...e}));
-    saveExpenses(defaults);
-    return defaults;
-  }
-  // Migrate old format: had {desc, category, amountTHB}
-  if(arr.length && 'desc' in arr[0]){
-    arr = arr.map(e=>({id:e.id, item:e.desc||'', details:'', price:parseFloat(e.amountTHB)||0, count:1}));
-    saveExpenses(arr);
+  const campKey = 'camp_expenses_'+(currentCampId||1);
+  let arr = load(campKey, null);
+  // Load defaults if never saved OR if empty OR if still on old format
+  if(!arr || arr.length===0 || (arr.length && 'desc' in arr[0])){
+    if(arr && arr.length && 'desc' in arr[0]){
+      // Migrate old format: {desc, category, amountTHB} → new format
+      arr = arr.map(e=>({id:e.id, item:e.desc||'', details:'', price:parseFloat(e.amountTHB)||0, count:1}));
+    } else {
+      arr = DEFAULT_EXPENSES.map(e=>({...e}));
+    }
+    save(campKey, arr);
   }
   return arr;
 }
