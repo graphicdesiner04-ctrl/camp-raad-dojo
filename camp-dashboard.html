@@ -1408,24 +1408,16 @@ function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
 
 // ====== DATA VERSION — bump this string any time DEFAULT_PARTICIPANTS changes ======
 // This forces mobile/cached browsers to reload fresh data from DEFAULT_PARTICIPANTS
-const DATA_VERSION = '20260614-v18';
+const DATA_VERSION = '20260614-v19';
 (function forceCacheBust(){
   const stored = localStorage.getItem('data_version');
   if(stored !== DATA_VERSION){
-    // Clear participant data so it re-loads from DEFAULT_PARTICIPANTS below
     localStorage.removeItem('camp_participants');
     localStorage.removeItem('camp_staff');
-    localStorage.setItem('data_version', DATA_VERSION);
-    console.log('[CampDashboard] Data version updated to', DATA_VERSION, '— refreshing participant data');
-  }
-})();
-
-// ====== EXPENSES VERSION — bump to force reload from DEFAULT_EXPENSES ======
-const EXPENSES_VERSION = '20260614-v1';
-(function forceExpensesBust(){
-  if(localStorage.getItem('expenses_version') !== EXPENSES_VERSION){
     for(let i=1;i<=20;i++) localStorage.removeItem('camp_expenses_'+i);
-    localStorage.setItem('expenses_version', EXPENSES_VERSION);
+    localStorage.removeItem('expenses_version');
+    localStorage.setItem('data_version', DATA_VERSION);
+    console.log('[CampDashboard] Data version updated to', DATA_VERSION);
   }
 })();
 
