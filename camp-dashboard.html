@@ -884,7 +884,8 @@ tr:last-child td{border-bottom:none}
     <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
       <p style="font-size:12px;color:var(--muted)">إيصال دفع منفصل لكل مشترك يتضمن المبالغ المدفوعة والمتبقية</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="chooseReportLang('receipts')">🖨️ PDF / طباعة</button>
+        <button class="btn btn-primary" onclick="chooseReportLang('receipts')">🖨️ الكل في ملف واحد</button>
+        <button class="btn btn-success" onclick="openSingleReceiptPicker()">📄 إيصال كل مشترك لوحده</button>
         <button class="btn btn-view" onclick="chooseReportLang('receipts','word')">📝 Word</button>
       </div>
     </div></div>
