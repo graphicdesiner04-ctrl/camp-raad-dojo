@@ -3451,6 +3451,11 @@ function deleteCamp(id){
       if(p.checkOut!=='2026-06-29'){ p.checkOut='2026-06-29'; changed=true; }
       if(p.returnDateTrip!=='2026-06-29'){ p.returnDateTrip='2026-06-29'; changed=true; }
     }
+    // يحيى المشرف (id:12) → مغادرة الفندق ورحلة العودة 29-06-2026
+    if(p.id===12){
+      if(p.checkOut!=='2026-06-29'){ p.checkOut='2026-06-29'; changed=true; }
+      if(p.returnDateTrip!=='2026-06-29'){ p.returnDateTrip='2026-06-29'; changed=true; }
+    }
     // عبدالرحمن (id:5) → second payment $1000, fully paid
     if(p.id===5){
       if(p.secondPayment!=='1000'){ p.secondPayment='1000'; p.secondPaymentDate='2026-06-03'; changed=true; }
