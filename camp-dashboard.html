@@ -2020,10 +2020,24 @@ function downloadFile(id){
 
 function deleteFile(id){
   if(!confirm('حذف هذا الملف؟')) return;
-  uploadedFiles = uploadedFiles.filter(f=>f.id!==id);
-  save('camp_files',uploadedFiles);
+  removeFileById(id);
   renderFiles();renderParticipants();
   toast('تم حذف الملف','success');
+}
+
+// Removes a file from the in-memory index and the small persisted keys.
+// Preloaded files (from the bundles) can't be erased from source, so their id is
+// remembered in camp_deleted_files; user files are dropped from camp_user_files.
+function removeFileById(id){
+  uploadedFiles = uploadedFiles.filter(f=>f.id!==id);
+  const wasUser = userFiles.some(f=>f.id===id);
+  if(wasUser){
+    userFiles = userFiles.filter(f=>f.id!==id);
+    save('camp_user_files', userFiles);
+  } else if(!deletedFileIds.includes(id)){
+    deletedFileIds.push(id);
+    save('camp_deleted_files', deletedFileIds);
+  }
 }
 
 // ========== STAFF ==========
