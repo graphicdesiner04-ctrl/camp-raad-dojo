@@ -1995,7 +1995,9 @@ function saveUploadedFile(){
     fileSize:currentUploadData.size,uploadDate:new Date().toISOString().split('T')[0]
   };
   uploadedFiles.push(newFile);
-  save('camp_files',uploadedFiles);
+  userFiles.push(newFile);
+  try { save('camp_user_files', userFiles); }
+  catch(err){ uploadedFiles.pop(); userFiles.pop(); toast('الملف كبير جداً على مساحة التخزين','error'); return; }
   closeModal('modal-upload');
   toast('تم رفع الملف بنجاح','success');
   renderParticipants();
