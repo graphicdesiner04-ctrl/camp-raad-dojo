@@ -1434,7 +1434,26 @@ let participants = load('camp_participants', DEFAULT_PARTICIPANTS);
 let camps = load('camp_camps', DEFAULT_CAMPS);
 let currentCampId = parseInt(localStorage.getItem('current_camp_id') || '1');
 let staff = load('camp_staff', DEFAULT_STAFF);
-let uploadedFiles = load('camp_files', []);
+// ===== FILES STORAGE (lightweight) =====
+// Preloaded passport/ticket/invoice blobs (~6MB) live ONLY in memory, sourced from the
+// *-data.js bundles. They are NEVER copied into localStorage (that overflowed the ~5MB
+// quota and crashed iOS Safari). localStorage holds only small keys: user-uploaded files
+// and the ids of any preloaded files the user deleted.
+localStorage.removeItem('camp_files'); // purge the old multi-MB blob from any prior version
+let userFiles      = load('camp_user_files', []);
+let deletedFileIds = load('camp_deleted_files', []);
+function buildFilesIndex(){
+  const out = [];
+  const seen = new Set();
+  const pushAll = (arr)=>{ if(Array.isArray(arr)) arr.forEach(f=>{ if(!seen.has(f.id)){ seen.add(f.id); out.push(f); } }); };
+  if(typeof PRELOADED_PASSPORTS !== 'undefined') pushAll(PRELOADED_PASSPORTS);
+  if(typeof PRELOADED_INVOICES  !== 'undefined') pushAll(PRELOADED_INVOICES);
+  if(typeof PRELOADED_TICKETS   !== 'undefined') pushAll(PRELOADED_TICKETS);
+  pushAll(userFiles);
+  const del = new Set(deletedFileIds);
+  return out.filter(f=>!del.has(f.id));
+}
+let uploadedFiles = buildFilesIndex();
 let editingParticipantId = null;
 let editingStaffId = null;
 let editingCampId = null;
