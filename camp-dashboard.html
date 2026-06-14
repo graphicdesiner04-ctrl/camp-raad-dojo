@@ -914,12 +914,15 @@ tr:last-child td{border-bottom:none}
       <span style="font-weight:600;font-size:14px">💱 سعر الصرف:</span>
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:13px;color:var(--muted)">1 دولار =</span>
-        <input type="number" id="thb-rate" value="35" min="1" step="0.1"
+        <input type="number" id="thb-rate" value="32" min="1" step="0.1"
           style="width:80px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:14px;text-align:center"
           oninput="saveThbRate()">
         <span style="font-size:13px;color:var(--muted)">بات تايلاندي (THB)</span>
       </div>
-      <span style="font-size:12px;color:var(--muted);margin-right:auto">كل المبالغ بالبات تتحول تلقائياً للدولار</span>
+      <div style="display:flex;align-items:center;gap:8px;margin-right:16px">
+        <span style="font-size:12px;color:var(--muted)">1$ = 3.75 ر.س. (ثابت)</span>
+      </div>
+      <span style="font-size:12px;color:var(--muted);margin-right:auto">الإجمالي يُحسب تلقائياً: السعر × العدد</span>
     </div>
   </div>
 
