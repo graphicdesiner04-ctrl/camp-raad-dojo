@@ -3461,6 +3461,13 @@ function deleteCamp(id){
       if(p.secondPayment!=='1000'){ p.secondPayment='1000'; p.secondPaymentDate='2026-06-03'; changed=true; }
       if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
     }
+    // ذعار السبيعي (id:4) → دفع القسط الثاني (باقي القيمة) — مدفوع بالكامل
+    if(p.id===4){
+      if(p.firstPayment!=='1992'){ p.firstPayment='1992'; p.firstPaymentDate='2026-03-15'; changed=true; }
+      if(p.secondPayment!=='998'){ p.secondPayment='998'; p.secondPaymentDate='2026-06-14'; changed=true; }
+      if(p.paymentMethod!=='SNB الأهلي'){ p.paymentMethod='SNB الأهلي'; changed=true; }
+      if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
+    }
     // مسح الملاحظات الطبية من كل المشتركين
     if(p.notes && (p.notes.includes('لا يعاني') || p.notes.includes('مرض'))){ p.notes=''; changed=true; }
     // كل الغرف المؤكدة: Single, 1 شخص
