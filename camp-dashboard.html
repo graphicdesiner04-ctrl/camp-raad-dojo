@@ -1787,9 +1787,8 @@ function saveParticipant(){
 function deleteParticipant(id){
   if(!confirm('هل تريد حذف هذا المشترك؟')) return;
   participants = participants.filter(p=>p.id!==id);
-  uploadedFiles = uploadedFiles.filter(f=>f.participantId!==id);
+  uploadedFiles.filter(f=>f.participantId===id).map(f=>f.id).forEach(removeFileById);
   save('camp_participants',participants);
-  save('camp_files',uploadedFiles);
   renderParticipants();
   toast('تم حذف المشترك','success');
 }
