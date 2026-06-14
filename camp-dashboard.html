@@ -931,18 +931,20 @@ tr:last-child td{border-bottom:none}
     </div>
     <div class="card-body" style="padding:0">
       <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
           <thead>
             <tr style="background:var(--navy);color:#fff">
-              <th style="padding:10px 12px;text-align:center;width:40px">#</th>
-              <th style="padding:10px 12px">الوصف</th>
-              <th style="padding:10px 12px;text-align:center">الفئة</th>
-              <th style="padding:10px 12px;text-align:left">المبلغ (THB)</th>
-              <th style="padding:10px 12px;text-align:left">المبلغ ($)</th>
-              <th style="padding:10px 12px;text-align:center">الإجراءات</th>
+              <th style="padding:10px 10px;text-align:center;width:36px">#</th>
+              <th style="padding:10px 12px;min-width:150px;text-align:right">البند</th>
+              <th style="padding:10px 12px;min-width:180px;text-align:right">التفاصيل</th>
+              <th style="padding:10px 10px;text-align:center;width:110px">السعر (THB ฿)</th>
+              <th style="padding:10px 10px;text-align:center;width:65px">العدد</th>
+              <th style="padding:10px 10px;text-align:center;width:130px">الإجمالي (THB ฿)</th>
+              <th style="padding:10px 10px;text-align:center;width:105px">الإجمالي ($)</th>
+              <th style="padding:10px 10px;text-align:center;width:80px">إجراءات</th>
             </tr>
           </thead>
-          <tbody id="expenses-tbody"><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">لا توجد مصروفات بعد</td></tr></tbody>
+          <tbody id="expenses-tbody"></tbody>
           <tfoot id="expenses-tfoot"></tfoot>
         </table>
       </div>
