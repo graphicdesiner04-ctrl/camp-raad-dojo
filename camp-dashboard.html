@@ -2981,9 +2981,14 @@ function _buildHotelLetters(forWord=false, lang='ar'){
 @media print{.no-print{display:none!important}@page{margin:12mm}}</style></head><body>` + (forWord?'':_printBtn()) + letters + `</body></html>`;
 }
 
-function _buildReceipts(forWord=false, lang='ar'){
-  const isAr = (lang==='ar');
-  const receipts = participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&!p.isGuestOnly&&p.campId===currentCampId).map((p,i)=>{
+// Participants eligible for a payment receipt (same filter used across receipt features)
+function _eligibleReceiptParticipants(){
+  return participants.filter(p=>!p.isCancelled&&!p.isUnconfirmed&&!p.isGuestOnly&&p.campId===currentCampId);
+}
+
+// Builds the inner HTML for ONE participant's receipt. `i` is the index in the eligible list
+// (drives the receipt number RD-001…). Used both for the combined report and single receipts.
+function _singleReceiptHTML(p, i){
     const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
     const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
     const receiptNum = 'RD-'+(String(i+1).padStart(3,'0'));
