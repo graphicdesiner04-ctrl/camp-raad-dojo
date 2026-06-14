@@ -3065,9 +3065,57 @@ function _singleReceiptHTML(p, i){
         </div>
       </div>
     </div>`;
-  }).join('');
+}
 
+function _buildReceipts(forWord=false, lang='ar'){
+  const receipts = _eligibleReceiptParticipants().map((p,i)=>_singleReceiptHTML(p,i)).join('');
   return _reportPage() + (forWord?'':_printBtn()) + receipts + `</body></html>`;
+}
+
+// Opens a picker listing every eligible participant, each with a button that prints
+// that one participant's receipt alone — so each person can be sent their own copy.
+function openSingleReceiptPicker(){
+  const list = _eligibleReceiptParticipants();
+  if(!list.length){ toast('لا يوجد مشتركون','error'); return; }
+  const rows = list.map((p,i)=>{
+    const paid=(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0);
+    const rem=Math.max(0,(parseFloat(p.totalAmount)||0)-paid);
+    const isPaid = rem<=0;
+    const status = isPaid ? '<span style="color:#16a34a">✅ مدفوع بالكامل</span>'
+                          : '<span style="color:#d97706">⏳ متبقي $'+rem.toLocaleString()+'</span>';
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border)">
+      <div style="min-width:0">
+        <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i+1}. ${p.arabicName}</div>
+        <div style="font-size:12px;margin-top:2px">${status}</div>
+      </div>
+      <button class="btn btn-primary" style="font-size:12px;padding:6px 14px;white-space:nowrap" onclick="printSingleReceipt(${p.id})">🖨️ إيصاله</button>
+    </div>`;
+  }).join('');
+  const html = `
+    <div id="modal-single-receipt" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center" onclick="if(event.target===this)this.remove()">
+      <div style="background:#fff;border-radius:16px;padding:24px;max-width:480px;width:94%;box-shadow:0 20px 60px rgba(0,0,0,.25);max-height:88vh;display:flex;flex-direction:column">
+        <h3 style="margin:0 0 6px;font-size:18px">📄 إيصال منفصل لكل مشترك</h3>
+        <p style="margin:0 0 16px;font-size:12px;color:var(--muted)">اختر المشترك واطبع إيصاله لوحده (PDF) لترسله له مباشرة</p>
+        <div style="overflow:auto;border:1px solid var(--border);border-radius:10px">${rows}</div>
+        <div style="display:flex;justify-content:flex-end;margin-top:16px">
+          <button onclick="document.getElementById('modal-single-receipt').remove()"
+            style="padding:9px 22px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:14px">إغلاق</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+// Prints a single participant's receipt in its own window (ready to save as PDF / send).
+function printSingleReceipt(id){
+  const list = _eligibleReceiptParticipants();
+  const i = list.findIndex(p=>p.id===id);
+  if(i<0){ toast('المشترك غير موجود','error'); return; }
+  const html = _reportPage() + _printBtn() + _singleReceiptHTML(list[i], i) + `</body></html>`;
+  const win = window.open('','_blank');
+  if(!win){ toast('اسمح بالنوافذ المنبثقة للطباعة','error'); return; }
+  win.document.write(html);
+  win.document.close();
 }
 
 // ========== UTILS ==========
