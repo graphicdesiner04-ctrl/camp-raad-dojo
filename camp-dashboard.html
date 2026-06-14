@@ -3264,27 +3264,11 @@ function toast(msg,type='success'){
   setTimeout(()=>item.remove(),3500);
 }
 
-// Auto-load passport files on first run
-(function initPassports() {
-  const stored = load('camp_files', null);
-  if (stored && stored.length > 0) return;
-  if (typeof PRELOADED_PASSPORTS !== 'undefined' && PRELOADED_PASSPORTS.length) {
-    uploadedFiles = PRELOADED_PASSPORTS;
-    save('camp_files', uploadedFiles);
-  }
-})();
-
-// Auto-load invoice files (adds them if not already present by id)
-(function initInvoices() {
+// Preloaded passport/invoice/ticket files are already merged into uploadedFiles in memory
+// by buildFilesIndex() — nothing is written to localStorage here (keeps storage tiny).
+// We only apply the lightweight participant payment side-effect from invoice amounts.
+(function initInvoicePayments() {
   if (typeof PRELOADED_INVOICES === 'undefined') return;
-  const existing = new Set(uploadedFiles.map(f => f.id));
-  let added = false;
-  PRELOADED_INVOICES.forEach(inv => {
-    if (!existing.has(inv.id)) { uploadedFiles.push(inv); added = true; }
-  });
-  if (added) save('camp_files', uploadedFiles);
-
-  // Also update participant payment data from invoice amounts
   const payUpdates = {
     1: {firstPayment:'1076', firstPaymentDate:'2026-05-19', paymentMethod:'SNB الأهلي', paymentStatus:'جزئي'},
     2: {firstPayment:'1990', firstPaymentDate:'2026-04-27', paymentMethod:'SNB الأهلي', paymentStatus:'جزئي'},
@@ -3297,32 +3281,6 @@ function toast(msg,type='success'){
     if (upd && !p.firstPayment) { Object.assign(p, upd); payChanged = true; }
   });
   if (payChanged) save('camp_participants', participants);
-})();
-
-// Auto-load ticket files (adds them if not already present by id)
-// Also updates existing tickets with corrected staffId/ownerName data
-(function initTickets() {
-  if (typeof PRELOADED_TICKETS === 'undefined') return;
-  const existingMap = {};
-  uploadedFiles.forEach(f => { existingMap[f.id] = f; });
-  let changed = false;
-  PRELOADED_TICKETS.forEach(t => {
-    if (!existingMap[t.id]) {
-      uploadedFiles.push(t); changed = true;
-    } else {
-      // Migrate: update staffId/ownerName/ownerRole if the source has them
-      const stored = existingMap[t.id];
-      if (t.staffId && !stored.staffId) {
-        stored.staffId   = t.staffId;
-        stored.ownerName = t.ownerName;
-        stored.ownerRole = t.ownerRole;
-        stored.participantId = null;
-        stored.fileName  = t.fileName;
-        changed = true;
-      }
-    }
-  });
-  if (changed) save('camp_files', uploadedFiles);
 })();
 
 // ========== CAMPS ==========
