@@ -3504,13 +3504,49 @@ function deleteCamp(id){
 
 
 // ========== EXPENSES ==========
-const EXPENSE_CATEGORIES = ['إقامة','طعام وشراب','نقل','تدريب ومعدات','ترفيه وجولات','رسوم إدارية','أخرى'];
+const DEFAULT_EXPENSES = [
+  {id:1,  item:'إيجار سيارة',                               details:'',                                                  price:5250,      count:2},
+  {id:2,  item:'T-shirt',                                    details:'تيشرت للمشتركين',                                  price:500,       count:20},
+  {id:3,  item:'Yoga mat and band resistant',                details:'10 yoga mate + 9band resistance',                  price:300,       count:20},
+  {id:4,  item:'TAXI',                                       details:'2 bus 3 day',                                      price:3800,      count:2},
+  {id:5,  item:'Hotel Rooms',                                details:'',                                                  price:0,         count:8},
+  {id:6,  item:'Taxi Airport',                               details:'5 تاكسي للمشتركين',                                price:2040,      count:5},
+  {id:7,  item:'Breakfast',                                  details:'',                                                  price:0,         count:8},
+  {id:8,  item:'cap and logo',                               details:'',                                                  price:0,         count:8},
+  {id:9,  item:'Bags',                                       details:'',                                                  price:0,         count:12},
+  {id:10, item:'Trip phiphi',                                details:'',                                                  price:0,         count:0},
+  {id:11, item:'Petrol',                                     details:'',                                                  price:0,         count:0},
+  {id:12, item:'Gym',                                        details:'',                                                  price:0,         count:0},
+  {id:13, item:'Water and ice',                              details:'',                                                  price:0,         count:0},
+  {id:14, item:'Towels',                                     details:'',                                                  price:0,         count:0},
+  {id:15, item:'Gloves',                                     details:'',                                                  price:0,         count:0},
+  {id:16, item:'ارباح احمد حسن',                            details:'',                                                  price:0,         count:0},
+  {id:17, item:'تذاكر كابتن رعد من اليابان تايلند',         details:'',                                                  price:0,         count:0},
+  {id:18, item:'حجز الفندق كابتن رعد',                      details:'',                                                  price:0,         count:0},
+  {id:19, item:'مصاريف الكابتن خلال فترة الاقامة بتايلند',  details:'مصاريف الكابتن خلال فترة الاقامة بتايلند',          price:109003.88, count:1},
+  {id:20, item:'مصاريف استخراج الفيزا',                     details:'الفيزا 160 ريال (لرعد) | الفيزا 145 ريال (لأحمد)', price:2694.58,   count:1},
+];
 
-function getExpenses(){ return load('camp_expenses_'+currentCampId, []); }
+const SAR_PER_USD = 3.75;
+
+function getExpenses(){
+  let arr = load('camp_expenses_'+currentCampId, null);
+  if(arr===null){
+    const defaults = DEFAULT_EXPENSES.map(e=>({...e}));
+    saveExpenses(defaults);
+    return defaults;
+  }
+  // Migrate old format: had {desc, category, amountTHB}
+  if(arr.length && 'desc' in arr[0]){
+    arr = arr.map(e=>({id:e.id, item:e.desc||'', details:'', price:parseFloat(e.amountTHB)||0, count:1}));
+    saveExpenses(arr);
+  }
+  return arr;
+}
 function saveExpenses(arr){ save('camp_expenses_'+currentCampId, arr); }
-function getThbRate(){ return parseFloat(localStorage.getItem('thb_rate')||'35'); }
+function getThbRate(){ return parseFloat(localStorage.getItem('thb_rate')||'32'); }
 function saveThbRate(){
-  const v = parseFloat(document.getElementById('thb-rate')?.value||35);
+  const v = parseFloat(document.getElementById('thb-rate')?.value||32);
   if(!isNaN(v) && v>0){ localStorage.setItem('thb_rate', String(v)); renderExpenses(); }
 }
 
@@ -3520,16 +3556,14 @@ function renderExpenses(){
   const rateEl = document.getElementById('thb-rate');
   if(rateEl && document.activeElement!==rateEl) rateEl.value = rate;
 
-  const totalTHB = expenses.reduce((s,e)=>s+(parseFloat(e.amountTHB)||0),0);
-  const totalUSD = totalTHB / rate;
+  const totalBAT = expenses.reduce((s,e)=>s+(parseFloat(e.price)||0)*(parseFloat(e.count)||0), 0);
+  const totalUSD = totalBAT / rate;
+  const totalSAR = totalUSD * SAR_PER_USD;
 
   const campPs = participants.filter(p=>p.campId===currentCampId&&!p.isCancelled&&!p.isUnconfirmed&&!p.isGuestOnly);
-  const revenueUSD = campPs.reduce((s,p)=>{
-    return s + (parseFloat(p.firstPayment||0)) + (parseFloat(p.secondPayment||0));
-  },0);
-  const profitUSD = revenueUSD - totalUSD;
-  const profitTHB = profitUSD * rate;
-  const isProfit = profitUSD >= 0;
+  const revenueUSD = campPs.reduce((s,p)=>s+(parseFloat(p.firstPayment)||0)+(parseFloat(p.secondPayment)||0), 0);
+  const profitUSD  = revenueUSD - totalUSD;
+  const isProfit   = profitUSD >= 0;
 
   const summary = document.getElementById('expenses-summary');
   if(summary){
@@ -3539,72 +3573,85 @@ function renderExpenses(){
         <div class="stat-label">إجمالي الإيرادات (USD)</div>
       </div></div>
       <div class="stat-card"><div class="stat-icon red">🧾</div><div>
-        <div class="stat-value">${Math.round(totalTHB).toLocaleString('en')} ฿</div>
+        <div class="stat-value">${Math.round(totalBAT).toLocaleString('en')} ฿</div>
         <div class="stat-label">إجمالي المصروفات (THB)</div>
       </div></div>
       <div class="stat-card"><div class="stat-icon red">💸</div><div>
-        <div class="stat-value">$${totalUSD.toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})}</div>
+        <div class="stat-value">$${totalUSD.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
         <div class="stat-label">إجمالي المصروفات (USD)</div>
+      </div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#fef9c3">💰</div><div>
+        <div class="stat-value" style="font-size:17px">${totalSAR.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})} ر.س.</div>
+        <div class="stat-label">إجمالي المصروفات (SAR)</div>
       </div></div>
       <div class="stat-card" style="border:2px solid ${isProfit?'var(--success)':'var(--danger)'}">
         <div class="stat-icon" style="background:${isProfit?'#dcfce7':'#fee2e2'}">${isProfit?'📈':'📉'}</div>
         <div>
           <div class="stat-value" style="color:${isProfit?'var(--success)':'var(--danger)'}">
-            ${isProfit?'+':''}${profitUSD.toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})} $
+            ${isProfit?'+':''}$${profitUSD.toLocaleString('en',{minimumFractionDigits:0,maximumFractionDigits:0})}
           </div>
           <div class="stat-label">${isProfit?'✅ صافي الربح':'❌ خسارة'} (USD)</div>
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
   const tbody = document.getElementById('expenses-tbody');
   if(!tbody) return;
   if(!expenses.length){
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">لا توجد مصروفات بعد — اضغط + إضافة مصروف</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted)">لا توجد مصروفات — اضغط + إضافة مصروف</td></tr>';
   } else {
     tbody.innerHTML = expenses.map((e,i)=>{
-      const usd = (parseFloat(e.amountTHB)||0)/rate;
+      const pr  = parseFloat(e.price)||0;
+      const cnt = parseFloat(e.count)||0;
+      const bat = pr * cnt;
+      const usd = bat / rate;
+      const dim = bat===0 ? 'color:#cbd5e1' : '';
       return `<tr style="border-bottom:1px solid var(--border)">
-        <td style="text-align:center;padding:10px 12px;color:var(--muted)">${i+1}</td>
-        <td style="padding:10px 12px;font-weight:500">${e.desc}</td>
-        <td style="padding:10px 12px;text-align:center">
-          <span style="background:#f1f5f9;border-radius:20px;padding:3px 10px;font-size:12px">${e.category||'أخرى'}</span>
-        </td>
-        <td style="padding:10px 12px;text-align:left;font-weight:600">${parseFloat(e.amountTHB||0).toLocaleString('en')} ฿</td>
-        <td style="padding:10px 12px;text-align:left;color:var(--danger)">$${usd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
-        <td style="padding:10px 12px;text-align:center">
-          <button class="btn btn-edit" style="font-size:11px;padding:4px 8px" onclick="editExpense(${e.id})">✏️ تعديل</button>
-          <button class="btn btn-danger" style="font-size:11px;padding:4px 8px;margin-right:4px" onclick="deleteExpense(${e.id})">🗑️</button>
+        <td style="text-align:center;padding:8px 10px;color:var(--muted);font-size:12px">${i+1}</td>
+        <td style="padding:8px 12px;font-weight:600">${e.item||'—'}</td>
+        <td style="padding:8px 12px;color:var(--muted);font-size:12px">${e.details||'—'}</td>
+        <td style="padding:8px 10px;text-align:center;font-family:monospace;${dim}">${pr?pr.toLocaleString('en'):'—'}</td>
+        <td style="padding:8px 10px;text-align:center;font-weight:600;${dim}">${cnt||'—'}</td>
+        <td style="padding:8px 10px;text-align:center;font-weight:700;${dim}">${bat?Math.round(bat).toLocaleString('en')+' ฿':'—'}</td>
+        <td style="padding:8px 10px;text-align:center;color:var(--danger);font-weight:600;${dim}">${usd?'$'+usd.toLocaleString('en',{minimumFractionDigits:3,maximumFractionDigits:3}):'—'}</td>
+        <td style="padding:8px 10px;text-align:center;white-space:nowrap">
+          <button class="btn btn-edit" style="font-size:11px;padding:3px 8px" onclick="editExpense(${e.id})">✏️</button>
+          <button class="btn btn-danger" style="font-size:11px;padding:3px 8px;margin-right:4px" onclick="deleteExpense(${e.id})">🗑️</button>
         </td>
       </tr>`;
     }).join('');
   }
 
   const tfoot = document.getElementById('expenses-tfoot');
-  if(tfoot && expenses.length){
-    tfoot.innerHTML = `
-      <tr style="background:#f8fafc;font-weight:700;border-top:2px solid var(--border)">
-        <td colspan="3" style="padding:12px;text-align:right">الإجمالي</td>
-        <td style="padding:12px;text-align:left;font-size:15px">${Math.round(totalTHB).toLocaleString('en')} ฿</td>
-        <td style="padding:12px;text-align:left;font-size:15px;color:var(--danger)">$${totalUSD.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
-        <td></td>
-      </tr>
-      <tr style="background:${isProfit?'#dcfce7':'#fee2e2'};font-weight:700">
-        <td colspan="3" style="padding:12px;text-align:right;color:${isProfit?'var(--success)':'var(--danger)'}">
-          ${isProfit?'✅ صافي الربح':'❌ الخسارة'}
-        </td>
-        <td style="padding:12px;text-align:left;color:${isProfit?'var(--success)':'var(--danger)'}">
-          ${isProfit?'+':'-'}${Math.round(Math.abs(profitTHB)).toLocaleString('en')} ฿
-        </td>
-        <td style="padding:12px;text-align:left;color:${isProfit?'var(--success)':'var(--danger)'}">
-          ${isProfit?'+':'-'}$${Math.abs(profitUSD).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
-        </td>
-        <td></td>
-      </tr>
-    `;
-  } else if(tfoot){
-    tfoot.innerHTML='';
+  if(tfoot){
+    if(expenses.length && totalBAT>0){
+      tfoot.innerHTML = `
+        <tr style="background:#f8fafc;font-weight:700;border-top:2px solid var(--border)">
+          <td colspan="5" style="padding:12px;text-align:right">الإجمالي</td>
+          <td style="padding:12px;text-align:center;font-size:15px">${Math.round(totalBAT).toLocaleString('en')} ฿</td>
+          <td style="padding:12px;text-align:center;font-size:15px;color:var(--danger)">$${totalUSD.toLocaleString('en',{minimumFractionDigits:3,maximumFractionDigits:3})}</td>
+          <td></td>
+        </tr>
+        <tr style="background:#fffbeb">
+          <td colspan="5" style="padding:8px 12px;text-align:right;font-size:12px;color:var(--muted)">بالريال السعودي (1$ = ${SAR_PER_USD} ر.س.)</td>
+          <td colspan="2" style="padding:8px 10px;text-align:center;font-weight:700;color:#92400e;font-size:14px">${totalSAR.toLocaleString('en',{minimumFractionDigits:5,maximumFractionDigits:5})} ر.س.</td>
+          <td></td>
+        </tr>
+        <tr style="background:${isProfit?'#dcfce7':'#fee2e2'};font-weight:700">
+          <td colspan="5" style="padding:10px 12px;text-align:right;color:${isProfit?'var(--success)':'var(--danger)'}">
+            ${isProfit?'✅ صافي الربح':'❌ الخسارة'}
+          </td>
+          <td style="padding:10px;text-align:center;color:${isProfit?'var(--success)':'var(--danger)'}">
+            ${isProfit?'+':'-'}${Math.round(Math.abs(profitUSD*rate)).toLocaleString('en')} ฿
+          </td>
+          <td style="padding:10px;text-align:center;color:${isProfit?'var(--success)':'var(--danger)'}">
+            ${isProfit?'+':'-'}$${Math.abs(profitUSD).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
+          </td>
+          <td></td>
+        </tr>`;
+    } else {
+      tfoot.innerHTML = '';
+    }
   }
 }
 
@@ -3614,25 +3661,39 @@ function openExpenseModal(id){
   editingExpenseId = id||null;
   const expenses = getExpenses();
   const e = id ? expenses.find(x=>x.id===id) : null;
-  const cats = EXPENSE_CATEGORIES.map(c=>`<option value="${c}" ${e&&e.category===c?'selected':''}>${c}</option>`).join('');
   const html = `
     <div id="modal-expense" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center" onclick="if(event.target===this)this.remove()">
-      <div style="background:#fff;border-radius:16px;padding:28px;max-width:440px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:480px;width:94%;box-shadow:0 20px 60px rgba(0,0,0,.25)">
         <h3 style="margin:0 0 20px;font-size:18px">${id?'✏️ تعديل مصروف':'➕ إضافة مصروف جديد'}</h3>
         <div style="display:flex;flex-direction:column;gap:14px">
-          <label style="font-size:13px;font-weight:600;display:block">الوصف
-            <input id="exp-desc" type="text" value="${e?e.desc:''}" placeholder="مثال: فندق ليلة 15 يونيو"
+          <label style="font-size:13px;font-weight:600;display:block">البند (Item)
+            <input id="exp-item" type="text" value="${e?e.item:''}" placeholder="مثال: إيجار سيارة"
               style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
           </label>
-          <label style="font-size:13px;font-weight:600;display:block">الفئة
-            <select id="exp-cat" style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
-              ${cats}
-            </select>
-          </label>
-          <label style="font-size:13px;font-weight:600;display:block">المبلغ بالبات (THB) ฿
-            <input id="exp-thb" type="number" value="${e?e.amountTHB:''}" min="0" step="1" placeholder="0"
+          <label style="font-size:13px;font-weight:600;display:block">التفاصيل (Details)
+            <input id="exp-details" type="text" value="${e?e.details:''}" placeholder="اختياري — وصف إضافي"
               style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
           </label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <label style="font-size:13px;font-weight:600;display:block">السعر/وحدة (THB ฿)
+              <input id="exp-price" type="number" value="${e?e.price:''}" min="0" step="0.01" placeholder="0"
+                oninput="updateExpTotal()"
+                style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
+            </label>
+            <label style="font-size:13px;font-weight:600;display:block">العدد (Count)
+              <input id="exp-count" type="number" value="${e?e.count:''}" min="0" step="1" placeholder="1"
+                oninput="updateExpTotal()"
+                style="display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
+            </label>
+          </div>
+          <div id="exp-total-preview" style="background:#f1f5f9;border-radius:8px;padding:10px 14px;font-size:13px;display:none">
+            <span style="color:var(--muted)">الإجمالي: </span>
+            <span id="exp-total-bat" style="font-weight:700"></span>
+            <span style="color:var(--muted);margin:0 8px">≈</span>
+            <span id="exp-total-usd" style="font-weight:700;color:var(--danger)"></span>
+            <span style="color:var(--muted);margin:0 8px">≈</span>
+            <span id="exp-total-sar" style="font-weight:700;color:#92400e"></span>
+          </div>
         </div>
         <div style="display:flex;gap:10px;margin-top:22px;justify-content:flex-end">
           <button onclick="document.getElementById('modal-expense').remove()"
@@ -3641,25 +3702,42 @@ function openExpenseModal(id){
             style="padding:9px 22px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600">حفظ</button>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
   document.body.insertAdjacentHTML('beforeend', html);
-  setTimeout(()=>document.getElementById('exp-desc')?.focus(), 80);
+  setTimeout(()=>{ document.getElementById('exp-item')?.focus(); updateExpTotal(); }, 80);
+}
+
+function updateExpTotal(){
+  const price = parseFloat(document.getElementById('exp-price')?.value)||0;
+  const count = parseFloat(document.getElementById('exp-count')?.value)||0;
+  const bat   = price * count;
+  const usd   = bat / getThbRate();
+  const sar   = usd * SAR_PER_USD;
+  const prev  = document.getElementById('exp-total-preview');
+  if(!prev) return;
+  if(bat>0){
+    prev.style.display = 'block';
+    document.getElementById('exp-total-bat').textContent = Math.round(bat).toLocaleString('en') + ' ฿';
+    document.getElementById('exp-total-usd').textContent = '$' + usd.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+    document.getElementById('exp-total-sar').textContent = sar.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' ر.س.';
+  } else {
+    prev.style.display = 'none';
+  }
 }
 
 function saveExpense(){
-  const desc = (document.getElementById('exp-desc')?.value||'').trim();
-  const cat  = document.getElementById('exp-cat')?.value || 'أخرى';
-  const thb  = parseFloat(document.getElementById('exp-thb')?.value)||0;
-  if(!desc){ alert('أدخل وصف المصروف'); return; }
-  if(!thb || thb<=0){ alert('أدخل المبلغ بالبات'); return; }
+  const item    = (document.getElementById('exp-item')?.value||'').trim();
+  const details = (document.getElementById('exp-details')?.value||'').trim();
+  const price   = parseFloat(document.getElementById('exp-price')?.value)||0;
+  const count   = parseFloat(document.getElementById('exp-count')?.value)||0;
+  if(!item){ alert('أدخل اسم البند'); return; }
   const expenses = getExpenses();
   if(editingExpenseId){
     const idx = expenses.findIndex(e=>e.id===editingExpenseId);
-    if(idx>=0){ expenses[idx].desc=desc; expenses[idx].category=cat; expenses[idx].amountTHB=thb; }
+    if(idx>=0) expenses[idx] = {...expenses[idx], item, details, price, count};
   } else {
     const newId = expenses.length ? Math.max(...expenses.map(e=>e.id))+1 : 1;
-    expenses.push({id:newId, desc, category:cat, amountTHB:thb});
+    expenses.push({id:newId, item, details, price, count});
   }
   saveExpenses(expenses);
   document.getElementById('modal-expense')?.remove();
