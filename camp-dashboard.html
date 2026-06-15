@@ -1507,7 +1507,7 @@ let currentUploadData = null;
   let changed = false;
   participants.forEach(p=>{
     if(p.id===7){
-      if(p.flightNumber==='EY / EY414'||p.flightNumber==='EY654 / EY414'){ p.flightNumber='EY415 / EY414'; changed=true; }
+      if(p.flightNumber==='EY / EY414'||p.flightNumber==='EY654 / EY414'||p.flightNumber==='EY415 / EY414'){ p.flightNumber='EY414 / EY415'; changed=true; }
       if(p.arabicName==='هديب الرشيد'){ p.arabicName='هديب جمال محمد حمود الهديب'; changed=true; }
       if(p.englishName==='HUDAIB J M H A ALRUSHAID'){ p.englishName='HUDAIB JAMAL MOHAMMED HAMOUD ALHDAIB'; changed=true; }
       if(!p.firstPayment || p.firstPayment===''){
