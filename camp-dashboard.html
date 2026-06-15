@@ -1519,18 +1519,24 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
-// Force the Arr. Flight (HKT) leg = the final flight that actually lands in Phuket
-// (not the first transit leg). Preserves the departure leg untouched.
-(function fixArrivalFlights(){
-  const arrFlight = { 4:'EY414', 7:'EY415', 12:'EY416', 10:'EY410', 11:'EY410' };
+// Flight numbers VERIFIED line-by-line against the original tickets (flight Tickets.rar, 2026-06).
+// Format "ARR / DEP" = the leg landing in Phuket (HKT) / the leg departing Phuket (HKT).
+// Where only one code is given, the return leg is NOT printed on the passenger's ticket
+// (NEEDS VERIFICATION) and is intentionally left blank rather than guessed.
+(function fixFlightNumbers(){
+  const fn = {
+    1:'QR846 / QR843',  // Ahmed  — arr QR846, dep QR843 (dep was missing)
+    2:'EY414 / EY417',  // Khalid — arr EY414, dep EY417 (dep was missing)
+    7:'EY414 / EY415',  // Hudaib — arr EY414, dep EY415 (was swapped)
+    8:'PG273 / PG274',  // Azad   — verified, unchanged
+    4:'EY414',          // Alsubaiai — arr verified; return leg not on ticket
+    12:'EY416',         // Yahya     — arr verified; return leg not on ticket
+    10:'EY410',         // Mishari   — arr verified; return leg not on ticket
+    11:'EY410'          // Turki     — guest, no ticket; arr assumed same as Mishari
+  };
   let changed = false;
   participants.forEach(p=>{
-    const want = arrFlight[p.id];
-    if(!want) return;
-    const parts = (p.flightNumber||'').split('/').map(s=>s.trim());
-    const dep = (parts[1]||'').trim();
-    const newVal = dep ? (want + ' / ' + dep) : want;
-    if(p.flightNumber !== newVal){ p.flightNumber = newVal; changed = true; }
+    if(fn[p.id] && p.flightNumber !== fn[p.id]){ p.flightNumber = fn[p.id]; changed = true; }
   });
   if(changed) save('camp_participants', participants);
 })();
