@@ -1519,6 +1519,22 @@ let currentUploadData = null;
   if(changed) save('camp_participants', participants);
 })();
 
+// Force the Arr. Flight (HKT) leg = the final flight that actually lands in Phuket
+// (not the first transit leg). Preserves the departure leg untouched.
+(function fixArrivalFlights(){
+  const arrFlight = { 4:'EY414', 7:'EY415', 12:'EY416', 10:'EY410', 11:'EY410' };
+  let changed = false;
+  participants.forEach(p=>{
+    const want = arrFlight[p.id];
+    if(!want) return;
+    const parts = (p.flightNumber||'').split('/').map(s=>s.trim());
+    const dep = (parts[1]||'').trim();
+    const newVal = dep ? (want + ' / ' + dep) : want;
+    if(p.flightNumber !== newVal){ p.flightNumber = newVal; changed = true; }
+  });
+  if(changed) save('camp_participants', participants);
+})();
+
 // ========== SIDEBAR MOBILE ==========
 function toggleSidebar(){
   const sb = document.getElementById('sidebar');
