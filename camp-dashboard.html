@@ -3595,9 +3595,9 @@ function deleteCamp(id){
       if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
     }
   });
-  // حذف الحجوزات غير المؤكدة (صالح id:3) نهائياً من القائمة
+  // حذف حجز صالح (id:3) غير المؤكد نهائياً من القائمة
   const _before = participants.length;
-  participants = participants.filter(p=>p.id!==3 && !p.isUnconfirmed);
+  participants = participants.filter(p=>p.id!==3);
   if(participants.length !== _before) changed = true;
   if(changed) save('camp_participants', participants);
 })();
