@@ -3581,7 +3581,24 @@ function deleteCamp(id){
       if(p.id===9 && p.checkIn!=='2026-06-22'){ p.checkIn='2026-06-22'; changed=true; }
       if(p.id===10 && p.departureDateTrip!=='2026-06-17'){ p.departureDateTrip='2026-06-17'; changed=true; }
       if(p.id===10 && p.departureTimeTrip!=='06:40'){ p.departureTimeTrip='06:40'; changed=true; }
+
+    // كل المشتركين المؤكدين سدّدوا كامل المبلغ — لا أحد عليه أي متبقٍّ
+    if(!p.isUnconfirmed && !p.isCancelled && !p.isGuestOnly){
+      const _total = parseFloat(p.totalAmount)||0;
+      const _first = parseFloat(p.firstPayment)||0;
+      const _paid  = _first + (parseFloat(p.secondPayment)||0);
+      if(_total>0 && _paid < _total){
+        p.secondPayment = String(_total - _first);
+        if(!p.secondPaymentDate){ p.secondPaymentDate = '2026-06-23'; }
+        changed = true;
+      }
+      if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
+    }
   });
+  // حذف الحجوزات غير المؤكدة (صالح id:3) نهائياً من القائمة
+  const _before = participants.length;
+  participants = participants.filter(p=>p.id!==3 && !p.isUnconfirmed);
+  if(participants.length !== _before) changed = true;
   if(changed) save('camp_participants', participants);
 })();
 
