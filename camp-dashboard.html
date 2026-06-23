@@ -3519,11 +3519,11 @@ function deleteCamp(id){
       if(p.paymentStatus!=='مدفوع بالكامل'){ p.paymentStatus='مدفوع بالكامل'; changed=true; }
       if(p.airline!=='Bangkok Airways'){ p.airline='Bangkok Airways'; p.flightNumber='PG273 / PG274'; p.departureTime='2026-06-16T12:35'; p.arrivalTime='2026-06-16T14:05'; p.transitInfo='عبر بانكوك (BKK) — Ref: EJ3NCR'; p.phuketArrival='2026-06-16T14:05'; p.departureDateTrip='2026-06-16'; p.departureTimeTrip='12:35'; p.returnDateTrip='2026-06-29'; p.returnTimeTrip='14:45'; changed=true; }
     }
-    // علي (id:9) → total $1950, partial $1011, مغادرة الفندق 29-06-2026
+    // علي (id:9) → total $1950, دفع الباقي $939 — مدفوع بالكامل
     if(p.id===9){
       if(p.totalAmount!=='1950'){ p.totalAmount='1950'; changed=true; }
       if(p.firstPayment!=='1011'){ p.firstPayment='1011'; p.firstPaymentDate='2026-06-03'; changed=true; }
-      if(p.paymentStatus!=='جزئي'){ p.paymentStatus='جزئي'; changed=true; }
+      if(p.secondPayment!=='939'){ p.secondPayment='939'; p.secondPaymentDate='2026-06-23'; changed=true; }
       if(p.checkOut!=='2026-06-29'){ p.checkOut='2026-06-29'; changed=true; }
       if(p.returnDateTrip!=='2026-06-29'){ p.returnDateTrip='2026-06-29'; changed=true; }
     }
