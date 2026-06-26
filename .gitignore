@@ -16,3 +16,5 @@ make_mockup*.py
 
 *.py
 C?UsershpDownloads*.html
+running-analysis-data.js
+_camp-dashboard-with-pdf-analysis.html
