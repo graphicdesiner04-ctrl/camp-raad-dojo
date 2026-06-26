@@ -2032,15 +2032,30 @@ function saveUploadedFile(){
 function previewFile(id){
   const f = uploadedFiles.find(x=>x.id===id);
   if(!f) return;
-  const win = window.open('','_blank');
-  win.document.write(`<html><head><title>${f.fileName}</title></head><body style="margin:0"><iframe src="${f.fileData}" style="width:100%;height:100vh;border:none"></iframe></body></html>`);
+  // User-uploaded files still carry raw base64; preloaded files use external URL.
+  const src = f.fileData || fileExternalUrl(f);
+  if(!src){ toast('لم يتم ضبط رابط الملفات الخارجي بعد — اضغط ⚙️ إعدادات الملفات','error'); return; }
+  window.open(src, '_blank');
 }
 
 function downloadFile(id){
   const f = uploadedFiles.find(x=>x.id===id);
   if(!f) return;
+  const src = f.fileData || fileExternalUrl(f);
+  if(!src){ toast('لم يتم ضبط رابط الملفات الخارجي بعد','error'); return; }
   const a = document.createElement('a');
-  a.href = f.fileData;a.download = f.fileName;a.click();
+  a.href = src; a.download = f.fileName; a.target = '_blank'; a.click();
+}
+
+// User-facing config: set the external base URL once after uploading the files folder.
+function openFilesBaseUrlPrompt(){
+  const current = FILES_BASE_URL || '';
+  const val = prompt('رابط مجلد الملفات الخارجي (مثال: https://your-host.com/raad-files):', current);
+  if(val===null) return;
+  const trimmed = val.trim().replace(/\/$/,'');
+  localStorage.setItem('files_base_url', trimmed);
+  toast('تم حفظ الرابط — تحديث الصفحة','success');
+  setTimeout(()=>location.reload(), 600);
 }
 
 function deleteFile(id){
