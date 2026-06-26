@@ -1447,7 +1447,8 @@ let staff = load('camp_staff', DEFAULT_STAFF);
 // Files (passports/tickets/invoices) are hosted externally; the dashboard only knows
 // metadata (id/participantId/fileType/fileName/url). Set FILES_BASE_URL to the hosting
 // folder URL. Each file's `url` is appended to the base. Empty base = links disabled.
-const FILES_BASE_URL = (typeof localStorage!=='undefined' && localStorage.getItem('files_base_url')) || '';
+const DEFAULT_FILES_BASE_URL = 'https://github.com/graphicdesiner04-ctrl/camp-raad-dojo/releases/download/files-v1';
+const FILES_BASE_URL = (typeof localStorage!=='undefined' && localStorage.getItem('files_base_url')) || DEFAULT_FILES_BASE_URL;
 function fileExternalUrl(f){
   if(!f || !f.url) return '';
   if(/^https?:\/\//i.test(f.url)) return f.url; // absolute already
