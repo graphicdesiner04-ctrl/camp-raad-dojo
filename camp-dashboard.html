@@ -1909,6 +1909,8 @@ function ownerName(f){
 }
 
 function renderFiles(){
+  const urlDisp = document.getElementById('files-base-url-display');
+  if(urlDisp) urlDisp.textContent = FILES_BASE_URL || 'لم يُضبط بعد — اضغط ⚙️ ضبط الرابط بعد رفع المجلد على مستضيف خارجي';
   const typeFilter = document.getElementById('filter-file-type').value;
   // فقط المشتركون المؤكدون (7 أشخاص) — لا مشرفون ولا غير مؤكدين ولا ملغيين
   const campParticipantIds = new Set(
