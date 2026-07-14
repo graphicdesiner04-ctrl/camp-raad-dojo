@@ -1,1 +1,760 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0; url=camp-dashboard.html"><script>window.location.replace("camp-dashboard.html");</script></head><body></body></html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>وليد الحديثة للإستثمار | عصائر · بسكوت · مشروبات</title>
+  <meta name="description" content="وليد الحديثة للإستثمار — مواد غذائية بالجملة، استيراد وتصدير، مخازن تجارية عامة. صلالة، سلطنة عُمان"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<!-- ══ LOADER ══ -->
+<div class="loader" id="loader">
+  <div class="loader-circle"></div>
+  <img src="images/logo-icon.png" alt="وليد الحديثة للإستثمار" class="loader-logo"/>
+  <span class="loader-brand-name">وليد الحديثة للإستثمار</span>
+</div>
+
+<!-- ══ CURSOR ══ -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- ══ NAV ══ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#home">
+      <img src="images/logo-icon.png" alt="" class="nav-icon-img"/>
+      <div class="nav-logo-text">
+        <span class="nlt-ar">وليد الحديثة</span>
+        <span class="nlt-en">للإستثمار</span>
+      </div>
+    </a>
+    <ul class="nav-menu">
+      <li><a href="#home">الرئيسية</a></li>
+      <li><a href="#about">من نحن</a></li>
+      <li><a href="#products">منتجاتنا</a></li>
+      <li><a href="#gallery">المعرض</a></li>
+      <li><a href="#contact">تواصل</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="https://wa.me/96890206784" class="nav-wa" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        واتساب
+      </a>
+      <button class="nav-burger" onclick="toggleMenu()" aria-label="menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-drawer" id="navDrawer">
+    <ul>
+      <li><a href="#home" onclick="toggleMenu()">الرئيسية</a></li>
+      <li><a href="#about" onclick="toggleMenu()">من نحن</a></li>
+      <li><a href="#products" onclick="toggleMenu()">منتجاتنا</a></li>
+      <li><a href="#gallery" onclick="toggleMenu()">المعرض</a></li>
+      <li><a href="#contact" onclick="toggleMenu()">تواصل</a></li>
+    </ul>
+    <a href="https://wa.me/96890206784" class="drawer-wa" target="_blank">+968 9020 6784</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="home" class="hero">
+  <div class="hero-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+  <div class="hero-layout">
+    <div class="hero-text">
+      <span class="hero-chip"><span class="chip-dot"></span> وكلاء حصريون في سلطنة عُمان</span>
+      <h1 class="hero-h1">
+        <span class="h1-line"><span>طعم</span></span>
+        <span class="h1-line"><span class="h1-accent">الطبيعة</span></span>
+        <span class="h1-line"><span>في كل قطرة</span></span>
+      </h1>
+      <p class="hero-p">وليد الحديثة للإستثمار — مواد غذائية بالجملة، عصائر ومشروبات وبسكوت بأعلى معايير الجودة، لكل تجار ومحلات سلطنة عُمان.</p>
+      <div class="hero-btns">
+        <a href="#products" class="btn-primary">تصفح منتجاتنا</a>
+        <a href="#contact" class="btn-outline">تواصل معنا</a>
+      </div>
+      <div class="hero-nums">
+        <div class="hnum"><b>+500</b><span>عميل راضٍ</span></div>
+        <div class="hnum-sep"></div>
+        <div class="hnum"><b>+50</b><span>منتج متنوع</span></div>
+        <div class="hnum-sep"></div>
+        <div class="hnum"><b>5+</b><span>سنوات خبرة</span></div>
+      </div>
+    </div>
+
+    <div class="hero-product">
+      <div class="product-ring product-ring-1"></div>
+      <div class="product-ring product-ring-2"></div>
+      <div class="product-ring product-ring-3"></div>
+      <div class="product-glow"></div>
+      <div class="hero-slider" id="heroSlider">
+        <div class="hs-slide active" data-brand="sunfun" data-name="عصير مانجو" data-label="Sun Fun">
+          <img src="images/sun-fun/sunfun-mango-1.png" alt="Sun Fun مانجو"/>
+        </div>
+        <div class="hs-slide" data-brand="sunplus" data-name="عصير برتقال" data-label="Sun Plus">
+          <img src="images/sun-plus/sunplus-orange-1.png" alt="Sun Plus برتقال"/>
+        </div>
+        <div class="hs-slide" data-brand="kino" data-name="كوكتيل درينك" data-label="Kino">
+          <img src="images/kino/kino-cocktail-1.png" alt="Kino كوكتيل"/>
+        </div>
+      </div>
+      <div class="hs-info">
+        <span class="hs-brand-pill hs-brand-sunfun" id="hsBrandPill">Sun Fun</span>
+        <span class="hs-product-name" id="hsProductName">عصير مانجو</span>
+      </div>
+      <div class="hs-dots" id="hsDots">
+        <span class="hs-dot active"></span>
+        <span class="hs-dot"></span>
+        <span class="hs-dot"></span>
+      </div>
+      <div class="product-badge-1"><span>🏆</span> جودة عالمية</div>
+      <div class="product-badge-2"><span>🌿</span> طبيعي 100%</div>
+    </div>
+
+    <div class="hero-cats">
+      <div class="cat-pill cat-active"><span class="cat-icon">🧃</span> عصائر</div>
+      <div class="cat-pill"><span class="cat-icon">🍪</span> بسكوت</div>
+      <div class="cat-pill"><span class="cat-icon">🥤</span> مشروبات</div>
+    </div>
+  </div>
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C480,80 960,0 1440,40 L1440,80 L0,80 Z" fill="#FFF8EE"/></svg>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Sun Fun</span><span class="mx">✦</span>
+    <span>Sun Plus</span><span class="mx">✦</span>
+    <span>Kino</span><span class="mx">✦</span>
+    <span>جودة طبيعية</span><span class="mx">✦</span>
+    <span>توزيع شامل لكل عُمان</span><span class="mx">✦</span>
+    <span>Sun Fun</span><span class="mx">✦</span>
+    <span>Sun Plus</span><span class="mx">✦</span>
+    <span>Kino</span><span class="mx">✦</span>
+    <span>جودة طبيعية</span><span class="mx">✦</span>
+    <span>توزيع شامل لكل عُمان</span><span class="mx">✦</span>
+  </div>
+</div>
+
+<!-- ══ CATEGORIES ══ -->
+<section class="cats-section section">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="stag">فئاتنا</span>
+      <h2>تشكيلة <em>متكاملة</em></h2>
+      <p>منتجات متنوعة تلبي كل احتياجات تجارتك</p>
+    </div>
+    <div class="cats-grid">
+      <div class="cat-card cat-card-juice" data-reveal>
+        <div class="cc-bg"></div>
+        <span class="cc-icon">🧃</span>
+        <div class="cc-content">
+          <h3>عصائر طبيعية</h3>
+          <p>عصائر فواكه منعشة بنكهات متعددة من Sun Fun وSun Plus وKino</p>
+          <span class="cc-products">+30 منتج</span>
+          <a href="#products" class="cc-link">استعرض المنتجات ↗</a>
+        </div>
+      </div>
+      <div class="cat-card cat-card-biscuit" data-reveal data-delay="100">
+        <div class="cc-bg"></div>
+        <span class="cc-icon">🍪</span>
+        <div class="cc-content">
+          <h3>بسكوت وحلويات</h3>
+          <p>تشكيلة واسعة من البسكوت والحلويات المستوردة عالية الجودة</p>
+          <span class="cc-products">قريباً</span>
+          <a href="#products" class="cc-link">استعرض المنتجات ↗</a>
+        </div>
+      </div>
+      <div class="cat-card cat-card-drinks" data-reveal data-delay="200">
+        <div class="cc-bg"></div>
+        <span class="cc-icon">🥤</span>
+        <div class="cc-content">
+          <h3>مشروبات متنوعة</h3>
+          <p>مشروبات غازية ومشروبات طاقة لتلبية كل الأذواق</p>
+          <span class="cc-products">قريباً</span>
+          <a href="#products" class="cc-link">استعرض المنتجات ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section id="about" class="about-section section">
+  <div class="container">
+    <div class="about-wrap">
+      <div class="about-visual" data-reveal>
+        <div class="av-main">
+          <div class="av-img">
+            <img src="images/company-building.jpg" alt="مقر وليد الحديثة للإستثمار" class="av-real-img"/>
+          </div>
+          <div class="av-blob"></div>
+          <div class="av-circles">
+            <div class="av-c av-c1"></div>
+            <div class="av-c av-c2"></div>
+          </div>
+          <div class="av-float av-f1"><span>📍</span><div><b>صلالة</b><small>سلطنة عُمان</small></div></div>
+          <div class="av-float av-f2"><span>🗓️</span><div><b>تأسست 2020</b><small>خبرة متراكمة</small></div></div>
+        </div>
+      </div>
+      <div class="about-text">
+        <span class="stag">من نحن</span>
+        <h2>شريكك الموثوق في <em>عالم التجارة</em></h2>
+        <p class="about-desc">وليد الحديثة للإستثمار شركة رائدة في مجال المواد الغذائية بالجملة، متخصصة في الاستيراد والتصدير والمخازن التجارية العامة. نفخر بكوننا وكلاء حصريين لماركات عالمية مرموقة، ونخدم تجار ومحلات سلطنة عُمان بأعلى معايير الجودة والاحترافية.</p>
+        <div class="about-vals">
+          <div class="av-item">
+            <div class="avi-icon" style="background:rgba(195,125,5,.12);color:var(--amber-dk)">🎯</div>
+            <div><h4>رؤية واضحة</h4><p>نسعى للريادة في السوق المحلي</p></div>
+          </div>
+          <div class="av-item">
+            <div class="avi-icon" style="background:rgba(46,125,50,.12);color:var(--green)">🌿</div>
+            <div><h4>جودة مضمونة</h4><p>منتجات مطابقة للمعايير الدولية</p></div>
+          </div>
+          <div class="av-item">
+            <div class="avi-icon" style="background:rgba(230,81,0,.12);color:var(--orange)">🚚</div>
+            <div><h4>توزيع سريع</h4><p>تغطية شاملة لكل ربوع عُمان</p></div>
+          </div>
+          <div class="av-item">
+            <div class="avi-icon" style="background:rgba(21,101,192,.12);color:#1565C0">🤝</div>
+            <div><h4>شراكة طويلة</h4><p>علاقات تجارية مبنية على الثقة</p></div>
+          </div>
+        </div>
+        <a href="#contact" class="btn-primary">تواصل معنا</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRODUCTS ══ -->
+<section id="products" class="products-section section">
+  <div class="products-bg-wave"></div>
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="stag">منتجاتنا</span>
+      <h2>اكتشف <em>تشكيلتنا</em></h2>
+      <p>منتجات متنوعة من أفضل الماركات العالمية</p>
+    </div>
+    <div class="pfilters" data-reveal>
+      <button class="pf active" data-filter="all">الكل</button>
+      <button class="pf" data-filter="sunfun">Sun Fun</button>
+      <button class="pf" data-filter="sunplus">Sun Plus</button>
+      <button class="pf" data-filter="kino">Kino</button>
+    </div>
+
+    <div class="pgrid" id="pgrid">
+
+      <div class="brand-section" id="brand-sunfun">
+        <div class="brand-divider"><div class="bd-line"></div><span class="bd-name" style="background:linear-gradient(135deg,#FF5722,#FF8C42);color:#fff">Sun Fun</span><div class="bd-line"></div></div>
+        <div class="brand-cards">
+
+          <div class="pcard" data-cat="sunfun" data-reveal>
+            <div class="pcard-img-real pcard-bg-sunfun">
+              <img src="images/sun-fun/sunfun-mango-1.png" class="pimg-main" alt="Sun Fun مانجو"/>
+              <img src="images/sun-fun/sunfun-mango-2.png" class="pimg-hover" alt="Sun Fun مانجو"/>
+              <span class="pbrand-tag pbrand-sunfun">Sun Fun</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير مانجو</h3>
+              <div class="pcard-tags"><span>250ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunfun" data-reveal data-delay="60">
+            <div class="pcard-img-real pcard-bg-sunfun">
+              <img src="images/sun-fun/sunfun-orange-1.png" class="pimg-main" alt="Sun Fun برتقال"/>
+              <img src="images/sun-fun/sunfun-orange-2.png" class="pimg-hover" alt="Sun Fun برتقال"/>
+              <span class="pbrand-tag pbrand-sunfun">Sun Fun</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير برتقال</h3>
+              <div class="pcard-tags"><span>250ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunfun" data-reveal data-delay="120">
+            <div class="pcard-img-real pcard-bg-sunfun">
+              <img src="images/sun-fun/sunfun-pineapple-1.png" class="pimg-main" alt="Sun Fun أناناس"/>
+              <img src="images/sun-fun/sunfun-pineapple-2.png" class="pimg-hover" alt="Sun Fun أناناس"/>
+              <span class="pbrand-tag pbrand-sunfun">Sun Fun</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير أناناس</h3>
+              <div class="pcard-tags"><span>250ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunfun" data-reveal data-delay="180">
+            <div class="pcard-img-real pcard-bg-sunfun">
+              <img src="images/sun-fun/sunfun-berry-1.png" class="pimg-main" alt="Sun Fun توت"/>
+              <img src="images/sun-fun/sunfun-berry-2.png" class="pimg-hover" alt="Sun Fun توت"/>
+              <span class="pbrand-tag pbrand-sunfun">Sun Fun</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير توت مشكل</h3>
+              <div class="pcard-tags"><span>250ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunfun" data-reveal data-delay="240">
+            <div class="pcard-img-real pcard-bg-sunfun">
+              <img src="images/sun-fun/sunfun-peach-1.png" class="pimg-main" alt="Sun Fun خوخ"/>
+              <span class="pbrand-tag pbrand-sunfun">Sun Fun</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير خوخ</h3>
+              <div class="pcard-tags"><span>250ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunfun" data-reveal data-delay="300">
+            <div class="pcard-img-real pcard-bg-sunfun">
+              <img src="images/sun-fun/sunfun-cocktail-1.png" class="pimg-main" alt="Sun Fun كوكتيل"/>
+              <img src="images/sun-fun/sunfun-cocktail-2.png" class="pimg-hover" alt="Sun Fun كوكتيل"/>
+              <span class="pbrand-tag pbrand-sunfun">Sun Fun</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>كوكتيل فواكه</h3>
+              <div class="pcard-tags"><span>250ml</span><span>مشكّل</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="brand-section" id="brand-sunplus">
+        <div class="brand-divider"><div class="bd-line"></div><span class="bd-name" style="background:linear-gradient(135deg,#FFA000,#FFD54F);color:#3E2700">Sun Plus</span><div class="bd-line"></div></div>
+        <div class="brand-cards">
+
+          <div class="pcard" data-cat="sunplus" data-reveal>
+            <div class="pcard-img-real pcard-bg-sunplus">
+              <img src="images/sun-plus/sunplus-orange-1.png" class="pimg-main" alt="Sun Plus برتقال"/>
+              <img src="images/sun-plus/sunplus-orange-2.png" class="pimg-hover" alt="Sun Plus برتقال"/>
+              <span class="pbrand-tag pbrand-sunplus">Sun Plus</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير برتقال بريميوم</h3>
+              <div class="pcard-tags"><span>200ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunplus" data-reveal data-delay="60">
+            <div class="pcard-img-real pcard-bg-sunplus">
+              <img src="images/sun-plus/sunplus-mango-1.png" class="pimg-main" alt="Sun Plus مانجو"/>
+              <img src="images/sun-plus/sunplus-mango-2.png" class="pimg-hover" alt="Sun Plus مانجو"/>
+              <span class="pbrand-tag pbrand-sunplus">Sun Plus</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير مانجو بريميوم</h3>
+              <div class="pcard-tags"><span>200ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunplus" data-reveal data-delay="120">
+            <div class="pcard-img-real pcard-bg-sunplus">
+              <img src="images/sun-plus/sunplus-pineapple-1.png" class="pimg-main" alt="Sun Plus أناناس"/>
+              <img src="images/sun-plus/sunplus-pineapple-2.png" class="pimg-hover" alt="Sun Plus أناناس"/>
+              <span class="pbrand-tag pbrand-sunplus">Sun Plus</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير أناناس بريميوم</h3>
+              <div class="pcard-tags"><span>200ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunplus" data-reveal data-delay="180">
+            <div class="pcard-img-real pcard-bg-sunplus">
+              <img src="images/sun-plus/sunplus-berries-1.png" class="pimg-main" alt="Sun Plus توت"/>
+              <img src="images/sun-plus/sunplus-berries-2.png" class="pimg-hover" alt="Sun Plus توت"/>
+              <span class="pbrand-tag pbrand-sunplus">Sun Plus</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>عصير توت مشكل</h3>
+              <div class="pcard-tags"><span>200ml</span><span>طبيعي</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="sunplus" data-reveal data-delay="240">
+            <div class="pcard-img-real pcard-bg-sunplus">
+              <img src="images/sun-plus/sunplus-cocktail-1.png" class="pimg-main" alt="Sun Plus كوكتيل"/>
+              <img src="images/sun-plus/sunplus-cocktail-2.png" class="pimg-hover" alt="Sun Plus كوكتيل"/>
+              <span class="pbrand-tag pbrand-sunplus">Sun Plus</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">عصائر</span>
+              <h3>كوكتيل فواكه بريميوم</h3>
+              <div class="pcard-tags"><span>200ml</span><span>مشكّل</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="brand-section" id="brand-kino">
+        <div class="brand-divider"><div class="bd-line"></div><span class="bd-name" style="background:linear-gradient(135deg,#1565C0,#42A5F5);color:#fff">Kino</span><div class="bd-line"></div></div>
+        <div class="brand-cards">
+
+          <div class="pcard" data-cat="kino" data-reveal>
+            <div class="pcard-img-real pcard-bg-kino">
+              <img src="images/kino/kino-orange-1.png" class="pimg-main" alt="Kino برتقال"/>
+              <img src="images/kino/kino-orange-2.png" class="pimg-hover" alt="Kino برتقال"/>
+              <span class="pbrand-tag pbrand-kino">Kino</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">مشروبات فاكهة</span>
+              <h3>مشروب برتقال</h3>
+              <div class="pcard-tags"><span>200ml</span><span>منعش</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="kino" data-reveal data-delay="60">
+            <div class="pcard-img-real pcard-bg-kino">
+              <img src="images/kino/kino-mango-1.png" class="pimg-main" alt="Kino مانجو"/>
+              <img src="images/kino/kino-mango-2.png" class="pimg-hover" alt="Kino مانجو"/>
+              <span class="pbrand-tag pbrand-kino">Kino</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">مشروبات فاكهة</span>
+              <h3>مشروب مانجو</h3>
+              <div class="pcard-tags"><span>200ml</span><span>منعش</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="kino" data-reveal data-delay="120">
+            <div class="pcard-img-real pcard-bg-kino">
+              <img src="images/kino/kino-pineapple-1.png" class="pimg-main" alt="Kino أناناس"/>
+              <img src="images/kino/kino-pineapple-2.png" class="pimg-hover" alt="Kino أناناس"/>
+              <span class="pbrand-tag pbrand-kino">Kino</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">مشروبات فاكهة</span>
+              <h3>مشروب أناناس</h3>
+              <div class="pcard-tags"><span>200ml</span><span>منعش</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+          <div class="pcard" data-cat="kino" data-reveal data-delay="180">
+            <div class="pcard-img-real pcard-bg-kino">
+              <img src="images/kino/kino-cocktail-1.png" class="pimg-main" alt="Kino كوكتيل"/>
+              <img src="images/kino/kino-cocktail-2.png" class="pimg-hover" alt="Kino كوكتيل"/>
+              <span class="pbrand-tag pbrand-kino">Kino</span>
+            </div>
+            <div class="pcard-body">
+              <span class="pcard-cat">مشروبات فاكهة</span>
+              <h3>كوكتيل درينك</h3>
+              <div class="pcard-tags"><span>200ml</span><span>مشكّل</span></div>
+              <a href="#contact" class="pcard-cta">استفسر الآن ↗</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="products-cta" data-reveal>
+      <a href="#contact" class="btn-primary">طلب كتالوج كامل</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATEMENT ══ -->
+<section class="statement-section">
+  <div class="st-bg"></div>
+  <div class="st-fruits">
+    <span style="top:10%;right:5%;font-size:3rem;animation-delay:0s">🍊</span>
+    <span style="top:20%;left:8%;font-size:2rem;animation-delay:1s">🥭</span>
+    <span style="bottom:15%;right:10%;font-size:2.5rem;animation-delay:2s">🍎</span>
+    <span style="bottom:20%;left:5%;font-size:2rem;animation-delay:0.5s">🍃</span>
+  </div>
+  <div class="container">
+    <div class="st-content" data-reveal>
+      <span class="stag stag-light">فلسفتنا</span>
+      <blockquote>
+        "من صلالة إلى كل عُمان —<br/>نجلب أفضل <em>النكهات</em> إلى مائدتك"
+      </blockquote>
+      <a href="#products" class="btn-primary">اكتشف الفرق</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHY ══ -->
+<section class="why-section section">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="stag">مميزاتنا</span>
+      <h2>لماذا <em>تختارنا؟</em></h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card wc-orange" data-reveal data-delay="0">
+        <div class="wc-num">01</div>
+        <div class="wc-ico">🌿</div>
+        <h3>جودة طبيعية</h3>
+        <p>منتجات خالية من المواد الضارة تحت أعلى معايير الرقابة الغذائية</p>
+      </div>
+      <div class="why-card wc-green" data-reveal data-delay="100">
+        <div class="wc-num">02</div>
+        <div class="wc-ico">🏅</div>
+        <h3>وكالات حصرية</h3>
+        <p>وكلاء حصريون لأبرز الماركات العالمية في السوق العُماني</p>
+      </div>
+      <div class="why-card wc-amber" data-reveal data-delay="200">
+        <div class="wc-num">03</div>
+        <div class="wc-ico">🚚</div>
+        <h3>توزيع شامل</h3>
+        <p>نغطي كامل مناطق سلطنة عُمان بشبكة توزيع متميزة وسريعة</p>
+      </div>
+      <div class="why-card wc-blue" data-reveal data-delay="300">
+        <div class="wc-num">04</div>
+        <div class="wc-ico">💰</div>
+        <h3>أسعار تنافسية</h3>
+        <p>أسعار الجملة المناسبة للتجار والمحلات والمؤسسات الكبرى</p>
+      </div>
+      <div class="why-card wc-purple" data-reveal data-delay="400">
+        <div class="wc-num">05</div>
+        <div class="wc-ico">📦</div>
+        <h3>تعبئة وتغليف</h3>
+        <p>تغليف احترافي يحافظ على جودة المنتج ويُبرز هويته البصرية</p>
+      </div>
+      <div class="why-card wc-red" data-reveal data-delay="500">
+        <div class="wc-num">06</div>
+        <div class="wc-ico">⭐</div>
+        <h3>ضمان الرضا</h3>
+        <p>نضمن رضاك التام عن كل منتج أو نسترده فوراً</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="testi-section section">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="stag">آراء عملائنا</span>
+      <h2>ثقتهم <em>تُلهمنا</em></h2>
+    </div>
+    <div class="testi-slider" id="tslider">
+      <div class="tcard active">
+        <div class="tc-stars">★★★★★</div>
+        <p>"منتجات رائعة وجودة استثنائية لم أتوقع هذا المستوى الراقي. عصائر صن فن من أفضل ما ذقته"</p>
+        <div class="tc-author"><div class="tc-av" style="background:#FF8C42">م.أ</div><div><b>محمد أحمد</b><small>مسقط، عُمان</small></div></div>
+      </div>
+      <div class="tcard">
+        <div class="tc-stars">★★★★★</div>
+        <p>"تعامل ممتاز وخدمة احترافية. المنتجات تفوق التوقعات في الجودة والتغليف. نوصي بالتعامل مع وليد"</p>
+        <div class="tc-author"><div class="tc-av" style="background:#4CAF50">ف.س</div><div><b>فهد السلطان</b><small>صحار، عُمان</small></div></div>
+      </div>
+      <div class="tcard">
+        <div class="tc-stars">★★★★★</div>
+        <p>"أفضل تجربة للجملة مررت بها، الأسعار ممتازة والتوصيل سريع. استمر يا وليد!"</p>
+        <div class="tc-author"><div class="tc-av" style="background:#9C27B0">ن.ك</div><div><b>نواف الكندري</b><small>صلالة، عُمان</small></div></div>
+      </div>
+    </div>
+    <div class="testi-dots">
+      <span class="tdot active" onclick="goToT(0)"></span>
+      <span class="tdot" onclick="goToT(1)"></span>
+      <span class="tdot" onclick="goToT(2)"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GALLERY ══ -->
+<section id="gallery" class="gallery-section section">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="stag">معرضنا</span>
+      <h2>لحظات <em>مميزة</em></h2>
+      <p>تابعنا على إنستغرام للمزيد من المحتوى الحصري</p>
+    </div>
+    <div class="gal-grid" data-reveal>
+      <div class="gi gi-tall gi-placeholder" style="--gc:#FF8C42"><div class="gi-ph">🍊</div></div>
+      <div class="gi gi-placeholder" style="--gc:#8B4513"><div class="gi-ph">🍪</div></div>
+      <div class="gi gi-placeholder" style="--gc:#1A237E"><div class="gi-ph">🥤</div></div>
+      <div class="gi gi-wide gi-placeholder" style="--gc:#004D40"><div class="gi-ph">⚡</div></div>
+      <div class="gi gi-placeholder" style="--gc:#4A148C"><div class="gi-ph">🏭</div></div>
+      <div class="gi gi-placeholder" style="--gc:#FF6F00"><div class="gi-ph">🧃</div></div>
+    </div>
+    <div class="gal-social" data-reveal>
+      <a href="https://www.instagram.com/waleed.modern.investment" target="_blank" class="gsoc-btn ig">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        إنستغرام
+      </a>
+      <a href="https://www.facebook.com/share/1J3ZDFUfW8/" target="_blank" class="gsoc-btn fb">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        فيسبوك
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section id="contact" class="contact-section section">
+  <div class="contact-blob"></div>
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="stag">تواصل معنا</span>
+      <h2>نسعد <em>بتواصلك</em></h2>
+      <p>فريقنا جاهز للرد على كل استفساراتك</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-form-card" data-reveal>
+        <form onsubmit="submitForm(event)">
+          <div class="fg"><label>الاسم الكامل</label><input type="text" placeholder="أدخل اسمك" required/></div>
+          <div class="fg"><label>رقم الهاتف / واتساب</label><input type="tel" placeholder="+968 9020 6784" required/></div>
+          <div class="fg"><label>البريد الإلكتروني</label><input type="email" placeholder="example@email.com"/></div>
+          <div class="fg"><label>نوع الطلب</label>
+            <select>
+              <option>استفسار عن منتج</option>
+              <option>طلب جملة</option>
+              <option>طلب وكالة</option>
+              <option>شكوى أو اقتراح</option>
+            </select>
+          </div>
+          <div class="fg"><label>رسالتك</label><textarea rows="4" placeholder="اكتب رسالتك هنا..." required></textarea></div>
+          <button type="submit" class="btn-primary btn-full">إرسال الرسالة</button>
+        </form>
+      </div>
+      <div class="contact-info-card" data-reveal data-delay="150">
+        <div class="cic-top">
+          <h3>تواصل مباشر</h3>
+          <p>نرد خلال ساعات قليلة</p>
+        </div>
+        <div class="ci-items">
+          <a href="https://wa.me/96890206784" target="_blank" class="ci-item ci-wa">
+            <div class="ci-ico" style="background:#25D366">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            </div>
+            <div><b>واتساب</b><span dir="ltr">‎+968 9020 6784</span></div>
+          </a>
+          <a href="https://www.instagram.com/waleed.modern.investment" target="_blank" class="ci-item">
+            <div class="ci-ico" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </div>
+            <div><b>إنستغرام</b><span>@waleed.modern.investment</span></div>
+          </a>
+          <a href="https://www.facebook.com/share/1J3ZDFUfW8/" target="_blank" class="ci-item">
+            <div class="ci-ico" style="background:#1877F2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+            <div><b>فيسبوك</b><span>Waleed modern investment</span></div>
+          </a>
+          <div class="ci-item">
+            <div class="ci-ico" style="background:#E65100">📍</div>
+            <div><b>الموقع</b><span>صلالة، سلطنة عُمان</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer-wave"><svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,30 C480,60 960,0 1440,30 L1440,60 L0,60 Z" fill="#FFF8EE"/></svg></div>
+  <div class="footer-inner">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="images/logo-icon.png" alt="وليد الحديثة للإستثمار" class="footer-logo-img"/>
+            <div class="footer-logo-text">
+              <span class="flt-main">وليد الحديثة</span>
+              <span class="flt-sub">للإستثمار</span>
+            </div>
+          </div>
+          <p>مواد غذائية بالجملة · مكاتب استيراد وتصدير<br/>مخازن تجارية عامة · صلالة، سلطنة عُمان</p>
+          <div class="footer-soc">
+            <a href="https://www.instagram.com/waleed.modern.investment" target="_blank" aria-label="إنستغرام">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/share/1J3ZDFUfW8/" target="_blank" aria-label="فيسبوك">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://wa.me/96890206784" target="_blank" aria-label="واتساب">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="#home">الرئيسية</a></li>
+            <li><a href="#about">من نحن</a></li>
+            <li><a href="#products">منتجاتنا</a></li>
+            <li><a href="#gallery">المعرض</a></li>
+            <li><a href="#contact">تواصل معنا</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>منتجاتنا</h4>
+          <ul>
+            <li><a href="#products">عصائر طبيعية</a></li>
+            <li><a href="#products">بسكوت وحلويات</a></li>
+            <li><a href="#products">مشروبات غازية</a></li>
+            <li><a href="#products">مشروبات طاقة</a></li>
+            <li><a href="#products">منتجات مصنّعة</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>تواصل معنا</h4>
+          <ul>
+            <li><a href="https://wa.me/96890206784" dir="ltr">‎+968 9020 6784</a></li>
+            <li><a href="#contact">صلالة، عُمان</a></li>
+            <li><a href="https://www.instagram.com/waleed.modern.investment">إنستغرام</a></li>
+            <li><a href="https://www.facebook.com/share/1J3ZDFUfW8/">فيسبوك</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 شركة وليد الحديثة للإستثمار · صلالة، سلطنة عُمان · جميع الحقوق محفوظة</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ FLOATING WHATSAPP ══ -->
+<a href="https://wa.me/96890206784" class="wa-btn" target="_blank">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  <span class="wa-pulse"></span>
+</a>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script src="script.js"></script>
+<script src="cms-bridge.js"></script>
+</body>
+</html>
